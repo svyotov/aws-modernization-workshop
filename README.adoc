@@ -8,14 +8,26 @@ To test any changes you have made locally make sure you have docker installed. M
 .docker login
 [source,shell]
 ----
-$(aws ecr get-login --no-include-email --region us-west-2)
+eval `aws ecr get-login --no-include-email --region us-west-2`
 ----
 
 .docker image pull
 [source,shell]
 ----
-docker pull 755152575036.dkr.ecr.us-east-1.amazonaws.com/aws-workshopper:latest
+docker pull <AWS ACCOUNT>.dkr.ecr.us-east-1.amazonaws.com/workshopper:latest
 ----
+
+----
+docker run -it --rm -p 8080:8080 \
+    -e CONTENT_URL_PREFIX=https://raw.githubusercontent.com/darkreapyre/aws-modernization-workshop/master \
+    -e WORKSHOPS_URLS=https://raw.githubusercontent.com/darkreapyre/aws-modernization-workshop/master/workshops/modernization-workshop.yml  \
+    <AWS ACCOUNT ID>.dkr.ecr.us-west-2.amazonaws.com/workshopper:latest
+
+----
+
+You should now be able to see the workshop on http://localhost:8080
+
+=== Alternate commands to leverage Docker Hub.
 
 Make sure you are in this repository root.
 
@@ -23,34 +35,9 @@ Make sure you are in this repository root.
 [source,shell]
 ----
 docker run -it --rm -p 8080:8080 -v `pwd`:/content \
-              -e CONTENT_URL_PREFIX=file:///content \
-              -e WORKSHOPS_URLS=file:///content/workshops/modernization-workshop.yml \
-              osevg/workshopper
+    -e CONTENT_URL_PREFIX=file:///content \
+    -e WORKSHOPS_URLS=file:///content/workshops/modernization-workshop.yml \
+    osevg/workshopper
 ----
 
-You should now be able to see the workshop on http://localhost:8080
-
-== Local Testing
-To test any changes you have made locally make sure you have docker installed. Make sure you are logged into the correct AWS account.
-
-=== Run the following commands.
-.docker login
-[source,shell]
-----
-eval `aws ecr get-login --no-include-email --region us-east-1`
-----
-
-.docker image pull
-[source,shell]
-----
-docker pull 7<AWS ACCOUNT>.dkr.ecr.us-east-1.amazonaws.com/aws-workshopper:latest
-----
-----
-docker run -it --rm -p 8080:8080 \
-    -e CONTENT_URL_PREFIX=https://raw.githubusercontent.com/darkreapyre/aws-modernization-workshop/master \
-    -e WORKSHOPS_URLS=https://raw.githubusercontent.com/darkreapyre/aws-modernization-workshop/master/workshops/modernization-workshop.yml  \
-    <AWS ACCOUNT>.dkr.ecr.us-west-2.amazonaws.com/workshopper
-
-----
-
-You should now be able to see the workshop on http://localhost:8080
+-->
