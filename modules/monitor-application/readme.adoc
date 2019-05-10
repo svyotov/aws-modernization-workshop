@@ -1,0 +1,439 @@
+= Digital Modernization
+
+== Monitoring the Application
+
+****
+*Expected Outcome:*
+
+* Add and understand Docker Healthchecks to the Pet Store Docker artifacts
+* Add and understand Container Healthchecks to Fargate
+* Ship container logs for to CloudWatch
+
+*Lab Requirements:*
+* an Amazon Elastic Container Service Cluster
+* an Amazon Elastic Container Service for Kubernetes Cluster
+
+*Average Lab Time:* 
+30-45 minutes
+****
+
+=== Introduction
+When it comes to monitoring an application, a key concept to understand is you need to ensure that the application is working rather than only looking to see if server or container is running. In this module, we will go over some key concepts in monitoring and logging and how to integrate those concepts with our Pet Store application.
+
+==== Docker Healthchecks
+The `HEALTHCHECK` instruction tells Docker how to test a container to check that it is still working. This can detect cases such as a web server that is stuck in an infinite loop and unable to handle new connections, even though the server process is still running. When a container has a healthcheck specified, it has a health status in addition to its normal status. This status is initially starting. Whenever a health check passes, it becomes `healthy` (whatever state it was previously in). After a certain number of consecutive failures, it becomes `unhealthy`.
+
+1. To get started, navigate to the folder where you created your `Dockerfile` in the `containerize-application` folder from the previous lab within this repository. Then open the `Dockerfile` in your editor of choice.
++
+2. At the bottom of our `Dockerfile` we will add a `HEALTHCHECK` that tests our application server. Add the `HEALTHCHECK` between the `ENTRYPOINT` command in the `Dockerfile` like the example below:
++
+[source,shell]
+----
+# run the application
+ENTRYPOINT [ "/opt/jboss/docker-entrypoint.sh" ]
+# add a Healthcheck
+HEALTHCHECK --interval=30s --timeout=5s --retries=5 --start-period=30s CMD curl --fail http://127.0.0.1:8080/applicationPetstore || exit 1
+CMD [ "-b", "0.0.0.0", "-bmanagement", "0.0.0.0" ]
+----
++
+- To review the above command we will go over some of the flags. The options that can appear before `CMD` in a `HEALTHCHECK` are:
+* `--interval=DURATION` (default: `30s`)
+* `--timeout=DURATION` (default: `30s`)
+* `--retries=N` (default: `3`)
+* `--start-period=DURATION` (default: `0s`)
+- You will notice the `CMD curl --fail http://127.0.0.1:8080/applicationPetstore || exit 1` in our `HEALTHCHECK`. This is how we are testing that the application is running. The commands exit status indicates the health status of  the container. The possible values are:
+* 0: success - the container is healthy and ready for use
+* 1: unhealthy - the container is not working correctly
+* 2: reserved - do not use this exit code
++
+3. Save the `Dockerfile` and move on to the next section. There is a working `Dockerfile` in the `monitor-application/container` folder within this repository if you need a full example.
+
+==== Healthchecks in Docker Compose
+As a refresher, Docker Compose is a tool for defining and running multi-container Docker applications. With Compose, you use a YAML file to configure your application’s services. Then, with a single command, you create and start all the services from your configuration.
+
+Using Compose is basically a three-step process:
+
+* Define your app’s environment with a `Dockerfile` so it can be reproduced anywhere.
+* Define the services that make up your app in `docker-compose.yml` so they can be run together in an isolated environment.
+* Run `docker-compose` up and Compose starts and runs your entire app.
+
+1. To get started, navigate to the folder where you created your `docker-compose.yml` in the `containerize-application` folder from the previous lab within this repository. Then open the `docker-compose.yml` in your editor of choice.
++
+2. Similar to the previous section, we are going to add healthchecks but this time we will also add one for our postgres container. 
++
+3. Add the `healthcheck` section to `postgres` so that it looks like the example below. For our healthcheck, we are going to add a simple `CMD-SHELL` command to issue the `pg_isready` utility for checking the connection status to PostgreSQL. Since we are using the official PostgreSQL image available from Docker Hub the `pg_isready` command should be available within our container.
++
+[source,yaml]
+----
+version: '3.4'
+
+services:
+
+  postgres:
+    image: postgres:9.6
+    ports:
+      - 5432:5432
+    environment:
+      - 'POSTGRES_DB=petstore'
+      - 'POSTGRES_USER=admin'
+      - 'POSTGRES_PASSWORD=password'
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+----
++
+4. For the Pet Store application add the following `healthcheck` section to `petstore` so that it looks like the example below. For our healthcheck, we are simply mirroring what was already defined in the `Dockerfile` earlier.
++
+[source,yaml]
+----
+  petstore:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    depends_on:
+      - postgres
+    ports:
+      - 8080:8080
+      - 9990:9990
+    environment:
+      - 'DB_URL=jdbc:postgresql://postgres:5432/petstore?ApplicationName=applicationPetstore'
+      - 'DB_HOST=postgres'
+      - 'DB_PORT=5432'
+      - 'DB_NAME=petstore'
+      - 'DB_USER=admin'
+      - 'DB_PASS=password'
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/applicationPetstore"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+----
++
+5. Save the `docker-compose.yml` and move on to the next section. There is a working `docker-compose.yml` in the `monitor-application/container` folder within this repository if you need a full example.
+
+==== Testing the Healthchecks
+Now that we've added healtchecks to our Pet Store application, we need to rebuild the petstore container to add our changes. 
+
+1. To get started, stop and delete any running Pet Store containers that you might have running. Switch back to the terminal in your Cloud9 environment and run the following command:
++
+[source,shell]
+----
+docker rm -f $(docker ps -aq --filter "name=containerize-application")
+----
++
+2. Run the database container in the background (`-d` or daemon flag). We don't need the database logs to clog our application logs.
++
+[source,shell]
+----
+docker-compose up -d postgres
+----
++
+3. Build out petstore service.
++
+[source,shell]
+----
+docker-compose build petstore
+----
++
+4. Run the application container in the foreground and live stream the logs to stdout. If you hit an error hit `Ctrl+C`, make updates to the Dockerfile and re-build the container using step 2.
++
+[source,shell]
+----
+docker-compose up petstore
+----
++
+5. You can check the status of the healthcheck as the Docker container starts by running the following command:
++
+[source,shell]
+----
+docker ps
+----
++
+[.output]
+....
+CONTAINER ID        IMAGE                               COMMAND                  CREATED             STATUS                             PORTS                                            NAMES
+1148b3885b63        containerize-application_petstore   "/opt/jboss/docker-e…"   11 seconds ago      Up 8 seconds (health: starting)    0.0.0.0:8080->8080/tcp, 0.0.0.0:9990->9990/tcp   containerize-application_petstore_1
+82883cfb7d87        postgres:9.6                        "docker-entrypoint.s…"   16 seconds ago      Up 14 seconds (health: starting)   0.0.0.0:5432->5432/tcp                           containerize-application_postgres_1
+....
++
+Notice how `health: starting status` is reported in the `STATUS` column. Checking after a few seconds shows the status:
++
+[source,shell]
+----
+docker ps
+----
++
+[.output]
+....
+CONTAINER ID        IMAGE                               COMMAND                  CREATED             STATUS                   PORTS                                            NAMES
+1148b3885b63        containerize-application_petstore   "/opt/jboss/docker-e…"   5 minutes ago       Up 5 minutes (healthy)   0.0.0.0:8080->8080/tcp, 0.0.0.0:9990->9990/tcp   containerize-application_petstore_1
+82883cfb7d87        postgres:9.6                        "docker-entrypoint.s…"   5 minutes ago       Up 5 minutes (healthy)   0.0.0.0:5432->5432/tcp                           containerize-application_postgres_1
+....
++
+6. Now that our containers are healthy for our Pet Store application, let's examine the healthchecks using `docker-inspect`.
++
+[source,shell]
+----
+docker inspect --format='{{json .State.Health}}' containerize-application_petstore_1
+----
++
+[.output]
+....
+{"Status":"healthy","FailingStreak":0,"Log":[{"Start":"2018-08-21T14:35:11.907562Z","End":"2018-08-21T14:35:12.0761621Z","ExitCode":0,"Output":"  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\n"},{"Start":"2018-08-21T14:35:42.0511823Z","End":"2018-08-21T14:35:42.2562366Z","ExitCode":0,"Output":"  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\n"},{"Start":"2018-08-21T14:36:12.2363974Z","End":"2018-08-21T14:36:12.4991695Z","ExitCode":0,"Output":"  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\n"},{"Start":"2018-08-21T14:36:42.5125779Z","End":"2018-08-21T14:36:42.6940741Z","ExitCode":0,"Output":"  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\n"},{"Start":"2018-08-21T14:37:12.6756989Z","End":"2018-08-21T14:37:12.8923253Z","ExitCode":0,"Output":"  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\n"}]}
+....
++
+You can see the status of the last 5 healthchecks but they are not easy to read. A simple utility you can install on your Cloud9 environment helps make them readable is `jq`. You can learn more about it at https://stedolan.github.io/jq/ but to install jq run the following command in your Cloud9 terminal:
++
+[source,shell]
+----
+sudo yum install jq -y
+----
++
+Once jq is installed, let's examine the healthchecks again by running the below command. Notice they are easier to read and you should see `"Status": "healthy"` as well as `"ExitCode": 0` which as you remember from above means the container is healthy and ready for use.
++
+[source,shell]
+----
+docker inspect containerize-application_petstore_1 | jq '.[].State.Health'
+----
++
+[.output]
+....
+{
+  "Status": "healthy",
+  "FailingStreak": 0,
+  "Log": [
+    {
+      "Start": "2018-08-21T14:41:14.5632276Z",
+      "End": "2018-08-21T14:41:14.7366676Z",
+      "ExitCode": 0,
+      "Output": "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\n"
+    },
+    {
+      "Start": "2018-08-21T14:41:44.713448Z",
+      "End": "2018-08-21T14:41:44.9698935Z",
+      "ExitCode": 0,
+      "Output": "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\n"
+    },
+    {
+      "Start": "2018-08-21T14:42:14.9512039Z",
+      "End": "2018-08-21T14:42:15.2283742Z",
+      "ExitCode": 0,
+      "Output": "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\n"
+    },
+    {
+      "Start": "2018-08-21T14:42:45.3412098Z",
+      "End": "2018-08-21T14:42:45.672289Z",
+      "ExitCode": 0,
+      "Output": "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\n"
+    },
+    {
+      "Start": "2018-08-21T14:43:15.6482799Z",
+      "End": "2018-08-21T14:43:15.8605473Z",
+      "ExitCode": 0,
+      "Output": "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\n"
+    }
+  ]
+}
+....
++
+7. Once you've confirmed that our Pet Store application is working with healthchecks, visit http://localhost:8080/applicationPetstore to view the application.
++
+8. Now we must tag the containerize-application_petstore image so you can push the image to the ECR repository. Note: You need to replace the value from the repositoryURI from the previous labs.
++
+[source,shell]
+----
+docker tag containerize-application_petstore:latest 123456789012.dkr.ecr.us-west-2.amazonaws.com/petstore_frontend:latest
+----
++
+9. Run the following command to push this image to the ECR repository. Note: You need to replace the value with
+the tag you applied in the previous step.
++
+[source,shell]
+----
+docker push 123456789012.dkr.ecr.us-west-2.amazonaws.com/petstore_frontend:latest
+----
++
+You should see the Docker image being pushed:
++
+[source,shell]
+----
+docker push 123456789012.dkr.ecr.us-west-2.amazonaws.com/petstore_frontend:latest
+----
++
+[.output]
+....
+The push refers to repository [123456789012.dkr.ecr.us-west-2.amazonaws.com/petstore_frontend]
+d09698a5c7b9: Pushed 
+8acb26508304: Pushed 
+9743103e1954: Pushed 
+cfbd33e75dbe: Pushed 
+bdc2cd9ee81f: Pushed 
+68f2b534f819: Layer already exists 
+25392e8f9f5a: Layer already exists 
+0c8237d7452a: Layer already exists 
+d9e554ca876f: Layer already exists 
+43e653f84b79: Layer already exists 
+latest: digest: sha256:1752fbb6c9d826148ef790c5ac4f99fcc2b48a5744543ba4c58a7edf3f7d625e size: 2417
+....
+
+==== Updating and Deploying Task Definition to Fargate
+Amazon Elastic Container Service (ECS) now supports Docker container health checks. This gives you more control over monitoring the health of your tasks and improves the ability of the ECS service scheduler to ensure your services are healthy. 
+
+Previously, the ECS service scheduler relied on the Elastic Load Balancer (ELB) to report container health status and to restart unhealthy containers. This required you to configure your ECS Service to use a load balancer, and only supported HTTP and TCP health-checks. 
+
+Now, in addition to supporting ELB health checks, Amazon ECS integrates with Docker container health checks to allow you to explicitly define and monitor the health of each container. Using the HEALTHCHECK command, you can define which parameters to monitor for each container in your Task Definition. Running tasks (groups of running containers) are now assigned a health status based on the health of their essential containers, and the task's health status is integrated with the ECS service scheduler to automatically redeploy unhealthy tasks and conduct rolling-updates of services.
+
+Note: The Amazon ECS container agent only monitors and reports on the health checks specified in the task definition. Amazon ECS does not monitor Docker health checks that are embedded in a container image and not specified in the container definition. Health check parameters that are specified in a container definition override any Docker health checks that exist in the container image.
+
+1. To get started, navigate to the folder where you created your `petstore-fargate-task-definition.json` in the `containerize-orchestration` folder from the previous lab within this repository. Then open the `petstore-fargate-task-definition.json` in your editor of choice.
++
+2. Add the healthcheck values to the `postgres` and `petstore` sections of `containerDefinitions` so that it looks like the example below. You will notice we are essentially setting the same settings for `healthCheck` as what we defined in the previous exercise.
++
+[source,yaml]
+----
+{
+  "family": "petstore",
+  "networkMode": "awsvpc",
+  "containerDefinitions": [{
+      "name": "postgres",
+      "image": "<YourAccountID>.dkr.ecr.us-west-2.amazonaws.com/petstore_postgres:latest",
+      "cpu": 512,
+      "memoryReservation": 1024,
+      "environment": [{
+          "name": "POSTGRES_DB",
+          "value": "petstore"
+        },
+        {
+          "name": "POSTGRES_USER",
+          "value": "admin"
+        },
+        {
+          "name": "POSTGRES_PASSWORD",
+          "value": "password"
+        }
+      ],
+      "portMappings": [{
+        "containerPort": 5432
+      }],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "petstore",
+          "awslogs-region": "us-west-2",
+          "awslogs-stream-prefix": "petstore/postgres"
+        }
+      },
+      "healthCheck": {
+        "command": ["CMD-SHELL", "pg_isready -U postgres"],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 2,
+        "startPeriod": 300
+  
+      }
+    },
+    {
+      "name": "petstore",
+      "image": "<YourAccountID>.dkr.ecr.us-west-2.amazonaws.com/petstore_frontend:latest",
+      "cpu": 512,
+      "memoryReservation": 1024,
+      "environment": [
+        {
+          "name": "DB_HOST",
+          "value": "127.0.0.1"
+        },
+        {
+          "name": "DB_NAME",
+          "value": "petstore"
+        },
+        {
+          "name": "DB_PASS",
+          "value": "password"
+        },
+        {
+          "name": "DB_PORT",
+          "value": "5432"
+        },
+        {
+          "name": "DB_URL",
+          "value": "jdbc:postgresql://127.0.0.1:5432/petstore?ApplicationName=applicationPetstore"
+        },
+        {
+          "name": "DB_USER",
+          "value": "admin"
+        }
+      ],
+      "portMappings": [{
+        "containerPort": 8080
+      }],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "petstore",
+          "awslogs-region": "us-west-2",
+          "awslogs-stream-prefix": "petstore/frontend"
+        }
+      },
+      "healthCheck": {
+        "command": ["CMD", "curl", "-f", "http://127.0.0.1:8080/applicationPetstore"],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 2,
+        "startPeriod": 300
+  
+      }
+    }
+  ],
+  "executionRoleArn": "arn:aws:iam::<YourAccountID>:role/petstoreExecutionRole",
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "cpu": "1 vcpu",
+  "memory": "2 gb"
+}
+----
++
+3. Save the `petstore-fargate-task-definition.json` file. There is a working `petstore-fargate-task-definition.json` in the `monitor-application/task-definition` folder within this repository if you need a full example.
++
+4. Update the petstore task definition from the JSON file by running this command in your Cloud9 terminal:
++
+[source,shell]
+----
+aws ecs register-task-definition --cli-input-json file://~/environment/aws-modernization-workshop/modules/container-orchestration/petstore-fargate-task-definition.json
+----
++
+5. Update the `petstore` service in the `petstore-workshop` cluster with the latest version of the `petstore` task definition by running the below command. This will also pull the latest version of the petstore_frontend container we uploaded previously.
++
+[source,shell]
+----
+aws ecs update-service --cluster petstore-workshop --service petstore --task-definition petstore --region us-west-2
+----
++ 
+Replacing the older version of your task will take a couple of minutes. To view the status navigate back to the petstore-workshop cluster and view the petstore service to view your tasks. You should see the new task being scheduled but you will have to wait for your task to transition to *RUNNING*.
++
+6. You will notice this version of the task should have a *Health Status* of *HEALTHY*. This is due to the new healthchecks we added to our task definition earlier.
++
+7. Take some time to inspect the logs for the petstore container in the new task. You should see the healtchecks every 30 seconds like below once the task is running:
++
+[.output]
+....
+[0m[0m17:10:30,508 INFO [io.undertow.accesslog] (default I/O-1) 127.0.0.1 - - [[21/Aug/2018:17:10:30 +0000]] "GET /applicationPetstore HTTP/1.1" 302 - "-" "curl/7.29.0"
+....
++
+8. You should also see the http health checks coming from the Application Load Balancer as well:
++
+[.output]
+....
+[0m[0m17:10:44,006 INFO [io.undertow.accesslog] (default task-7) 172.31.0.71 - - [[21/Aug/2018:17:10:44 +0000]] "GET / HTTP/1.1" 200 2438 "-" "ELB-HealthChecker/2.0"
+....
+
+==== Understanding Shipping Logs to CloudWatch from Amazon ECS
+As you are inspecting the properties of your task, each container in the task should have a link under *Log Configuration* that says `Log driver: awslogs View logs in CloudWatch`. The reason we have the ability to view our containers logs in CloudWatch is due to numerous reasons:
+
+* Our Pet Store application is configured to log to `STDOUT` and `STDERR` which is the command output that you would normally see in an interactive terminal if you ran the container locally.
+* We defined the `logDriver` in our `petstore-fargate-task-definition.json` as `awslogs` along with some settings around CloudWatch. The awslogs log driver simply passes these STDOUT and STDERR from Docker to CloudWatch.
+* In order to have our container instances can send log data to CloudWatch Logs, there is an IAM policy called petstoreExecutionRole that allows your container instances to use the CloudWatch Logs APIs that we are defining in the `petstore-fargate-task-definition.json`.
