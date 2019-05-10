@@ -1,8 +1,8 @@
 ---
 id: modernization-august-2018
-name: Workshop
+name: Digital Modernization Workshop
 workshop_title: "Digital Modernization"
-revision: nsiAugust2018
+revision: TrimbleJune2019
 logo: "aws-smile.png"
 enable_issue_submission: false
 repo_url: https://github.com/mandusm/aws-modernization-workshop
