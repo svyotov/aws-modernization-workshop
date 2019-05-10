@@ -22,10 +22,10 @@ Make sure you are in this repository root.
 .docker run
 [source,shell]
 ----
-docker run -it --rm -p 8080:8080 -v $(pwd):/app-data \
-              -e CONTENT_URL_PREFIX="file:///app-data" \
-              -e WORKSHOPS_URLS="file:///app-data/workshops/modernization-workshop.yml" \
-              -e LOG_TO_STDOUT=true
+docker run -it --rm -p 8080:8080 -v `pwd`:/content \
+              -e CONTENT_URL_PREFIX=file:///content \
+              -e WORKSHOPS_URLS=file:///content/workshops/modernization-workshop.yml \
+              -e LOG_TO_STDOUT=true \
               quay.io/osevg/workshopper
 ----
 
