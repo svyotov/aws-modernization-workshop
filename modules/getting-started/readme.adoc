@@ -5,9 +5,11 @@
 
 == Getting Started with the Workshop
 
-In order for you to succeed in this workshop, we need you to run through a few steps to finalize the configuration of your https://aws.amazon.com/cloud9/[AWS Cloud9] environment.
+In order for you to succeed in this workshop, we need you to run through a few steps to finalize the configuration of your AWS Cloud9 environment. Your AWS Cloud9 environment is accessable from the https://us-west-2.console.aws.amazon.com/cloud9/home?region=us-west-2#[AWS Console]. Once you've accessed the console, open the `AWSModernizationWorkshop-IDEStack` IDE.
 
-=== Update and install the necessary tools.
+image::cloud9-launch.png[Open IDE]
+
+=== Update and install the necessary tools
 The first step is to update the `AWS CLI`,`pip` and a range of pre-installed packages.
 [source,shell]
 ----
