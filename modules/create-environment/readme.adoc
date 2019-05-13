@@ -1,18 +1,21 @@
 = Digital Modernization
 
 :imagesdir: ../../images
+:icons: font
 
 == Creating the Workshop Environment
 
 ****
 *Requirements:*
-An AWS account.
 
-*Disclaimer:*
-You are responsible for the cost of the AWS services used while running this workshop in your AWS account.
+. An AWS account provided to you by the AWS Solutions Architect.
+. Working Laptop with Internet Access.
+
 ****
 
 === Introduction
+
+Welcome to the 
 
 If you are participating in this workshop as part of an AWS sponsored event, then this module does not apply to you. However, if you are interested in completing the modules contained in this workshop outside of such events, the steps outlined below will allow you to quickly create a training environment that will work with the instructions contained througout this workshop.
 
