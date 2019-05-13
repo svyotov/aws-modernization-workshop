@@ -8,8 +8,12 @@
 ****
 *Requirements:*
 
-. An AWS account provided to you by the AWS Instructor.
-. Working Laptop with Internet Access.
+* An AWS account provided to you by the AWS Instructor.
+* Working Laptop with Internet Access.
+
+*Note:*
+
+* All AWS resources used for this workshop are to be created in the *us-west-1* AWS Region.
 ****
 
 === Workshop Introduction
