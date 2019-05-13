@@ -7,47 +7,31 @@
 
 In order for you to succeed in this workshop, we need you to run through a few steps to finalize the configuration of your AWS Cloud9 environment. Your AWS Cloud9 environment is accessable from the https://us-west-2.console.aws.amazon.com/cloud9/home?region=us-west-2#[AWS Console]. Once you've accessed the console, open the `AWSModernizationWorkshop-IDEStack` IDE.
 
-image::cloud9-launch.png[Open IDE]
+image::cloud9-launch.png[Ope IDE]
 
 === Update and install the necessary tools
-The first step is to update the `AWS CLI`,`pip` and a range of pre-installed packages.
+
+The first step is to update the `AWS CLI` and `pip` packages, as well as other pre-installed packages. Open a new `terminal` by pressing the combination keys `alt+t` for Linux/Windows or pressing `option+t` on the Mac. Once the new `terminal` is open, run the following commands:
 [source,shell]
 ----
 sudo yum update -y && pip install --upgrade --user awscli pip
+
 exec $SHELL
 ----
 
 === Configure the AWS Environment
-After you have the installed the latest `awscli` and `pip` we need to configure
-our environment a little
+
+After you have the installed the latest `awscli` and `pip` we need to configure our environment further.
 [source,shell]
 ----
 aws configure set region us-west-2
 ----
 
-=== AWS Workshop Portal
+=== Update the IAM Instance Profile
 
-NOTE: If you are running this workshop using the provided AWS Workshop Portal
-environment, following the steps below, if not skip to *Clone the source
-repository for this workshop*.
+Next thing we need to turn off the Managed Temporary credentials as the Cloud9 IDE needs to use the assigned IAM Instance profile.
 
-First thing we need to do is update the IAM Instance Profile associated with the
-Cloud9 environment.
-
-[source,shell]
-----
-aws ec2 associate-iam-instance-profile \
-  --instance-id $(aws ec2 describe-instances \
-  --filters Name=tag:Name,Values="*cloud9*" \
-  --query Reservations[0].Instances[0].InstanceId \
-  --output text) --iam-instance-profile Name="cl9-workshop-role"
-----
-
-Following that we'll need to turn off the Managed Temporary credentials.
-
-The Cloud9 IDE needs to use the assigned IAM Instance profile. Open the *AWS
-Cloud9* menu, go to *Preferences*, go to *AWS Settings*, and disable *AWS
-managed temporary credentials* as depicted in the diagram here:
+Open the *AWS Cloud9* menu, go to *Preferences*, then go to *AWS Settings*, and disable *AWS managed temporary credentials*, as depicted in the diagram below:
 
 image::cloud9-credentials.png[Cloud9 Managed Credentials]
 
@@ -56,17 +40,19 @@ Now we want to clone the repository that contains all the content and files you 
 [source,shell]
 ----
 cd ~/environment
-git clone https://github.com/mandusm/aws-modernization-workshop.git
+
+git clone https://github.com/darkreapyre/aws-modernization-workshop.git
 ----
 
 === Installing 3rd Party CLIs
-During the workshop we will be using a couple of third party *CLI* tools like `eksctl` to configure our EKS cluster, and `kubectl` to interact with our Kubernetes cluster. Follow the steps below to ensure that these tools have been installed:
+During the workshop we will be using a couple of 3^rd^ party CLI tools like `eksctl` to configure our EKS cluster, and `kubectl` to interact with our Kubernetes cluster. Follow the steps below to ensure that these tools have been installed:
 
 Step 1::
 Let's make a `bin` folder where these binaries will be stored and change our directory to the new location.
 [source,shell]
 ----
 mkdir ~/bin
+
 cd ~/bin
 ----
 
@@ -75,10 +61,15 @@ Download the required `CLI` tools from their locations. Make them Runnable, and 
 [source,shell]
 ----
 curl -skL "https://github.com/weaveworks/eksctl/releases/download/latest_release/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp && mv /tmp/eksctl ~/bin/
-curl -skLo ~/bin/kubectl "https://amazon-eks.s3-us-west-2.amazonaws.com/1.10.3/2018-06-05/bin/linux/amd64/kubectl"
-curl -skLo ~/bin/heptio-authenticator-aws "https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/download/v0.3.0/heptio-authenticator-aws_0.3.0_linux_amd64"
+
+curl -skLo ~/bin/kubectl "https://amazon-eks.s3-us-west-2.amazonaws.com/1.12.7/2019-03-27/bin/linux/amd64/kubectl"
+
+curl -skLo ~/bin/aws-iam-authenticator "https://amazon-eks.s3-us-west-2.amazonaws.com/1.12.7/2019-03-27/bin/linux/amd64/aws-iam-authenticator"
+
 chmod -R +x ~/bin
+
 echo "export PATH=~/bin:\${PATH}" >> ~/.bashrc
+
 exec $SHELL
 ----
 
@@ -86,11 +77,13 @@ exec $SHELL
 It takes a few minutes to launch an EKS cluster, so we will have you launch one now, while completing some initial modules. We will launch our EKS Cluster using the `eksctl` tool
 
 Step 1::
-`eksctl` requires a SSH Key to configure your EKS nodes with.
+`eksctl` requires an SSH Key to configure your EKS nodes with.
 [source,shell]
 ----
 ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa
 ----
+
+NOTE: When prompted to enter a passphrase, press [ENTER]
 
 Step 2::
 Now that we have the key, let's launch the EKS Cluster.
@@ -103,16 +96,28 @@ Step 3::
 You can expect to see an output like the one below...
 [.output]
 ....
-eksctl create cluster --full-ecr-access --name=petstore
-2018-08-27T21:36:50Z [ℹ]  setting availability zones to [us-west-2c us-west-2b us-west-2a]
-2018-08-27T21:36:50Z [ℹ]  importing SSH public key "/home/ec2-user/.ssh/eks-key.pub" as "eksctl-petstore-20:bc:c5:14:ab:c1:6b:92:10:e5:92:c0:2a:9e:07:37"
-2018-08-27T21:36:50Z [ℹ]  creating EKS cluster "petstore" in "us-west-2" region
-2018-08-27T21:36:50Z [ℹ]  creating VPC stack "EKS-petstore-VPC"
-2018-08-27T21:36:50Z [ℹ]  creating ServiceRole stack "EKS-petstore-ServiceRole"
-2018-08-27T21:37:31Z [✔]  created ServiceRole stack "EKS-petstore-ServiceRole"
-2018-08-27T21:37:51Z [✔]  created VPC stack "EKS-petstore-VPC"
-2018-08-27T21:37:51Z [ℹ]  creating control plane "petstore"
+[ℹ]  using region us-west-2
+[ℹ]  setting availability zones to [us-west-2b us-west-2d us-west-2c]
+[ℹ]  subnets for us-west-2b - public:192.168.0.0/19 private:192.168.96.0/19
+[ℹ]  subnets for us-west-2d - public:192.168.32.0/19 private:192.168.128.0/19
+[ℹ]  subnets for us-west-2c - public:192.168.64.0/19 private:192.168.160.0/19
+[ℹ]  nodegroup "ng-c16b6b90" will use "ami-0923e4b35a30a5f53" [AmazonLinux2/1.12]
+[ℹ]  creating EKS cluster "petstore" in "us-west-2" region
+[ℹ]  will create 2 separate CloudFormation stacks for cluster itself and the initial nodegroup
+[ℹ]  if you encounter any issues, check CloudFormation console or try 'eksctl utils describe-stacks --region=us-west-2 --name=petstore'
+[ℹ]  2 sequential tasks: { create cluster control plane "petstore", create nodegroup "ng-c16b6b90" }
+[ℹ]  building cluster stack "eksctl-petstore-cluster"
+[ℹ]  deploying stack "eksctl-petstore-cluster"
 ...
 ....
 
-We will leave this process running, and get back to it later in the workshop. So let's open a new `terminal` by pressing the combination keys `alt+t`
+We will leave this process running, and get back to it later in the workshop. So let's open a new `terminal` by pressing the combination keys `alt+t` for Linux/Windows pressing the combination keys `option+t` on the Mac and, proceed to the *Containerize Application* module.
+
+kbd:[alt+t] for windows
+
+[alt+t]
+
+kbd:[⌥ alt]
+
+[⌥ alt]
+
