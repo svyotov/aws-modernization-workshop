@@ -111,8 +111,8 @@ You can expect to see an output like the one below...
 ...
 ....
 
-We will leave this process running, and get back to it later in the workshop. So let's open a new `terminal` by pressing the combination keys `[alt+t]` for Linux/Windows pressing the combination keys `[⌥+t]` on the Mac and, proceed to the *Containerize Application* module.
+We will leave this process running, and get back to it later in the workshop. So let's open a new `terminal` by pressing the combination keys `[alt+t]` (icon) or pressing the combination keys `[⌥+t]` on the Mac and. Then we'll proceed to the *Containerize Application* module.
 
-icon:fire[]
+icon:linux[]
 
-btn:[Save]
+icon:mac[]
