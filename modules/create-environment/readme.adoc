@@ -10,7 +10,6 @@
 
 . An AWS account provided to you by the AWS Solutions Architect.
 . Working Laptop with Internet Access.
-
 ****
 
 === Introduction
