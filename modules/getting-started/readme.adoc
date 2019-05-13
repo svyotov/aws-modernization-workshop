@@ -49,8 +49,6 @@ managed temporary credentials* as depicted in the diagram here:
 
 image::cloud9-credentials.png[Cloud9 Managed Credentials]
 
-
-
 === Clone the source repository for this workshop.
 Now we want to clone the repository that contains all the content and files you need to complete this workshop.
 [source,shell]
@@ -60,7 +58,7 @@ git clone https://github.com/mandusm/aws-modernization-workshop.git
 ----
 
 === Installing 3rd Party CLIs
-During the workshop we will be using a couple of third party `CLI` tools like `eksctl` to configure our EKS cluster, and `kubectl` to interact with our Kubernetes cluster.
+During the workshop we will be using a couple of third party *CLI* tools like `eksctl` to configure our EKS cluster, and `kubectl` to interact with our Kubernetes cluster. Follow the steps below to ensure that these tools have been installed:
 
 Step 1::
 Let's make a `bin` folder where these binaries will be stored and change our directory to the new location.
