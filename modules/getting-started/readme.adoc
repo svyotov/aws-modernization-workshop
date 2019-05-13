@@ -115,4 +115,6 @@ We will leave this process running, and get back to it later in the workshop. So
 
 icon:linux[]
 
-icon:mac[]
+icon:osx[]
+
+icon:windows[]
