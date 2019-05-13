@@ -22,4 +22,4 @@ NOTE: If you do not have an AWS Account, please see the AWS Instructor.
 
 Ensure that you have the appropriate permissions to provision resources in your AWS account. Then, log into the AWS account provided to you and https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/create/review?stackName=AWSModernizationWorkshop&templateURL=https://s3-us-west-2.amazonaws.com/modernization-workshop-west-2/create-environment/templates/workshop_env_master.yaml[deploy the environment].
 
-Once the environment has been created, you may proceed with additional configuration steps in the _Getting Started_ module.
+Once the environment has been created, you may proceed with additional configuration steps in the *Getting Started* module.
