@@ -1,12 +1,13 @@
 = Digital Modernization
 
 :imagesdir: ../../images
+:icons: font
 
-== Getting Started with this Workshop
+== Getting Started with the Workshop
 
-In order for you to succeed in this workshop, we need you to run through a few steps to finalize the configuration of your Cloud9 environment.
+In order for you to succeed in this workshop, we need you to run through a few steps to finalize the configuration of your https://aws.amazon.com/cloud9/[AWS Cloud9] environment.
 
-=== Update and install some tools.
+=== Update and install the necessary tools.
 The first step is to update the `AWS CLI`,`pip` and a range of pre-installed packages.
 [source,shell]
 ----
@@ -35,9 +36,9 @@ Cloud9 environment.
 ----
 aws ec2 associate-iam-instance-profile \
   --instance-id $(aws ec2 describe-instances \
-    --filters Name=tag:Name,Values="*cloud9*" \
-    --query Reservations[0].Instances[0].InstanceId \
-    --output text) --iam-instance-profile Name="cl9-workshop-role"
+  --filters Name=tag:Name,Values="*cloud9*" \
+  --query Reservations[0].Instances[0].InstanceId \
+  --output text) --iam-instance-profile Name="cl9-workshop-role"
 ----
 
 Following that we'll need to turn off the Managed Temporary credentials.
