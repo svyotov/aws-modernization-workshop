@@ -5,6 +5,8 @@
 
 == Artifactory (Optional)
 
+NOTE: *This is an optional lab for an introduction to leveraging better security principles by using a binary repository manager. Click to the next module should you wish to skip this lab.*
+
 ****
 *Expected Outcome:*
 

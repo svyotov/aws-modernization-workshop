@@ -1,15 +1,19 @@
 = Digital Modernization
 
+:imagesdir: ../../images
+:icons: font
+
 == Container Orchestration
+
+NOTE: *This lab focusses on orchestrating our workload into production using Amazon ECS and AWS Fargate. Should you wish to focus on using Amaxon EKS, please skip to the next lab.*
 
 ****
 *Expected Outcome:*
 
-* 200 level usage of Amazon ECS/Fargate
+* 200 level usage of Amazon ECS and Fargate
 
 *Lab Requirements:*
-
-* an Amazon Elastic Container Service Cluster
+Cloud9 IDE
 
 *Average Lab Time:*
 30-45 minutes
@@ -17,7 +21,7 @@
 
 === Introduction
 
-In this module, we're going to deploy applications using http://aws.amazon.com/ecs/[Amazon Elastic Container Service (Amazon ECS)] to orchestrate our containers on top of http://aws.amazon.com/fargate/[AWS Fargate].
+In this module, we're going to deploy applications using link:http://aws.amazon.com/ecs/[Amazon Elastic Container Service (Amazon ECS)] to orchestrate our containers on top of link:http://aws.amazon.com/fargate/[AWS Fargate].
 
 ==== Getting Started with Amazon ECS using AWS Fargate
 
@@ -67,11 +71,10 @@ until [[ `aws cloudformation describe-stacks --stack-name "petstore" --query "St
 https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definitions.html[Amazon ECS Task definitions] are required to run Docker containers in Amazon ECS.
 For our pestore application, we will review the key pieces of a task definition before we deploy it.
 
-Step 1:: Open the *petstore-fargate-task-definition.json* file in your favorite text editor.
+Step 1:: Open the `petstore-fargate-task-definition.json` file.
 +
 The file has the following content:
 +
-.petstore-fargate-task-definition.json
 [.output]
 ....
 {
@@ -165,7 +168,9 @@ Step 2:: We need to replace the placeholder for your account id in the template 
 [source,shell]
 ----
 ACCOUNT_ID=$(aws ecr describe-repositories --repository-name petstore_frontend --query=repositories[0].repositoryUri --output=text | cut -d"." -f1)
+
 echo ${ACCOUNT_ID}
+
 sed -i "s/<YourAccountID>/${ACCOUNT_ID}/" ~/environment/aws-modernization-workshop/modules/container-orchestration-ecs/petstore-fargate-task-definition.json
 ----
 +

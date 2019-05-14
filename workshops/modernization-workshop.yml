@@ -15,7 +15,7 @@ modules:
   - "modules_create-environment_readme"
   - "modules_getting-started_readme"
   - "modules_containerize-application_readme"
-  - "modules_artifactory_readme optional"
+  - "modules_artifactory_readme"
   - "modules_container-registry_readme"
   - "modules_container-orchestration-ecs_readme"
   - "modules_container-orchestration-eks_readme"
