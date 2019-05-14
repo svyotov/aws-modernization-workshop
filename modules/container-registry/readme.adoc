@@ -17,12 +17,19 @@
 
 === Introduction
 
-In this module, we're going to take our already containerized applications and push them to link:https://aws.amazon.com/ecr/[Amazon Elastic Container Registry (ECR)].
+In this module, we're going to take our already containerized applications and push them to link:https://aws.amazon.com/ecr/[Amazon Elastic Container Registry (ECR)]. amazon ECR is a fully-managed Docker container registry that makes it easy for developers to store, manage, and deploy Docker container images. Amazon ECR is integrated with Amazon Elastic Container Service (ECS), simplifying your development to production workflow.
 
 ==== Deploy ECR Repositories
-We will first deploy our CloudFormation template which configures our ECR Repositories
+We will first deploy our CloudFormation template which configures our ECR Repositories.
 
-Step 1:: Change to this modules directory by running:
+****
+CloudFormation creates the following resources:
+
+* `PetStorePostgreSQLRepository` - ECR Respository for PostgresSQL containers.
+* `PetStoreFrontendRepository` - ECR Repository for the front-end containers.
+****
+
+Step 1:: Using the Cloud9 `terminal`, change to this modules' directory by running:
 [source,shell]
 ----
 cd ~/environment/aws-modernization-workshop/modules/container-registry
@@ -46,9 +53,7 @@ until [[ `aws cloudformation describe-stacks --stack-name "petstore-ecr" --query
 
 ===== Pushing the Petstore images to Amazon Elastic Container Registry (ECR)
 
-Before we can deploy our Petstore application to an orchestrator, we need to push our Petstore images to link:https://aws.amazon.com/ecr/[Amazon Elastic Container Registry (ECR)]. 
-
-Amazon Elastic Container Registry (ECR) is a fully-managed Docker container registry that makes it easy for developers to store, manage, and deploy Docker container images. Amazon ECR is integrated with Amazon Elastic Container Service (ECS), simplifying your development to production workflow.
+Before we can deploy our Petstore application to an orchestrator, we need to push our Petstore images to *ECR*. 
 
 Step 1:: Log into your Amazon ECR registry using the helper provided by the AWS CLI.
 
@@ -57,7 +62,9 @@ Step 1:: Log into your Amazon ECR registry using the helper provided by the AWS 
 eval $(aws ecr get-login --no-include-email)
 ----
 
-Step 2:: Use the AWS CLI to get information about the two Amazon ECR repositories that were created for you ahead of time. One repository will be for the Petstore PostgreSQL backend and the other will be for the Petstore web frontend.
+NOTE: Ignore any `WARNNING` messages.
+
+Step 2:: Use the AWS CLI to get information about the two Amazon ECR repositories that were created for you by the CloudFormation template. One repository will be for the Petstore PostgreSQL backend and the other will be for the Petstore web frontend.
 
 [source,shell]
 ----
@@ -96,15 +103,15 @@ docker images
 [.output]
 ....
 REPOSITORY                          TAG                 IMAGE ID            CREATED             SIZE
-containerize-application_petstore   latest              22f901adffb3        32 minutes ago      626MB
-<none>                              <none>              9b961113e5bf        33 minutes ago      564MB
-postgres                            9.6                 506063568b80        2 days ago          237MB
-maven                               3.5-jdk-7           84a20ec9fab9        3 weeks ago         483MB
-lambci/lambda                       nodejs4.3           6c30c5c1b1e0        6 weeks ago         969MB
-lambci/lambda                       python2.7           377732dd7a1f        6 weeks ago         974MB
-lambci/lambda                       python3.6           acf16b1d5297        6 weeks ago         1.1GB
-lambci/lambda                       nodejs6.10          da301bf4fe34        6 weeks ago         1.02GB
-jboss/wildfly                       11.0.0.Final        6926d48f2e5b        4 months ago        617MB
+containerize-application_petstore   latest              3190952ddfc8        39 minutes ago      799MB
+postgres                            9.6                 8d9572468d97        4 days ago          230MB
+lambci/lambda                       python3.6           420212d009b3        4 weeks ago         1.03GB
+lambci/lambda                       python2.7           7a436931435e        4 weeks ago         901MB
+lambci/lambda                       nodejs4.3           c0914066d9a8        4 weeks ago         931MB
+lambci/lambda                       nodejs6.10          74b405a65ed4        4 weeks ago         946MB
+lambci/lambda                       nodejs8.10          edf1f613772c        4 weeks ago         960MB
+jboss/wildfly                       11.0.0.Final        a12aa93a45f7        3 months ago        700MB
+maven                               3.5-jdk-7           5f03adaf2bbf        7 months ago        483MB
 ....
 
 Step 4:: Tag the local docker images with the locations of the remote ECR repositories we created using our `CloudFormation` template. 
@@ -112,6 +119,7 @@ Step 4:: Tag the local docker images with the locations of the remote ECR reposi
 [source,shell]
 ----
 docker tag postgres:9.6 $(aws ecr describe-repositories --repository-name petstore_postgres --query=repositories[0].repositoryUri --output=text):latest
+
 docker tag containerize-application_petstore:latest $(aws ecr describe-repositories --repository-name petstore_frontend --query=repositories[0].repositoryUri --output=text):latest
 ----
 
@@ -120,6 +128,7 @@ Step 5:: Once the images have been tagged, push them to the remote repository.
 [source,shell]
 ----
 docker push $(aws ecr describe-repositories --repository-name petstore_postgres --query=repositories[0].repositoryUri --output=text):latest
+
 docker push $(aws ecr describe-repositories --repository-name petstore_frontend --query=repositories[0].repositoryUri --output=text):latest
 ----
 
@@ -144,4 +153,4 @@ cdb3f9544e4c: Layer already exists
 latest: digest: sha256:ca39b6107978303706aac0f53120879afcd0d4b040ead7f19e8581b81c19ecea size: 3243
 ....
 
-With the images pushed to Amazon ECR we are ready to deploy them to our orchestrator.
+With the images pushed to Amazon ECR we are ready to deploy them to our orchestrator. The next module will show you how to leverage amazon ECS and Fargate to orchestrate our containers into production.

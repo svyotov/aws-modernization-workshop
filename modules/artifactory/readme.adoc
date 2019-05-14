@@ -36,9 +36,11 @@ Before we get started in deploying Artifactory, lets first change to the module 
 cd ~/environment/aws-modernization-workshop/modules/artifactory
 ----
 
-To deploy JFrog Artifactory we'll be using CloudFormation and create the following resources: 
+To deploy JFrog Artifactory we'll be using CloudFormation.
 
 ****
+CloudFormation creates the following resources:
+
 * `VPC` - Virtual Private CLoud for the Fargate Cluster.
 * `ECS Cluster` - Cluster to manage Fargate tasks.
 * `ECS Task` - Artifactory OSS Fargate containers.
