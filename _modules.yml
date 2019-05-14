@@ -12,9 +12,9 @@ modules:
   modules_container-orchestration-eks_readme:
     name: Amazon EKS
   modules_artifactory_readme:
-    name: Artifactory
+    name: Artifactory (Optional)
   modules_cicd_readme:
-    name: Automation
+    name: CI/CD Automation
   modules_monitor-application_readme:
     name: Application Monitoring
   modules_security_readme:
@@ -22,6 +22,6 @@ modules:
   modules_container-elasticity_readme:
     name: Container Elasticity
   modules_security_readme:
-    name: Security  
+    name: Security (Optional)
   modules_feedback_readme:
     name: Feedback

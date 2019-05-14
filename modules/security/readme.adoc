@@ -2,8 +2,6 @@
 
 :imagesdir: ../../images
 
-
-
 == Security modernization : Image scanning.
 
 ****
@@ -19,7 +17,7 @@ Completed Labs:
 container-orchestration
 continuous-integration
 continuous-delivery
-CICD
+Automation CI/CD
 Artifactory
 
 
