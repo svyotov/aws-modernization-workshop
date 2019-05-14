@@ -1,17 +1,18 @@
 = Digital Modernization
 
 :imagesdir: ../../images
+:icons: font
 
 == Artifactory
 
 ****
 *Expected Outcome:*
 
-* Understanding of a binary repository manager
-* Deploy JFrog Artifactory
+* 100 level nderstanding of a binary repository manager.
+* Deploy JFrog Artifactory.
 
 *Lab Requirements:*
-None
+Cloud9 IDE
 
 *Average Lab Time:*
 45-60 minutes
@@ -30,7 +31,7 @@ cd ~/environment/aws-modernization-workshop/modules/artifactory
 
 ==== Getting Started with JFrog Artifactory
 
-Steps to Deploy Artifactory using a CloudFormation template:
+The steps to Deploy Artifactory using a CloudFormation template are:
 
 ===== Launch the Cloudformation template
 [source,shell]
@@ -41,7 +42,15 @@ aws cloudformation create-stack --stack-name "artifactory-oss" \
   --capabilities CAPABILITY_IAM
 ----
 
-Wait for the CloudFormation template to successfully deploy.
+Sample output:
+[.output]
+....
+{
+    "StackId": "arn:aws:cloudformation:us-west-2:179830185540:stack/artifactory-oss/b6822bf0-767b-11e9-8e3a-0a95c68a7df8"
+}
+....
+
+Wait for the CloudFormation template to successfully deploy by running the following:
 
 [source,shell]
 ----
@@ -53,8 +62,10 @@ until [[ `aws cloudformation describe-stacks \
   sleep 30; done && echo "The Stack is built at `date` - Please proceed"
 ----
 
+TIP: You can also view the status of the CloudFormation create process by openning the https://us-west-2.console.aws.amazon.com/cloudformation/home?region=us-west-2[Cloudformation Console] in a browser tab and viewing the stack.
+
 ===== Get the container IP
-In a production environment, you will want to front your ECS service using an Amazon Application LoadBalancer, but for the purpose of this lab, we will simply connect directly to the container public IP address.
+In a production environment, it is a good practice to front-end your ECS or Fargate services using an https://aws.amazon.com/elasticloadbalancing/[Amazon Application LoadBalancer]. Howeever, for the purpose of this lab, we will simply connect directly to the container public IP address. Run the following command to output the public IP address:
 
 [source,shell]
 ----
@@ -71,7 +82,7 @@ aws ec2 describe-network-interfaces \
 ----
 
 ==== Log into Artifactory and set up a new admin password.
-Open up your browser to http://<ip-from-previous-step>:8081. For example: http://54.202.45.157:8081. You should be presented with a window that looks similar to the one below.
+Open up your browser to `http://<ip-from-previous-step>:8081`. For example: http://54.202.45.157:8081. You should be presented with a window that looks similar to the one below.
 
 
 ==== Configuring JFrog Artifactory
@@ -98,7 +109,7 @@ Step 5:: You have successfully configured Artifactory and should see a message l
 
 image::artifactory-05.PNG[artifactory]
 
-** *NOTE:* Additional information can be found in the https://www.jfrog.com/confluence/display/RTF/Welcome+to+Artifactory[JFrog Artifactory User Guide]
+NOTE: Additional information can be found in the https://www.jfrog.com/confluence/display/RTF/Welcome+to+Artifactory[JFrog Artifactory User Guide].
 
 ==== Configure the Maven repositories.
 For the purpose of this lab, we will only be simulating the process of preemptively reviewing libraries as discussed in our Security discussion. So in order for our build process to succeed, we also need to add some upstream repositories to Artifactory.
