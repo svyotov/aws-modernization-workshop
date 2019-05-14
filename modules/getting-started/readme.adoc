@@ -5,6 +5,21 @@
 
 == Getting Started with the Workshop
 
+****
+*Expected Outcomes:*
+
+* Configure IDE Environment and Roles.
+* Update installed packages.
+* Install 3^rd^ Party applications.
+* Launch EKS Cluster.
+
+*Lab Requirements:*
+None
+
+*Average Lab Time:*
+15-20 minutes
+****
+
 In order for you to succeed in this workshop, we need you to run through a few steps to finalize the configuration of your AWS Cloud9 environment. Your AWS Cloud9 environment is accessable from the https://us-west-2.console.aws.amazon.com/cloud9/home?region=us-west-2#[AWS Console]. Once you've accessed the console, open the `AWSModernizationWorkshop-IDEStack` IDE.
 
 image::cloud9-launch.png[Ope IDE]
@@ -111,10 +126,4 @@ You can expect to see an output like the one below...
 ...
 ....
 
-We will leave this process running, and get back to it later in the workshop. So let's open a new `terminal` by pressing the combination keys `[alt+t]` (icon) or pressing the combination keys `[⌥+t]` on the Mac and. Then we'll proceed to the *Containerize Application* module.
-
-icon:linux[]
-
-icon:osx[]
-
-icon:windows[]
+We will leave this process running, and get back to it later in the workshop. So let's open a new `terminal` by pressing the combination keys `[alt + t]` (Windows/Linux) or `[⌥ + t]` (Mac OS). Then we'll proceed to the *Containerize Application* module.
