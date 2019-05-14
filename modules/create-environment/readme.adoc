@@ -6,7 +6,7 @@
 == Creating the Workshop Environment
 
 ****
-*Requirements:*
+*Lab Requirements:*
 
 * An AWS account provided to you by the AWS Instructor.
 * Working Laptop with Internet Access.

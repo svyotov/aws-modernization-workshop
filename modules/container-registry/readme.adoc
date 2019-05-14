@@ -11,6 +11,9 @@
 * 100 level introduction to Amazon Elastic Container Registry.
 * Containers pushed to ECR.
 
+*Lab Requirements:*
+Cloud9 IDE
+
 *Average Lab Time:*
 10-15 minutes
 ****
