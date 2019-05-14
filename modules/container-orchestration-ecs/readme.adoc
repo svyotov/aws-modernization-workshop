@@ -68,7 +68,7 @@ until [[ `aws cloudformation describe-stacks --stack-name "petstore" --query "St
 
 ===== Amazon ECS Task definitions
 
-https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definitions.html[Amazon ECS Task definitions] are required to run Docker containers in Amazon ECS.
+link:https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definitions.html[Amazon ECS Task definitions] are required to run Docker containers in Amazon ECS.
 For our pestore application, we will review the key pieces of a task definition before we deploy it.
 
 Step 1:: Open the `petstore-fargate-task-definition.json` file.
