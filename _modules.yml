@@ -12,7 +12,7 @@ modules:
   modules_container-orchestration-eks_readme:
     name: Amazon EKS
   modules_artifactory_readme:
-    name: Artifactory
+    name: Artifactory (Optional)
   modules_cicd_readme:
     name: Automation
   modules_monitor-application_readme:

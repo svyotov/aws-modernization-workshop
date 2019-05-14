@@ -3,7 +3,7 @@
 :imagesdir: ../../images
 :icons: font
 
-== Artifactory
+== Artifactory (Optional)
 
 ****
 *Expected Outcome:*
