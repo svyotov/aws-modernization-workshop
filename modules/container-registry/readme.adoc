@@ -1,11 +1,15 @@
 = Digital Modernization
 
+:imagesdir: ../../images
+:icons: font
+
 == Container Registry
 
 ****
 *Expected Outcome:*
 
-* Push your containers to Amazon Elastic Container Registry
+* 100 level introduction to Amazon Elastic Container Registry.
+* Containers pushed to ECR.
 
 *Average Lab Time:*
 10-15 minutes
@@ -42,7 +46,7 @@ until [[ `aws cloudformation describe-stacks --stack-name "petstore-ecr" --query
 
 ===== Pushing the Petstore images to Amazon Elastic Container Registry (ECR)
 
-Before we can deploy our Petstore application to an orchestrator, we need to push our Petstore images to https://aws.amazon.com/ecr/[Amazon Elastic Container Registry (ECR)]. 
+Before we can deploy our Petstore application to an orchestrator, we need to push our Petstore images to link:https://aws.amazon.com/ecr/[Amazon Elastic Container Registry (ECR)]. 
 
 Amazon Elastic Container Registry (ECR) is a fully-managed Docker container registry that makes it easy for developers to store, manage, and deploy Docker container images. Amazon ECR is integrated with Amazon Elastic Container Service (ECS), simplifying your development to production workflow.
 

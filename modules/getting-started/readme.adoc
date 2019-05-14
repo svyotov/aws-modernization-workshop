@@ -20,7 +20,7 @@ None
 15-20 minutes
 ****
 
-In order for you to succeed in this workshop, we need you to run through a few steps to finalize the configuration of your AWS Cloud9 environment. Your AWS Cloud9 environment is accessable from the https://us-west-2.console.aws.amazon.com/cloud9/home?region=us-west-2#[AWS Console]. Once you've accessed the console, open the `AWSModernizationWorkshop-IDEStack` IDE.
+In order for you to succeed in this workshop, we need you to run through a few steps to finalize the configuration of your AWS Cloud9 environment. Your AWS Cloud9 environment is accessable from the link:https://us-west-2.console.aws.amazon.com/cloud9/home?region=us-west-2#[AWS Console]. Once you've accessed the console, open the `AWSModernizationWorkshop-IDEStack` IDE.
 
 image::cloud9-launch.png[Ope IDE]
 
@@ -62,7 +62,7 @@ git clone https://github.com/darkreapyre/aws-modernization-workshop.git
 === Installing 3rd Party CLIs
 During the workshop we will be using a couple of 3^rd^ party CLI tools like `eksctl` to configure our EKS cluster, and `kubectl` to interact with our Kubernetes cluster. Follow the steps below to ensure that these tools have been installed:
 
-TIP: You can learn more about the `eksctl` tool from this https://aws.amazon.com/blogs/opensource/eksctl-eks-cluster-one-command/[blog] post.
+TIP: You can learn more about the `eksctl` tool from this link:https://aws.amazon.com/blogs/opensource/eksctl-eks-cluster-one-command/[blog] post.
 
 Step 1::
 Let's make a `bin` folder where these binaries will be stored and change our directory to the new location.
