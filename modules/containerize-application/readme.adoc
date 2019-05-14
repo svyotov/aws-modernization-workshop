@@ -267,7 +267,7 @@ Successfully built ac38f026e2e0
 Successfully tagged containerize-application_petstore:latest
 ....
 +
-Step 3:: Run the application container in the foreground and live stream the logs to stdout. If you hit an error hit `Ctrl+C`, make the necessary updates to the Dockerfile and re-build the container using step 2.
+Step 3:: Run the application container in the foreground and live stream the logs to stdout. If you hit an error hit `[Ctrl + C]`, make the necessary updates to the Dockerfile and re-build the container using step 2.
 +
 [source,shell]
 ----
@@ -309,5 +309,7 @@ petstore_1  | 18:53:39,588 INFO  [org.xnio.nio] (MSC service thread 1-2) XNIO NI
 Step 4:: To preview the application you will need to click *Preview* from the top menu of the Cloud9 environment, then *Preview Running Application*. This will open a new window and pre-populate the full URL to your preview domain.
 +
 image::preview.png[preview]
++
+Now that we have confirmed that the container is functioning, press `[Ctrl + c]` in the `terminal` to stop the running container and clouse the *Preview* tab.
 
 In the next module, we will look at how to deploy the application into production using https://aws.amazon.com/fargate/[AWS Fargate].
