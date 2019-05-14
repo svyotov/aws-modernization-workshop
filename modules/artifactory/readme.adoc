@@ -29,11 +29,6 @@ JFrog Artifactory is an advanced *Binary Repository Manager* for use by build to
 
 ==== Getting Started with JFrog Artifactory
 
-To deploy JFrog Artifactory we'll be using CloudFormation to create the following resources: 
-
-
-
-
 Before we get started in deploying Artifactory, lets first change to the module directory.
 
 [source,shell]
@@ -41,9 +36,25 @@ Before we get started in deploying Artifactory, lets first change to the module 
 cd ~/environment/aws-modernization-workshop/modules/artifactory
 ----
 
+To deploy JFrog Artifactory we'll be using CloudFormation and create the following resources: 
+
+****
+* `VPC` - Virtual Private CLoud for the Fargate Cluster.
+* `ECS Cluster` - Cluster to manage Fargate tasks.
+* `ECS Task` - Artifactory OSS Fargate containers.
+****
+
 The steps to Deploy Artifactory using a CloudFormation template are:
 
-===== Launch the Cloudformation template
+. Launch the CloudFormation Teamplte.
+. Login and configure Artifactory.
+. Configure code repositories.
+. Modify and build containers.
+
+===== 1a. Launch the Cloudformation template
+
+To launch the CloudFormation `CREATE` process, run the following command in the Cloud9 `terminal`.
+
 [source,shell]
 ----
 aws cloudformation create-stack --stack-name "artifactory-oss" \
@@ -60,7 +71,7 @@ Sample output:
 }
 ....
 
-Wait for the CloudFormation template to successfully deploy by running the following:
+To wait for the CloudFormation template to successfully deploy, run the following:
 
 [source,shell]
 ----
@@ -74,7 +85,7 @@ until [[ `aws cloudformation describe-stacks \
 
 TIP: You can also view the status of the CloudFormation `CREATE` process by openning the https://us-west-2.console.aws.amazon.com/cloudformation/home?region=us-west-2[Cloudformation Console] in a browser tab and viewing the stack.
 
-===== Get the container IP
+===== 1b. Get the container IP
 In a production environment, it is a good practice to front-end your ECS or Fargate services using an https://aws.amazon.com/elasticloadbalancing/[Amazon Application LoadBalancer]. Howeever, for the purpose of this lab, we will simply connect directly to the container public IP address. Run the following command to output the public IP address:
 
 [source,shell]
@@ -91,11 +102,11 @@ aws ec2 describe-network-interfaces \
   --output=text
 ----
 
-==== Log into Artifactory and set up a new admin password.
+==== 2a. Log into Artifactory and set up a new admin password.
 Open up your browser to `http://<ip-from-previous-step>:8081`. For example: http://54.202.45.157:8081. You should be presented with a window that looks similar to the one below.
 
 
-==== Configuring JFrog Artifactory
+==== 2b. Configuring JFrog Artifactory
 
 Steps to Configure Artifactory for the first time:
 
@@ -121,29 +132,32 @@ image::artifactory-05.PNG[artifactory]
 
 NOTE: Additional information can be found in the https://www.jfrog.com/confluence/display/RTF/Welcome+to+Artifactory[JFrog Artifactory User Guide].
 
-==== Configure the Maven repositories.
-For the purpose of this lab, we will only be simulating the process of preemptively reviewing libraries as discussed in our Security discussion. So in order for our build process to succeed, we also need to add some upstream repositories to Artifactory.
+==== 3. Configure the Maven repositories.
+For the purpose of this lab, we will only be simulating the process of preemptively reviewing libraries as discussed in our *Security* discussion. So in order for our build process to succeed, we also need to add some upstream repositories to Artifactory.
 
-Step 1:: Open the Admin Interface on the left and click on "Remote Repositories"
+Step 1:: Open the Admin Interface by clicking *Admin* on the left and click on *Remote* under the *Repositories* header.
 
 image::artifactory-12.png[artifactory]
 
-Step 2:: Click on the *+ New* button in the top right corner, and select *Maven* from the Package Type dialog that opens. In the new form that opens fill in the fields like in the image below. Then click *Test*. When the test succeeds, click *Save & Finish* in the bottom right.
+Step 2:: Click on the *+ New* button in the top right corner, and select *Maven* from the Package Type dialog that opens. In the new form that opens, fill in the fields as shown in the image below: 
 
 image::artifactory-13.JPG[artifactory]
 
-Step 3:: We now need to edit the virtual repository, to include the newly added remote repository. On the left side menu, open the admin panel again and select *Virtual* under the repositories section. Select the *libs-release* repository. A new window like the one below should open.
+Then click *Test*. When the test succeeds, click *Save & Finish* in the bottom right.
+
+Step 3:: We now need to edit the virtual repository, to include the newly added remote repository. On the left side menu, open the *Admin* panel again and select *Virtual* under the repositories section. Select the *libs-release* repository. A new window like the one below should open.
 
 image::artifactory-14.JPG[artifactory]
 
 Step 4:: Move the *primefaces* repository from the *available repositories list* to the *Selected repositories list* by clicking on *primefaces* and then using the green *>* button. Now click *Save and Finish*
 
-==== Modify our Maven Container Build
-Now that we have our Artifactory repositories correctly configured, we need to modify the maven settings for our application and have it pull the libraries from the secured repo. We do this by editing the settings.xml file for maven.
+==== 4. Modify our Maven Container Build
+Now that we have our Artifactory repositories correctly configured, we need to modify the maven settings for our application and have it pull the libraries from the secured repo. We do this by editing the `settings.xml` file for maven.
 
 We have a pre-written `settings.xml` for you, but we need to replace some of the info inside it, with info specific to your deployment.
 
-Step 1:: We need to get the public IP from the artifactory container again. This time, we will also store it as an Environment Variable.
+Step 1:: We need to get the public IP from the artifactory container again. This time, we will also store it as an Environment Variable. Using the Cloud9 `terminal`, Run the following command to create a variable called `ART_IP`.
+
 [source,shell]
 ----
 ART_IP=$(aws ec2 describe-network-interfaces \
@@ -154,28 +168,29 @@ ART_IP=$(aws ec2 describe-network-interfaces \
   --query NetworkInterfaces[0].Association.PublicIp --output=text)
 ----
 
-Step 2:: Add the IP to our settings.xml
+Step 2:: Add the IP to our `settings.xml` by running the following command:
 [source,shell]
 ----
 sed -i "s/<artifact-ip>/$ART_IP/" settings.xml
 ----
 
-Step 3:: Make some modifications to Dockerfile
-Now that we have the repository information saved in the `settings.xml` for maven, we also need to make sure that Docker copies the file into the new build environment. We do that by simply adding a single line to the existing `Dockerfile`
+Step 3:: Make some modifications to `Dockerfile`
+Now that we have the repository information saved in the `settings.xml` for maven, we also need to make sure that Docker copies the file into the new build environment. We _could_ accomplish that by simply adding a single line to the existing `Dockerfile`, as shown below.
 
 [source,shell]
 ----
 COPY ./settings.xml /root/.m2/
 ----
 
-To save some time, we have already done this for you on line #8. We just need you to copy the `settings.xml` and `Dockerfile` into the container app directory.
+However, to save some time, we have already done this for you on line `#8` of the `Dockerfile` in the current working directory. We just need you to copy the `settings.xml` and `Dockerfile` into the container app directory by running the following commands.
+
 [source,shell]
 ----
 cp {settings.xml,Dockerfile} \
 ~/environment/aws-modernization-workshop/modules/containerize-application/
 ----
 
-Your `Dockerfile` should look like:
+Your `Dockerfile` in the `~/environment/aws-modernization-workshop/modules/containerize-application/` direcrtory, should as follows:
 
 [source,shell]
 ----
@@ -190,18 +205,18 @@ COPY ./settings.xml /root/.m2/
 
 # just install the dependencies for caching
 RUN mvn dependency:go-offline
+...
 ----
 
 Step 4::
-Now that we have reconfigured our Docker containers we need to rebuild these images.
+Now that we have reconfigured our Docker containers we need to rebuild these images. First we need to go back to the `containerized-application` directory.
 
 [source,shell]
 ----
 cd ~/environment/aws-modernization-workshop/modules/containerize-application
 ----
 
-Now that we are back in the *Containerize Application* folder we can rerun
-`docker-compose build`
+Now that we are back in the *Containerize Application* folder we can rerun `docker-compose build` command.
 
 [source,shell]
 ----
