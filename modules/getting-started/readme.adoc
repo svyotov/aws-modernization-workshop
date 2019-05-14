@@ -62,6 +62,8 @@ git clone https://github.com/darkreapyre/aws-modernization-workshop.git
 === Installing 3rd Party CLIs
 During the workshop we will be using a couple of 3^rd^ party CLI tools like `eksctl` to configure our EKS cluster, and `kubectl` to interact with our Kubernetes cluster. Follow the steps below to ensure that these tools have been installed:
 
+TIP: You can learn more about the `eksctl` tool from this https://aws.amazon.com/blogs/opensource/eksctl-eks-cluster-one-command/[blog] post.
+
 Step 1::
 Let's make a `bin` folder where these binaries will be stored and change our directory to the new location.
 [source,shell]
@@ -89,7 +91,7 @@ exec $SHELL
 ----
 
 === Launch an EKS Cluster
-It takes a few minutes to launch an EKS cluster, so we will have you launch one now, while completing some initial modules. We will launch our EKS Cluster using the `eksctl` tool
+It takes a few minutes to launch an EKS cluster, so we will have you launch one now, while completing some initial modules. We will launch our EKS Cluster using the `eksctl` tool.
 
 Step 1::
 `eksctl` requires an SSH Key to configure your EKS nodes with.
