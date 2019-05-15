@@ -4,9 +4,9 @@
 :icons: font
 
 == Container Orchestration
-
+////
 NOTE: *This lab focusses on orchestrating our workload into production using Amazon ECS and AWS Fargate. Should you wish to focus on using Amazon EKS, please skip to the next lab.*
-
+////
 ****
 *Expected Outcome:*
 
