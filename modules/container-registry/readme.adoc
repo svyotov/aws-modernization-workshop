@@ -74,6 +74,8 @@ Step 2:: Use the AWS CLI to get information about the two Amazon ECR repositorie
 aws ecr describe-repositories --repository-name petstore_postgres petstore_frontend
 ----
 
+Expceted output:
+
 [.output]
 ....
 {
@@ -102,6 +104,8 @@ Step 3:: Verify that your Docker images exist by running the docker images comma
 ----
 docker images
 ----
+
+Expected Output:
 
 [.output]
 ....
@@ -156,4 +160,6 @@ cdb3f9544e4c: Layer already exists
 latest: digest: sha256:ca39b6107978303706aac0f53120879afcd0d4b040ead7f19e8581b81c19ecea size: 3243
 ....
 
-With the images pushed to Amazon ECR we are ready to deploy them to our orchestrator. The next module will show you how to leverage link:http://aws.amazon.com/ecs/[Amazon Elastic Container Service (Amazon ECS)], link:http://aws.amazon.com/fargate/[AWS Fargate] *_OR_* link:https://aws.amazon.com/eks/[Amazon EKS] to orchestrate our containers into production.
+With the images pushed to Amazon ECR we are ready to deploy them to our orchestrator. The next module will show you how to leverage either link:http://aws.amazon.com/ecs/[Amazon Elastic Container Service (Amazon ECS)], link:http://aws.amazon.com/fargate/[AWS Fargate] *_OR_* link:https://aws.amazon.com/eks/[Amazon EKS] to orchestrate our containers into production.
+
+image:choose.png[Choice]

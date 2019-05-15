@@ -24,6 +24,9 @@ The Pet Store application is a Java 7 based application that runs on top of the 
 
 ==== Building the Dockerfile
 
+
+image:docker-image.png[Docker Image]
+
 Step 1:: To get started, switch to the `containerize-application` folder within this repository.
 +
 [source,shell]
@@ -36,6 +39,9 @@ Step 2:: Double-click to open the `Dockerfile` in the Cloud9 editor, using the *
 image::dockerfile-nav.png[Dockerfile]
 
 ==== Reviewing the Dockerfile
+
+image:dockerfile-layers.png[Dockerfile layers]
+
 The first `stage` of our `Dockerfile` will be to build the application. We will use the `maven:3.5-jdk-7` container from Docker Hub as our base image. The first `stage` of our `Dockerfile` will need to copy the code into the container, install the dependencies, then build the application using Maven.
 
 The second `stage` of our `Dockerfile` will be to build our Wildfly application server. We will need to copy the WAR file we created in the first stage to the second stage. The WAR file is built to `/usr/src/app/target/applicationPetstore.war` in the first stage. We will instruct `docker` to copy that WAR file to the `/opt/jboss/wildfly/standalone/deployments/applicationPetstore.war` in the new `stage`. We will also have `docker` copy the `standalone.xml` file to the proper location `/opt/jboss/wildfly/standalone/configuration/standalone.xml`. Wildfly will deploy that application on boot. 
@@ -190,7 +196,7 @@ Finally, we will define our Pet Store application. Docker Compose supports build
 ==== Running the Application
 To run the application we will execute the following Docker Compose commands from the `terminal`.
 
-NOTE: Make sure the terminal is in the `~/environment/aws-modernization-workshop/modules/containerize-application/` working directory.
+NOTE: Make sure the `terminal` session current working directory is `~/environment/aws-modernization-workshop/modules/containerize-application/` working directory.
 
 Step 1:: Run the database container in the background (`-d` or daemon flag). We don't need the database logs to clog our application logs.
 +
