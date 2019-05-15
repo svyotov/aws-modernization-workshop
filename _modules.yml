@@ -4,7 +4,7 @@ modules:
   modules_getting-started_readme:
     name: Getting Started
   modules_containerize-application_readme:
-    name: Containerize Application
+    name: Modern Container Application
   modules_container-registry_readme:
     name: Container Registry
   modules_container-orchestration-ecs_readme:
@@ -16,12 +16,10 @@ modules:
   modules_cicd_readme:
     name: CI/CD Automation
   modules_monitor-application_readme:
-    name: Application Monitoring
+    name: Container Application Monitoring
   modules_security_readme:
     name: Security Practices
   modules_container-elasticity_readme:
     name: Container Elasticity
-  modules_security_readme:
-    name: Security
   modules_feedback_readme:
     name: Feedback

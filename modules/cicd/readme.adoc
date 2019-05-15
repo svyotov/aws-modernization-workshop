@@ -1,8 +1,9 @@
 = Digital Modernization
 
 :imagesdir: ../../images
+:icons: font
 
-== Continuous Integration\Continuous Delivery (CICD)
+== Continuous Integration/Continuous Delivery (CI/CD)
 
 ****
 *Expected Outcome:*

@@ -10,7 +10,7 @@ NOTE: *This lab focusses on orchestrating our workload into production using Ama
 ****
 *Expected Outcome:*
 
-* 200 level usage of Amazon ECS and Fargate
+* 200 level usage of Amazon ECS and Fargate.
 
 *Lab Requirements:*
 Cloud9 IDE
