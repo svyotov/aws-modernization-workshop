@@ -1,105 +1,76 @@
 = Digital Modernization
 
 :imagesdir: ../../images
+:icons: font
 
 == Container Elasticity
 
 ****
 *Expected Outcome:*
 
-* 300 level differentiation ECS/Fargate Vs EKS Scaling Patterns
+* 300 level understanding of EKS Scaling Patterns.
 
 *Lab Requirements:*
 
-* an Amazon Elastic Container Service Cluster
-* an Amazon Elastic Container Service for Kubernetes Cluster
+* Cloud9 IDE.
+* an Amazon Elastic Container Service for Kubernetes Cluster.
+* an Amazon Elastic Container Service Cluster.
 
 *Average Lab Time:*
-20-30 minutes
+15-20 minutes
 ****
 
 === Introduction
 
-In this module we will take the existing applications you've deployed into your
-Amazon Fargate cluster and your Amazon EKS cluster and demonstrate some of the
-scaling capabilities.
+In this module we will take the existing applications you've deployed into your Amazon EKS cluster and demonstrate some of the scaling capabilities.
 
 ==== Amazon Fargate AutoScaling
 
-To scale a Fargate task you will need to configure this via the console, or via
-the CLI. For this example we're going to go through the Console.
+To scale a Fargate task you will need to configure this via the console, or via the CLI. For this example we're going to go through the Console.
 
-1. Navigate to the Petstores Services console within the
-   link:https://console.aws.amazon.com/ecs/home#/clusters/petstore-workshop/services/petstore/details[AWS
-   ECS Console]
+Step 1:: Navigate to the Petstores Services console within the link:https://console.aws.amazon.com/ecs/home#/clusters/petstore-workshop/services/petstore/details[AWS ECS Console].
 +
 image::ecs-services-console.png[ECS Console]
 +
-2. From this screen click on the *Auto Scaling* tab in the Services panel. Where
-   you will see a note for "*Scalable Target* No Auto Scaling resources
-   configured for this service. Click the update button to configure Auto
-   Scaling for tasks".
+Step 2:: From this screen click on the *Auto Scaling* tab in the Services panel. Where you will see a note for "*Scalable Target* No Auto Scaling resources configured for this service. Click the update button to configure Auto Scaling for tasks".
 +
 image::ecs-auto-scaling-console.png[Auto Scaling Console]
 +
-3. Now we can click *Update* as the note says to configure our Auto Scaling.
+Step 3:: Now we can click *Update* as the note says to configure our Auto Scaling.
 +
-NOTE: The petstore app in it's current configuration on Fargate isn't actually
-auto scalable. Each replica that is created will have a new Postrges container
-deployed along side it without shared storage. *This is for demonstration
-purposes only.*
+NOTE: The petstore app in it's current configuration on Fargate isn't actually auto scalable. Each replica that is created will have a new Postrges container deployed along side it without shared storage. *This is for demonstration purposes only.*
 +
-4. We'll then leave all the settings the same on *Configure service* page and
-   click *Next step*
+Step 4:: We'll then leave all the settings the same on *Configure service* page and click *Next step*.
 
-5. Again leaving the settings the same on *Configure network* and clicking *Next
-   step*
-6. Now on the *Set Auto Scaling (optional)* page we can select the option
-   *Configure Service Auto Scaling to adjust your service’s desired count* This
-   will open up the following panel allowing us to set our auto scaling rules.
+Step 5:: Again leaving the settings the same on *Configure network* and clicking *Next step*.
+
+Step 6:: Now on the *Set Auto Scaling (optional)* page we can select the option *Configure Service Auto Scaling to adjust your service’s desired count* This will open up the following panel allowing us to set our auto scaling rules.
 +
 image::ecs-auto-scaling.png[Set Auto Scaling (optional)]
++
+Step 7:: We'll fill this out with demo information set *Minimum number of tasks* to `1` set *Desired number of tasks* to `1` and set *Maximum number of tasks* to `5` allowing Fargate to consume upto 5 running tasks when the app needs to auto scale and stops after that.
 
-7. We'll fill this out with demo information set *Minimum number of tasks* to
-   `1` set *Desired number of tasks* to `1` and set *Maximum number of tasks* to
-   `5` allowing Fargate to consume upto 5 running tasks when the app needs to
-   auto scale and stops after that.
+Step 8:: We'll then *Add scaling policy* which will open up a panel for us to add an Auto Scaling Policy.
 
-8. We'll then *Add scaling policy* which will open up a panel for us to add an
-   Auto Scaling Policy.
+Step 9:: In this form select *Target tracking* set the *Policy name** to `PetstoreFrontendAutoscalingPolicy` configure which *ECS service metric** to scale based on and then add a *Target value* of `75` which will tell it to scale when the container gets to `75%` of whatever metric you are using.
 
-9. In this form select *Target tracking* set the *Policy name** to
-   `PetstoreFrontendAutoscalingPolicy` configure which *ECS service metric** to
-   scale based on and then add a *Target value* of `75` which will tell it to
-   scale when the container gets to 75% of whatever metric you are using.
+Step 10:: When you are done *Save* that and it will close the panel and you will be  able to select *Next step* continuing to *Update Service* which will apply all of your changes.
 
-10. When you are done *Save* that and it will close the panel and you will be
-    able to select *Next step* continuing to *Update Service* which will apply
-    all of your changes.
+This is how easy it is to configure your Auto Scaling policies for an Amazon ECS and Amazon Fargate Cluster.
 
-This is how easy it is to configure your Auto Scaling policies for an Amazon ECS
-and Amazon Fargate Cluster.
+=== Amazon EKS AutoScaling
 
+Within a Kubernetes cluster, there are multiple ways to think about scaling your applications.
 
-==== Amazon EKS AutoScaling
+. Scale the instances running the cluster, this is typically called *Cluster AutoScaling*.
+. *Pod AutoScaling*, typically referred to as Horizontal Pod AutoScaling or (HPA) for short.
 
-Within a Kubernetes cluster there are multiple ways to think about scaling your
-applications. 1. is to scale the instances running the cluster, this is
-typically called Cluster AutoScaling. 2. Pod AutoScaling typically
-referred to as Horizontal Pod AutoScaling or (HPA) for short. Both Cluster
-AutoScaling and Horizontal Pod Autoscaling provide different mechanisms to scale
-your entire architecture via any way.
+Both Cluster AutoScaling and Horizontal Pod Autoscaling provide different mechanisms to scale your entire architecture via any way.
 
-===== Cluster AutoScaling
+==== Cluster AutoScaling
 
-Cluster autoscaling deals with how many physical EC2 instances are running in
-the cluster and how many resource requests are in the scheduler. How this works,
-in your `Deployment` you can define CPU and Memory requests and limits; when you
-scale this number it adds up all the request and verifies it has the capacity to
-fulfill all the requests. When you run Cluster Autoscaler it will listen to the
-scheduler and when it doesn't have enough resources it will reconfigure the
-desired instance count on the AWS AutoScaling Group causing it to provision more
-instances to fulfill the request.
+Cluster autoscaling deals with how many physical EC2 instances are running in the cluster and how many resource requests are in the scheduler. How this works, in your `Deployment` you can define CPU and Memory requests and limits; when you scale this number it adds up all the request and verifies it has the capacity to fulfill all the requests. When you run Cluster Autoscaler it will listen to the
+scheduler and when it doesn't have enough resources it will reconfigure the desired instance count on the AWS AutoScaling Group causing it to provision more instances to fulfill the request.
 
 Lets deploy Cluster Autoscaler to your EKS cluster.
 
@@ -455,7 +426,7 @@ kubectl scale deploy/frontend --namespace petstore --replicas=2
 deployment.extensions/frontend scaled
 ....
 
-===== Horizontal Pod Autoscaling
+==== Horizontal Pod Autoscaling
 
 The other kind of elasticity that you have when you use Kubernete or EKS is
 Horizontal Pod AutoScaling, or HPA for short. This is a capability where HPA

@@ -8,209 +8,159 @@
 ****
 *Expected Outcome:*
 
-* Create a source code repository using AWS CodeCommit
-* Configure a CI/CD pipeline using AWS CodePipeline
-* Deploy AWS CodeBuild to build your container image and push to ECS
+* 300 level understaing of Kubernetes Continuous Deployment:
+** Create a source code repository using AWS CodeCommit
+** Configure a CI/CD pipeline using AWS CodePipeline
+** Deploy AWS CodeBuild to build your container image and push to ECS
 
 *Lab Requirements*
 
-* Complete container application and orchestration modules
-* Launch Artifactory lab CloudFormation template
+* Cloud9 IDE.
+* an Amazon Elastic Container Service for Kubernetes Cluster.
 
 *Average Lab Time:*
 45-60 minutes
 ****
 
 === Introduction
+This moduleis designed to improve your undesrtanding of the link:https://aws.amazon.com/codestar/[AWS Code*] services like, link:https://aws.amazon.com/codecommit/[AWS CodeCommit], link:https://aws.amazon.com/codebuild/[AWS CodeBuild], link:https://aws.amazon.com/codepipeline/[AWS Codepipeline] and link:https://aws.amazon.com/lambda/[AWS Lambda] can be used for continuous deployment on link:https://aws.amazon.com/eks/[Amazon EKS].
 
-In this lab, we will use https://aws.amazon.com/cloudformation/[AWS CloudFormation] to create our environment and provision various AWS resources. We will use  https://aws.amazon.com/codecommit/[AWS CodeCommit] as our fully managed https://aws.amazon.com/devops/source-control/[source control] service,  https://aws.amazon.com/codepipeline/[AWS CodePipeline] as our https://aws.amazon.com/devops/continuous-integration/[continuous integration] and https://aws.amazon.com/devops/continuous-delivery/[continuous delivery] service, as well as https://aws.amazon.com/codebuild/[AWS CodeBuild] as our fully managed build service. 
+The following *Reference Architecture* details the how the above AWS services will be leveraged and the specific steps we will follow for this module.
 
-It is expected that you have a fully functional JFrog Artifactory installation as well as a source code repository. If you followed the previous _Artifactory_ lab, then these environments are already provisioned in your AWS account. If you have not completed those labs, please do so before continuing with this lab.
+=== Reference Architecure
+image:architecture.png[Architecture]
 
-In this lab, we will launch a CloudFormation template `pipeline.yaml` in order to automate much of the provisioning and configuring or our pipeline. 
+=== Setting up the CI/CD Pipeline
 
-Prerequisites for this template:
+NOTE: The following section of the module assumes a working EKS cluster, created in *Module 6 - Amazon EKS*.
 
-* An Existing AWS CodeCommit repository. 
-* An Amazon S3 bucket to be used for the output artifacts from AWS CodePipeline. 
-* An Artifactory host.
-* An exiting Amazon VPC. If you need to build a new one, you can use the https://github.com/aws-quickstart/quickstart-aws-vpc[AWS VPC QuickStart].
+Step 1:: Create repo
 
-=== AWS CodePipeline Workflow
-
-A pipeline models our workflow from end to end. Within our pipeline we can have stages, and you can think of stages as groups of actions. An action or a plug in is what acts upon the current revision that is moving through your pipeline; this is where the actual work happens in your pipeline. Stages can then be connected by transitions, and in our console we represent these by an arrow between each stage. Our pipeline will consist of _three_ stages:
-
-image::cicd-01.png[cicd]
-
-The *Source* stage monitors for changes to our source code repository. When a change is made, we will transition to the following stage. In this case, our *Build* stage. Here we will use CodeBuild to build a new docker image and push this to our https://aws.amazon.com/ecr/[Amazon Elastic Container Registry]. This is defined within our _BuildSpec_ which will be found in the `buildspec.yml` in the source code root directory.
-
-[source,yaml]
-----
-        BuildSpec: |
-          version: 0.2
-          phases:
-            pre_build:
-              commands:
-                - echo Logging in to Amazon ECR...
-                - aws --version
-                - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
-                - REPOSITORY_URI=$(aws ecr describe-repositories --repository-name petstore_frontend --query=repositories[0].repositoryUri --output=text)
-                - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
-                - IMAGE_TAG=${COMMIT_HASH:=latest}
-                - PWD=$(pwd)              
-            build:
-              commands:
-                - echo Build started on `date`
-                - echo Building the Docker image...
-                - cd modules/containerize-application
-                - docker build -t $REPOSITORY_URI:latest .
-                - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
-            post_build:
-              commands:
-                - echo Build completed on `date`
-                - echo Pushing the Docker images...
-                - docker push $REPOSITORY_URI:latest
-                - docker push $REPOSITORY_URI:$IMAGE_TAG
-                - echo Writing image definitions file...
-                - echo Source DIR ${CODEBUILD_SRC_DIR}
-                - printf '[{"name":"petstore","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > ${CODEBUILD_SRC_DIR}/imagedefinitions.json
-----
-
-Once our new Docker image has successfully been built and stored in ECR, we transition to our final stage where we deploy the image to our Fargate cluster. The *Deploy* stage will then consume the `imagedefinitions.json` output from the _post_build_ process to sping up new containers using our newly created image into our existing cluster.
-
-=== Getting Started
-
-Steps to Create the Pipeline
-
-Step 1:: From your Cloud9 IDE, let's launch the CloudFormation template:
-
++
 [source,shell]
 ----
-aws cloudformation create-stack \
-  --stack-name cicd --template-body=file://~/environment/aws-modernization-workshop/modules/cicd/pipeline.yaml \
-  --capabilities CAPABILITY_IAM
+aws ecr create-repository --repository-name eks-cicd-demo-repo --region us-west-2
 ----
-
-Step 2:: Wait for the CloudFormation template to successfully deploy.
-
++
+[.output]
+----
+{
+    "repository": {
+        "registryId": "<REDACTED>", 
+        "repositoryName": "eks-cicd-demo-repo", 
+        "repositoryArn": "arn:aws:ecr:us-west-2:<.REDACTED>:repository/eks-cicd-demo-repo", 
+        "createdAt": 1558127545.0, 
+        "repositoryUri": "<REDACTED>.dkr.ecr.us-west-2.amazonaws.com/eks-cicd-demo-repo"
+    }
+}
+----
++
+step 2:: Create repo
++
 [source,shell]
 ----
-until [[ `aws cloudformation describe-stacks \
-  --stack-name "cicd" --query "Stacks[0].[StackStatus]" \
-  --output text` == "CREATE_COMPLETE" ]]; \
-  do  echo "The stack is NOT in a state of CREATE_COMPLETE at `date`"; \
-  sleep 30; done && echo "The Stack is built at `date` - Please proceed"
+aws codecommit create-repository --repository-name eks-cicd-demo-repo --repository-description "EKS CICD demonstration repository" --region us-west-2
 ----
-
-Step 3:: Obtain the clone URL for our repository. We will pass the output of our CLI query to an ENVIRONMENT VARIABLE for later use.
-
-[source,shell]
++
+Expected Output:
++
+[.output]
 ----
-CloneURL=$(aws codecommit get-repository \
-  --repository-name aws_pet_store_repo \
-  --query 'repositoryMetadata.cloneUrlHttp' \
-  --output=text)
+{
+    "repositoryMetadata": {
+        "repositoryName": "eks-cicd-demo-repo", 
+        "cloneUrlSsh": "ssh://git-codecommit.us-west-2.amazonaws.com/v1/repos/eks-cicd-demo-repo", 
+        "lastModifiedDate": 1558126857.734, 
+        "repositoryDescription": "EKS CICD demonstration repository", 
+        "cloneUrlHttp": "https://git-codecommit.us-west-2.amazonaws.com/v1/repos/eks-cicd-demo-repo", 
+        "creationDate": 1558126857.734, 
+        "repositoryId": "1d5e262b-ff0a-4555-a552-31a87db6373a", 
+        "Arn": "arn:aws:codecommit:us-west-2:<REDACTED>:eks-cicd-demo-repo", 
+        "accountId": "<REDACTED>"
+    }
+}
 ----
-
-=== Cloning your CodeCommit Repo
-
-Step 1:: When your Cloud9 environment was provisioned, it should also have automatically cloned the GitHub repository for this lab. We will want to push the contents of that repo to our CodeCommit repo. From your Cloud9 IDE change directories to your locally clone copy of the lab content:
-
-[source,shell]
-----
-cd ~/environment/aws-modernization-workshop/aws-modernization-workshop/
-----
-
-Step 2:: Before we are able to clone our CodeCommit repo, we will need to configure our credentials allow HTTP:
-
++
+Step 3:: Commit to repo
++
 [source,shell]
 ----
 git config --global credential.helper '!aws codecommit credential-helper $@'
-----
-[source,shell]
-----
+
 git config --global credential.UseHttpPath true
+
+git clone https://git-codecommit.us-west-2.amazonaws.com/v1/repos/eks-cicd-demo-repo
+
+cp aws-eks-cicd-essentials/sample-app/* eks-cicd-demo-repo/
+
+cd eks-cicd-demo-repo
+
+git add . && git commit -m "initial commit ofsample app" && git push origin master
 ----
-
-Step 3:: Next, we will add CodeCommit as a remote repo.
-
++
+Step 4:: Create pipeline
++
+BLAH BLAH
++
+Step 5:: Add build stage
++
+BLAH BLAH BLAH
++
+Step 6:: Lambda client for Kubernetes
++
 [source,shell]
 ----
-git remote add codecommit $CloneURL
+cd ..
+git clone https://github.com/BranLiang/lambda-eks
+cd lambda-eks
+
+sed -i -e "s#\$EKS_CA#$(aws eks describe-cluster --name k8s-workshop --query cluster.certificateAuthority.data --output text)#g" ./config
+sed -i -e "s#\$EKS_CLUSTER_HOST#$(aws eks describe-cluster --name k8s-workshop --query cluster.endpoint --output text)#g" ./config
+sed -i -e "s#\$EKS_CLUSTER_NAME#k8s-workshop#g" ./config
+sed -i -e "s#\$EKS_CLUSTER_USER_NAME#lambda#g" ./config
 ----
-
-Step 4:: We are almost ready to commit. Let's configure git with our email and name:
-
++
+Step 7:: Check secrets
++
 [source,shell]
 ----
-git config --global user.email " your_email "
+kubectl get secrets
 ----
-[source,shell]
-----
-git config --global user.name " your_name "
-----
-
-Step 5:: Now we are finally ready for our initial commit. Type the following:
-
-[source,shell]
-----
-git status
-----
-[source,shell]
-----
-git add .
-----
-[source,shell]
-----
-git commit -am "initial"
-----
-[source,shell]
-----
-git push -f codecommit master
-----
-
-This should create a branch called `master` in your CodeCommit repo and push the contents of our lab. You should see the following results in your Cloud9 console:
-
++
+Expected Output:
++
 [.output]
-....
-Counting objects: 457, done.
-Compressing objects: 100% (283/283), done.
-Writing objects: 100% (457/457), 11.56 MiB | 15.70 MiB/s, done.
-Total 457 (delta 153), reused 457 (delta 153)
-To https://git-codecommit.us-west-2.amazonaws.com/v1/repos/aws_pet_store_repo
- * [new branch]      master -> master
-....
-
-You can also see the same results by navigating to the https://console.aws.amazon.com/codecommit/[CodeCommit console] where you will find results similar to these:
-
-image::cicd-04.png[cicd]
-
-=== Build Process
-
-Remember that our pipeline has been configured to watch for any changes to CodeCommit. When a change is detected it will trigger the pipeline and the build process will commence.
-
-You can also trigger the process by clicking the `Release change` button from the https://console.aws.amazon.com/codepipeline/[CodePipeline console]
-
-image::cicd-05.png[cicd]
-
-Once triggered, you should see the various stages go through the workflow from the https://console.aws.amazon.com/codepipeline[CodePipeline console]. For example:
-
-image::cicd-06.png[cicd]
-
-You can also view additional details for the build process by navigating to the https://console.aws.amazon.com/codebuild/[CodeBuild console] where you will find messages for the various stages defined.
-
-image::cicd-07.png[cicd]
-
-A complete log of the events is also detailed for you in this console.
-
-image::cicd-08.png[cicd]
-
-=== Deploy Process
-
-The final stage in our pipeline is to deploy the new docker image into our Fargate cluster. As part of the process, an `imagedefinitions.json` file is generated which contains the path to the newly created docker image(s) stored in ECR.
-
-This file will then be used in Fargate's task definition to pull the `latest` image containing your recent code changes.
-
-So, now you should be able to confirm your containers are running by navigating to your https://us-west-2.console.aws.amazon.com/ecs/home?#/clusters/petstore-workshop/services/petstore/details[Fargate console] and see the following:
-
-image::cicd-09.png[cicd]
+----
+NAME                  TYPE                                  DATA      AGE
+default-token-dwfwk   kubernetes.io/service-account-token   3         22m
+----
++
+Step 8:: Update Token
++
+[source,shell]
+----
+sed -i -e "s#\$TOKEN#$(kubectl get secret $SECRET_NAME -o json | jq -r '.data["token"]' | base64 -d)#g" ./config
+----
++
+Step 9:: Build, Package, deploy
++
+[source,shell]
+----
+npm install
+zip -r lambda-package_v1.zip .
+export LAMBDA_SERVICE_ROLE=$(aws cloudformation describe-stacks --stack-name $AWS_MASTER_STACK | jq -r '.Stacks[0].Outputs[]|select(.OutputKey=="LambdaExecutionRoleArn")|.OutputValue')
+aws lambda create-function --function-name LambdaKubeClient --runtime nodejs8.10 --role $LAMBDA_SERVICE_ROLE --handler index.handler  --zip-file fileb://lambda-package_v1.zip --timeout 10 --memory-size 128
+----
++
+Step 10:: Prioviuding admin access
++
+[source,shell]
+----
+kubectl create clusterrolebinding default-admin --clusterrole cluster-admin --serviceaccount=default:default
+----
++
+Step 11:: Add deployment stage
++
+BLAH B:AH B:AH
++
+Step 12:: Test

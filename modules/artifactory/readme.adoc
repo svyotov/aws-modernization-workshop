@@ -72,7 +72,7 @@ Sample output:
 [.output]
 ....
 {
-    "StackId": "arn:aws:cloudformation:us-west-2:179830185540:stack/artifactory-oss/b6822bf0-767b-11e9-8e3a-0a95c68a7df8"
+    "StackId": "arn:aws:cloudformation:us-west-2:<REDACTED>:stack/artifactory-oss/b6822bf0-767b-11e9-8e3a-0a95c68a7df8"
 }
 ....
 
