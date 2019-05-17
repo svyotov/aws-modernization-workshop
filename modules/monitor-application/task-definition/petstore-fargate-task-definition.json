@@ -82,7 +82,7 @@
         }
       },
       "healthCheck": {
-        "command": ["CMD", "curl", "-f", "http://127.0.0.1:8080/applicationPetstore"],
+        "command": ["CMD", "curl", "-f", "http://127.0.0.1:8080/"],
         "interval": 30,
         "timeout": 5,
         "retries": 2,

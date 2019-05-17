@@ -46,5 +46,5 @@ EXPOSE 8080 9990
 # run the application
 ENTRYPOINT [ "/opt/jboss/docker-entrypoint.sh" ]
 # add a Healthcheck
-HEALTHCHECK --interval=30s --timeout=5s --retries=5 --start-period=30s CMD curl --fail http://127.0.0.1:8080/applicationPetstore || exit 1
+HEALTHCHECK --interval=30s --timeout=5s --retries=5 --start-period=30s CMD curl --fail http://127.0.0.1:8080/ || exit 1
 CMD [ "-b", "0.0.0.0", "-bmanagement", "0.0.0.0" ]

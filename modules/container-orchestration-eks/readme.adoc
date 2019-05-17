@@ -57,19 +57,6 @@ Step 3:: The file has the following contents:
 apiVersion: v1
 kind: List
 items:
-- apiVersion: storage.k8s.io/v1
-  kind: StorageClass
-  metadata:
-    name: gp2
-    annotations:
-      "storageclass.kubernetes.io/is-default-class": "true"
-  provisioner: kubernetes.io/aws-ebs
-  parameters:
-    type: gp2
-  reclaimPolicy: Retain
-  mountOptions:
-    - debug
-    
 - apiVersion: v1
   kind: Namespace
   metadata:
@@ -221,6 +208,8 @@ items:
             value: password
 ----
 +
+NOTE: Amazon EKS clusters that were created prior to Kubernetes version 1.11 were not created with any storage classes. Since we are running the version `1.12`, the default `StorageClass` has already been set to link:https://aws.amazon.com/ebs/[Amazon Elastic Block Store (EBS)]. Therefore there is no `StorageClass` definition int he `petstore-eks-manifest.yaml` file.
++
 Step 4:: Close the `petstore-eks-manifest.yaml`. Run the following commands in the Cloud9 IDE `terminale` to replace the *<YourAccountID>* placeholders with your AWS Account ID.
 +
 [source,shell]
@@ -296,7 +285,5 @@ postgres   ClusterIP      None            <none>                                
 ....
 +
 Step 9:: Here we can see that we're exposing the *frontend* using an ELB, which is available at the *EXTERNAL-IP* field. Copy and paste this into a new browser tab.
-+
-Step 10:: Navigate to that URL with `/applicationPetstore` to see the running application.
 
-Now that we have our containers deployed to Amazon EKS we can continue with the workshop.
+Now that we have our containers deployed to Amazon EKS we can continue with the workshop and look at how to monitor the *Pet Store* application.

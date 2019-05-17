@@ -34,7 +34,7 @@ services:
       - 'DB_USER=admin'
       - 'DB_PASS=password'
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/applicationPetstore"]
+      test: ["CMD", "curl", "-f", "http://localhost:8080/"]
       interval: 30s
       timeout: 5s
       retries: 5
