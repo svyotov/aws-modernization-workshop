@@ -28,6 +28,8 @@ In this module we will take the existing applications you've deployed into your 
 
 To scale a Fargate task you will need to configure this via the console, or via the CLI. For this example we're going to go through the Console.
 
+NOTE: The following part of the module assumes a working ECS cluster, created in *Module 5 - Amazon ECS & Fargate*.
+
 Step 1:: Navigate to the Petstores Services console within the link:https://console.aws.amazon.com/ecs/home#/clusters/petstore-workshop/services/petstore/details[AWS ECS Console].
 +
 image::ecs-services-console.png[ECS Console]
@@ -65,7 +67,7 @@ Within a Kubernetes cluster, there are multiple ways to think about scaling your
 . Scale the instances running the cluster, this is typically called *Cluster AutoScaling*.
 . *Pod AutoScaling*, typically referred to as Horizontal Pod AutoScaling or (HPA) for short.
 
-Both Cluster AutoScaling and Horizontal Pod Autoscaling provide different mechanisms to scale your entire architecture via any way.
+Both Cluster AutoScaling and Horizontal Pod Autoscaling provide different mechanisms to scale your entire architecture any way.
 
 ==== Cluster AutoScaling
 
@@ -74,14 +76,16 @@ scheduler and when it doesn't have enough resources it will reconfigure the desi
 
 Lets deploy Cluster Autoscaler to your EKS cluster.
 
-1. Switch to the tab where you have your Cloud9 environment opened and change to this modules directory by running:
+NOTE: The following section of the module assumes a working EKS cluster, created in *Module 6 - Amazon EKS*.
+
+Step 1:: Switch to the tab where you have your Cloud9 `terminal` opened and change to this modules directory by running:
 +
 [source,shell]
 ----
 cd ~/environment/aws-modernization-workshop/modules/containerize-elasticity
 ----
 +
-2. Get the autoscaling group name of for the worker nodes, to do this run this
+Step 2:: Get the autoscaling group name of for the worker nodes, to do this run this
    command from your Cloud9 terminal session.
 +
 [source,shell]
@@ -89,17 +93,18 @@ cd ~/environment/aws-modernization-workshop/modules/containerize-elasticity
 aws autoscaling describe-auto-scaling-groups | jq -r '.AutoScalingGroups[] | select((.Tags[].Value == "owned") and (.Tags[].Key == "kubernetes.io/cluster/petstore")) .AutoScalingGroupName'
 ----
 +
+Expected Output:
++
 [.output]
-....
+----
 EKS-petstore-DefaultNodeGroup-NodeGroup-EFK80OCC50R
-....
+----
 
 3. Open the *cluster-autoscaler.yaml* file by double clicking the
-   filename in the lefthand navigation in Cloud9.
+   filename in the lefthand navigation in the Cloud9 IDE.
 
 4. The file has the following contents:
 +
-.cluster-autoscaler.yaml
 [source,json]
 ----
 ---
