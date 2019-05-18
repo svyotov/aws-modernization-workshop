@@ -106,7 +106,7 @@ Step 2::
 Now that we have the key, let's launch the EKS Cluster.
 [source,shell]
 ----
-eksctl create cluster --full-ecr-access --name=petstore
+eksctl create cluster --full-ecr-access --name=petstore --nodes-min=2 --nodes-max=4
 ----
 
 Step 3::

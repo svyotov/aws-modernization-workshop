@@ -139,7 +139,7 @@ spec:
             - --nodes=1:10:<AutoScalingGroupName>
           env:
             - name: AWS_REGION
-              value: <Region>
+              value: us-west-2
           volumeMounts:
             - name: ssl-certs
               mountPath: /etc/kubernetes/pki/ca.crt

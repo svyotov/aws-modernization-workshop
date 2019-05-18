@@ -12,9 +12,11 @@
 
 *Lab Requirements:*
 
+* an Amazon Elastic Container Service for Kubernetes Cluster with:
+** `petstore` deployment.
+** application monitoring has been confgiured.
+//* an Amazon Elastic Container Service Cluster.
 * Cloud9 IDE.
-* an Amazon Elastic Container Service for Kubernetes Cluster.
-* an Amazon Elastic Container Service Cluster.
 
 *Average Lab Time:*
 15-20 minutes
@@ -23,7 +25,7 @@
 === Introduction
 
 In this module we will take the existing applications you've deployed into your Amazon EKS cluster and demonstrate some of the scaling capabilities.
-
+////
 ==== Amazon Fargate AutoScaling
 
 To scale a Fargate task you will need to configure this via the console, or via the CLI. For this example we're going to go through the Console.
@@ -59,51 +61,50 @@ Step 9:: In this form select *Target tracking* set the *Policy name** to `Petsto
 Step 10:: When you are done *Save* that and it will close the panel and you will be  able to select *Next step* continuing to *Update Service* which will apply all of your changes.
 
 This is how easy it is to configure your Auto Scaling policies for an Amazon ECS and Amazon Fargate Cluster.
-
+////
 === Amazon EKS AutoScaling
 
 Within a Kubernetes cluster, there are multiple ways to think about scaling your applications.
 
 . Scale the instances running the cluster, this is typically called *Cluster AutoScaling*.
-. *Pod AutoScaling*, typically referred to as Horizontal Pod AutoScaling or (HPA) for short.
+. *Pod AutoScaling*, typically referred to as Horizontal Pod AutoScaling or (*HPA*) for short.
 
-Both Cluster AutoScaling and Horizontal Pod Autoscaling provide different mechanisms to scale your entire architecture any way.
+Both Cluster AutoScaling and Horizontal Pod Autoscaling provide different mechanisms to scale your entire architecture your way. This module will focus on Cluster Autoscaling.
 
 ==== Cluster AutoScaling
 
-Cluster autoscaling deals with how many physical EC2 instances are running in the cluster and how many resource requests are in the scheduler. How this works, in your `Deployment` you can define CPU and Memory requests and limits; when you scale this number it adds up all the request and verifies it has the capacity to fulfill all the requests. When you run Cluster Autoscaler it will listen to the
-scheduler and when it doesn't have enough resources it will reconfigure the desired instance count on the AWS AutoScaling Group causing it to provision more instances to fulfill the request.
+Cluster autoscaling deals with how many physical EC2 instances are running in the cluster and how many resource requests are in the scheduler. How this works, in your `Deployment` you can define CPU and Memory requests and limits; when you scale this number it adds up all the request and verifies it has the capacity to fulfill all the requests. When you run Cluster Autoscaler it will listen to the scheduler and when it doesn't have enough resources it will reconfigure the desired instance count on the AWS AutoScaling Group causing it to provision more instances to fulfill the request.
 
 Lets deploy Cluster Autoscaler to your EKS cluster.
 
-NOTE: The following section of the module assumes a working EKS cluster, created in *Module 6 - Amazon EKS*.
+NOTE: The following section of the module assumes a working EKS cluster, created in the *Amazon EKS* module.
 
 Step 1:: Switch to the tab where you have your Cloud9 `terminal` opened and change to this modules directory by running:
 +
 [source,shell]
 ----
-cd ~/environment/aws-modernization-workshop/modules/containerize-elasticity
+cd ~/environment/aws-modernization-workshop/modules/container-elasticity
 ----
 +
-Step 2:: Get the autoscaling group name of for the worker nodes, to do this run this
-   command from your Cloud9 terminal session.
+Step 2:: Get the autoscaling group name of for the worker nodes, to do this run the following command:
 +
 [source,shell]
 ----
-aws autoscaling describe-auto-scaling-groups | jq -r '.AutoScalingGroups[] | select((.Tags[].Value == "owned") and (.Tags[].Key == "kubernetes.io/cluster/petstore")) .AutoScalingGroupName'
+ASG=$(aws autoscaling describe-auto-scaling-groups | jq -r '.AutoScalingGroups[] | select((.Tags[].Value == "owned") and (.Tags[].Key == "kubernetes.io/cluster/petstore")) .AutoScalingGroupName')
+
+echo "export ASG=${ASG}" >> ~/.bash_profile
+
+echo $ASG
 ----
 +
-Expected Output:
+Example Output:
 +
 [.output]
 ----
-EKS-petstore-DefaultNodeGroup-NodeGroup-EFK80OCC50R
+eksctl-petstore-nodegroup-ng-4897f70e-NodeGroup-1R9B6MYESB2Z1
 ----
-
-3. Open the *cluster-autoscaler.yaml* file by double clicking the
-   filename in the lefthand navigation in the Cloud9 IDE.
-
-4. The file has the following contents:
++
+Step 3:: Open the *cluster-autoscaler.yaml* file by double clicking the filename in the lefthand navigation in the Cloud9 IDE.  The file has the following contents:
 +
 [source,json]
 ----
@@ -248,7 +249,7 @@ spec:
             - --nodes=2:10:<AutoScalingGroupName>
           env:
             - name: AWS_REGION
-              value: <Region>
+              value: us-west-2
           volumeMounts:
             - name: ssl-certs
               mountPath:  /etc/kubernetes/pki/ca.crt
@@ -260,16 +261,16 @@ spec:
             path: "/etc/kubernetes/pki/ca.crt"
 ----
 +
-5. Then replace `<Region>` with the region your cluster is deployed into. and
-   replace `<AutoScalingGroupName>` with the output from #2
-
-6. Once you have edited those values, save and return to your terminal session
-   and run.
+Step 4:: Replace `<AutoScalingGroupName>` with the output from *Step 2* and save the new file.
++
+Step 5:: Return to `terminal` session and run the following command:
 +
 [source,shell]
 ----
 kubectl apply -f cluster-autoscaler.yaml
 ----
++
+Expected Output:
 +
 [.output]
 ....
@@ -281,26 +282,43 @@ rolebinding.rbac.authorization.k8s.io/cluster-autoscaler created
 deployment.extensions/cluster-autoscaler created
 ....
 +
-7. Now we need to configure our instance role to allow it to mutate the
-   autoscaling group. To do this we need to get our instance role.
+Step 6:: Now we need to configure our instance role to allow it to mutate the autoscaling group. To do this we need to get our instance role.
 +
 [source,shell]
 ----
-aws cloudformation describe-stacks --stack-name eksctl-petstore-nodegroup-0 | jq -r ".Stacks[0].Outputs[0].OutputValue"
+echo $ROLE_NAME
 ----
++
+Example Output:
 +
 [.output]
 ....
-EKS-petstore-DefaultNodeGroup-NodeInstanceRole-1SDLKJZN1UE75
+eksctl-petstore-nodegroup-ng-4897-NodeInstanceRole-5YGEF14MRJVE
 ....
-_Yours will differ slightly._
-8. With the output from the cloudformation stack you can then `put-role-policy`.
-   to enable the autoscaler the ability to control the ASG.
 +
-The policy we'll be deploying is in
-`modules/container-elasticity/ca-policy.jsom`.
+[IMPORTANT]
+====
+If there is no output to the above command, make sure to re-run the following commands from the *Container Application Monitoring* module.
++++ <details><summary> +++
+*Command Reference*:
++++ </summary><div> +++
+[source,shell]
+----
+INSTANCE_PROFILE_NAME=$(aws iam list-instance-profiles | jq -r '.InstanceProfiles[].InstanceProfileName' | grep nodegroup)
+
+INSTANCE_PROFILE_ARN=$(aws iam get-instance-profile --instance-profile-name $INSTANCE_PROFILE_NAME | jq -r '.InstanceProfile.Arn')
+
+ROLE_NAME=$(aws iam get-instance-profile --instance-profile-name $INSTANCE_PROFILE_NAME | jq -r '.InstanceProfile.Roles[] | .RoleName')
+
+echo "export ROLE_NAME=${ROLE_NAME}" >> ~/.bash_profile
+
+echo "export INSTANCE_PROFILE_ARN=${INSTANCE_PROFILE_ARN}" >> ~/.bash_profile
+----
++++ </div></details> +++
+====
 +
-.ca-policy.json
+Step 7:: With the output from the cli you can then use the `put-role-policy` AWS CLI command to enable the autoscaler with the ability to control the ASG. In the lefthand navigation pane of the Cloud9 IDE, open the `modules/container-elasticity/ca-policy.json` file. The file has the following contents:
++
 [source,json]
 ----
 {
@@ -322,21 +340,23 @@ The policy we'll be deploying is in
 }
 ----
 +
-We'll then add this policy to the Instance role.
+Step 8:: Add the policy to the Instance role by running the following command, which substitutes the `role-name` from *Step 6*:
 +
 [source,shell]
 ----
 aws iam put-role-policy --policy-name AmazonEKS_CA_Policy \
-  --role-name EKS-petstore-DefaultNodeGroup-NodeInstanceRole-1SDLKJZN1UE75 \
-  --policy-document file://${PWD}/modules/container-elasticity/ca-policy.json
+--role-name ${ROLE_NAME} \
+--policy-document file://ca-policy.json
 ----
 +
-9. Now let's check out the all the pods and see what we have done.
+Step 9:: Now let's see all the pods and see what we have done. View the `kubectl` log output by running the following command:
 +
 [source,shell]
 ----
 kubectl logs -f deploy/cluster-autoscaler --namespace kube-system -f
 ----
++
+Example Output:
 +
 [.output]
 ....
@@ -360,27 +380,23 @@ I0824 19:47:29.223632       1 static_autoscaler.go:337] ip-192-168-229-57.us-wes
 I0824 19:47:29.223668       1 static_autoscaler.go:352] Scale down status: unneededOnly=true lastScaleUpTime=2018-08-24 19:44:18.175190509 +0000 UTC lastScaleDownDeleteTime=2018-08-24 19:37:17.283607196 +0000 UTC lastScaleDownFailTime=2018-08-24 19:37:17.283607245 +0000 UTC schedulablePodsPresent=false isDeleteInProgress=false
 ....
 +
-_Your output will differ_
+In the logs here you can see that it is constantly checkin the amount of nodes and capactiy each node has available, if we have too many requests for resources and not enough availabe it will provision new nodes for you. Let's try this.
 +
-In the logs here you can see that it is constantly checkin the amount of nodes
-and capactiy each node has available, if we have too many requests for resources
-and not enough availabe it will provision new nodes for you. Let's try this.
-+
-10. First we need to scale our `deployment` using the `scale` subcommand for
-    `kubectl`
+Step 10:: First we need to scale our `deployment` using the `scale` subcommand for `kubectl`.  Press `[Ctrl + c]` to stop to stop the logs and run the following command:
 +
 [source,shell]
 ----
 kubectl scale deploy/frontend --namespace petstore --replicas=10
 ----
 +
+Expected Output:
++
 [.output]
 ....
 deployment.extensions/frontend scaled
 ....
 +
-11. Now we should again log the `cluster-autoscaler` pod and you will see it
-    update the `desired` count of instances to reflect that.
+Step 11:: Now we should again log the `cluster-autoscaler` pod and you will see it has update the `desired` count of instances to reflect that.
 +
 [source,shell]
 ----
@@ -390,9 +406,7 @@ kubectl logs -f deploy/cluster-autoscaler --namespace kube-system -f
 In the logs for this you will see the new nodes being provisioned into the
 cluster.
 +
-12. Now that you have seen this application scale up we can scale this down, but
-    prior to scale down we need to disable scale down on the node running
-    `cluster-autoscaler` so that it doesn't fail.
+Step 12:: Now that you have seen this application scale up we can scale this down, but prior to scale down we need to disable scale down on the node running `cluster-autoscaler` so that it doesn't fail.
 +
 [source,shell]
 ----
@@ -401,11 +415,7 @@ kubectl annotate node \
   cluster-autoscaler.kubernetes.io/scale-down-disabled=true
 ----
 +
-[.output]
-....
-....
-+
-To see this applied you can get the `node` `annotations` using the following.
+To see this applied you can get the `node` `annotations` using the following commanbd:
 +
 [source,shell]
 ----
@@ -417,28 +427,24 @@ kubectl get node $(kubectl get pod -n kube-system -o jsonpath="{.items[0].spec.n
 map[cluster-autoscaler.kubernetes.io/scale-down-disabled:true node.alpha.kubernetes.io/ttl:0 volumes.kubernetes.io/controller-managed-attach-detach:true]
 ....
 +
-13. Now that we have the instance cordoned from `down scaling` we can then
-    `scale` the `--replicas` to `2`
-
+Step 13:: Now that we have the instance cordoned from `down scaling` we can then `scale` the `--replicas` to `2` by issueing the folling commanbd:
 +
 [source,shell]
 ----
 kubectl scale deploy/frontend --namespace petstore --replicas=2
 ----
 +
+Expected Output:
++
 [.output]
 ....
 deployment.extensions/frontend scaled
 ....
 
+TIP: Leveraging link:https://aws.amazon.com/ec2/spot/[Amazon EC2 Spot Instances] is a perfect mechanism to scale the cluster when needed *and* do this with link:https://aws.amazon.com/pricing/cost-optimization/[Cost Optimization] in mind. You can find out more information about this from this link:https://aws.amazon.com/pricing/cost-optimization/[blog] post.
+
 ==== Horizontal Pod Autoscaling
 
-The other kind of elasticity that you have when you use Kubernete or EKS is
-Horizontal Pod AutoScaling, or HPA for short. This is a capability where HPA
-will provision more pods based on the existin pods being contrainted by some
-resource usually CPU, Memory, Request Throughput etc. As of today this doesn't
-work on EKS but will be supported very shortly.
+The other kind of elasticity that you have when you use Kubernete or EKS is Horizontal Pod AutoScaling, or HPA for short. This is a capability where HPA will provision more pods based on the existin pods being contrainted by some resource usually CPU, Memory, Request Throughput etc. As of today this doesn't work on EKS but will be supported very shortly.
 
-To get started with HPA check out the official documentation about HPA.
-link:https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/[Horizontal
-Pod Autoscaling]
+To get started with HPA check out the official documentation about link:https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/[Horizontal Pod Autoscaling]
