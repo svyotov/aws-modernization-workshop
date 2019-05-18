@@ -30,7 +30,7 @@ In this module we will take the existing applications you've deployed into your 
 
 To scale a Fargate task you will need to configure this via the console, or via the CLI. For this example we're going to go through the Console.
 
-NOTE: The following part of the module assumes a working ECS cluster, created in *Module 5 - Amazon ECS & Fargate*.
+NOTE: The following part of the module assumes a working ECS cluster, created in *Amazon ECS & Fargate* module.
 
 Step 1:: Navigate to the Petstores Services console within the link:https://console.aws.amazon.com/ecs/home#/clusters/petstore-workshop/services/petstore/details[AWS ECS Console].
 +

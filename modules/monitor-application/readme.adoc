@@ -294,7 +294,7 @@ docker rm -f $(docker ps -aq --filter "name=containerize-application")
 ////
 === Healthchecks in Amazon ECS & Fargate
 
-NOTE: The following part of the module assumes a working ECS cluster, created in *Module 5 - Amazon ECS & Fargate*.
+NOTE: The following part of the module assumes a working ECS cluster, created in the *Amazon ECS & Fargate* module.
 
 Amazon Elastic Container Service (ECS) now supports Docker container health checks. This gives you more control over monitoring the health of your tasks and improves the ability of the ECS service scheduler to ensure your services are healthy. 
 
@@ -442,7 +442,7 @@ image::ecs-task-logs.png[Task Logs]
 
 === Healthchecks in Amazon EKS
 
-NOTE: The following section of the module assumes a working EKS cluster, created in *Module 6 - Amazon EKS*.
+NOTE: The following section of the module assumes a working EKS cluster, created in the *Amazon EKS* module.
 
 By default, Kubernetes will restart a container if it crashes for any reason. It uses Liveness and Readiness probes which can be configured for running a robust application by identifying the healthy containers to send traffic to and restarting the ones when required.
 
@@ -751,7 +751,7 @@ The reason we have the ability to view our containers logs in CloudWatch is due 
 ----
 
 ==== Amazon EKS
-NOTE: The following section of the module assumes a working EKS cluster, created in *Module 6 - Amazon EKS*.
+NOTE: The following section of the module assumes a working EKS cluster, created in the *Amazon EKS* module.
 
 A typical logging patern in Kubernetes and hence EKS is to leverage a pattern known as the *EFK stack*, which is comprised of:
 

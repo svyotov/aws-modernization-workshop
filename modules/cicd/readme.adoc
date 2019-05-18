@@ -9,9 +9,9 @@
 *Expected Outcome:*
 
 * 300 level understaing of Kubernetes Continuous Deployment:
-** Create a source code repository using AWS CodeCommit
-** Configure a CI/CD pipeline using AWS CodePipeline
-** Deploy AWS CodeBuild to build your container image and push to ECS
+** Create a source code repository using AWS CodeCommit.
+** Configure a CI/CD pipeline using AWS CodePipeline.
+** Deploy AWS CodeBuild to build your container image and push to ECS.
 
 *Lab Requirements*
 
@@ -32,7 +32,7 @@ image:architecture.png[Architecture]
 
 === Setting up the CI/CD Pipeline
 
-NOTE: The following section of the module assumes a working EKS cluster, created in *Module 6 - Amazon EKS*.
+NOTE: The following section of the module assumes a working EKS cluster, created in *Amazon EKS* module.
 
 Step 0:: Role `CodePipelineServiceRole`
 [source,json]

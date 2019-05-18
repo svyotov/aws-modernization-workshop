@@ -13,7 +13,7 @@
 *Lab Requirements:*
 
 * Cloud9 IDE.
-* EKS Cluster created in *Module 2 - Getting Started*.
+* EKS Cluster created in the *Getting Started* module.
 
 *Average Lab Time:*
 20-30 minutes
