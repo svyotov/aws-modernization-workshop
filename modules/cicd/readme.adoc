@@ -3,7 +3,7 @@
 :imagesdir: ../../images
 :icons: font
 
-== Continuous Integration/Continuous Delivery (CI/CD)
+== EKS Continuous Integration/Continuous Delivery (CI/CD)
 
 ****
 *Expected Outcome:*
@@ -23,7 +23,7 @@
 ****
 
 === Introduction
-This moduleis designed to improve your undesrtanding of the link:https://aws.amazon.com/codestar/[AWS Code*] services like, link:https://aws.amazon.com/codecommit/[AWS CodeCommit], link:https://aws.amazon.com/codebuild/[AWS CodeBuild], link:https://aws.amazon.com/codepipeline/[AWS Codepipeline] and link:https://aws.amazon.com/lambda/[AWS Lambda] can be used for continuous deployment on link:https://aws.amazon.com/eks/[Amazon EKS].
+This module is designed to improve your undesrtanding of the link:https://aws.amazon.com/codestar/[AWS Code*] services like, link:https://aws.amazon.com/codecommit/[AWS CodeCommit], link:https://aws.amazon.com/codebuild/[AWS CodeBuild], link:https://aws.amazon.com/codepipeline/[AWS Codepipeline] and link:https://aws.amazon.com/lambda/[AWS Lambda] can be used for continuous deployment on link:https://aws.amazon.com/eks/[Amazon EKS].
 
 The following *Reference Architecture* details the how the above AWS services will be leveraged and the specific steps we will follow for this module.
 
@@ -34,108 +34,45 @@ image:architecture.png[Architecture]
 
 NOTE: The following section of the module assumes a working EKS cluster, created in *Amazon EKS* module.
 
-Step 0:: Role `CodePipelineServiceRole`
-[source,json]
-----
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Action": [
-                "s3:*"
-            ],
-            "Resource": [
-                "*"
-            ],
-            "Effect": "Allow"
-        },
-        {
-            "Action": [
-                "codecommit:GetBranch",
-                "codecommit:GetCommit",
-                "codecommit:UploadArchive",
-                "codecommit:GetUploadArchiveStatus",
-                "codecommit:CancelUploadArchive"
-            ],
-            "Resource": "*",
-            "Effect": "Allow"
-        },
-        {
-            "Action": [
-                "codepipeline:*",
-                "iam:ListRoles",
-                "iam:PassRole",
-                "codedeploy:CreateDeployment",
-                "codedeploy:GetApplicationRevision",
-                "codedeploy:GetDeployment",
-                "codedeploy:GetDeploymentConfig",
-                "codedeploy:RegisterApplicationRevision",
-                "lambda:*",
-                "sns:*"
-            ],
-            "Resource": "*",
-            "Effect": "Allow"
-        },
-        {
-            "Action": [
-                "codebuild:StartBuild",
-                "codebuild:StopBuild",
-                "codebuild:BatchGet*",
-                "codebuild:Get*",
-                "codebuild:List*",
-                "codecommit:GetBranch",
-                "codecommit:GetCommit",
-                "codecommit:GetRepository",
-                "codecommit:ListBranches",
-                "s3:GetBucketLocation",
-                "s3:ListAllMyBuckets"
-            ],
-            "Resource": "*",
-            "Effect": "Allow"
-        },
-        {
-            "Action": [
-                "logs:GetLogEvents"
-            ],
-            "Resource": "arn:aws:logs:*:*:log-group:/aws/codebuild/*:log-stream:*",
-            "Effect": "Allow"
-        }
-    ]
-}
-----
+To start, we need to assign a *ServiceRole* to CodePipeline, as permissions for some aspects of the pipeline execution process are granted to another role type that acts on behalf of CodePipeline, like EKS, rather than to IAM users.
 
+The Service role is an IAM role that gives CodePipeline permission to use resources in your account. Service role creation is only required the first time you create a pipeline in CodePipeline.
 
+CodePipeline uses this service role when processing revisions through the stages and actions in a pipeline. That role is configured with one or more policies that control access to the AWS resources used by the pipeline. You might want to attach additional policies to this role, edit the policy attached to the role, or configure policies for other service roles in AWS. You might also want to attach a policy to a role when configuring cross-account access to your pipeline. 
 
-
-Step 1:: Create repo
-
+Step 1:: In the Cloud9 IDE `terminal`, navigate to this modules working directory.
 +
 [source,shell]
 ----
-aws ecr create-repository --repository-name eks-cicd-demo-repo --region us-west-2
+cd ~/environment/aws-modernization-workshop/modules/cicd/
 ----
++
+Step 2:: Next we wil create the necessary Service Roles using the CloudFormation template in this modules wotking directory by running the follopwing AWS CLI command:
++
+[source,shell]
+----
+aws cloudformation create-stack --stack-name "eks-cicd-demo-roles" \
+--template-body=file://eks-cicd-roles-template.yaml \
+--capabilities CAPABILITY_IAM
+----
++
+Example Output:
 +
 [.output]
 ----
 {
-    "repository": {
-        "registryId": "<REDACTED>", 
-        "repositoryName": "eks-cicd-demo-repo", 
-        "repositoryArn": "arn:aws:ecr:us-west-2:<.REDACTED>:repository/eks-cicd-demo-repo", 
-        "createdAt": 1558127545.0, 
-        "repositoryUri": "<REDACTED>.dkr.ecr.us-west-2.amazonaws.com/eks-cicd-demo-repo"
-    }
+    "StackId": "arn:aws:cloudformation:us-west-2:<REDACTED>:stack/workshop-cicd-roles/686a6510-79b7-11e9-a777-0a58a0e3e17a"
 }
 ----
 +
-step 2:: Create repo
+Step 3:: Next we will create an AWS CodeCommit repository to store the source code for our sample EKS project. This is the source code for the application we are "developing" and will eventually push to "production" using our CI/CD Pipeline. Execute the following command in the Ckoud9 `terminal`.
 +
 [source,shell]
 ----
-aws codecommit create-repository --repository-name eks-cicd-demo-repo --repository-description "EKS CICD demonstration repository" --region us-west-2
+aws codecommit create-repository --repository-name eks-cicd-demo-repo --repository-description "EKS CICD demo application repository" --region us-west-2
 ----
 +
-Expected Output:
+Example Output:
 +
 [.output]
 ----
@@ -154,6 +91,33 @@ Expected Output:
 }
 ----
 +
+Step 4:: As we saw with the other examples in this workshop, we will need to store our demo applications' docker containers. Next, we'll create an AWS ECR respository for the application contianers by running the following command:
++ 
+[source,shell]
+----
+aws ecr create-repository --repository-name eks-cicd-demo-repo --region us-west-2
+----
++
+Example Output:
++
+[.output]
+----
+{
+    "repository": {
+        "registryId": "<REDACTED>", 
+        "repositoryName": "eks-cicd-demo-repo", 
+        "repositoryArn": "arn:aws:ecr:us-west-2:<.REDACTED>:repository/eks-cicd-demo-repo", 
+        "createdAt": 1558127545.0, 
+        "repositoryUri": "<REDACTED>.dkr.ecr.us-west-2.amazonaws.com/eks-cicd-demo-repo"
+    }
+}
+----
+
+
+[red yellow-background big]*TO BE CONTINUED*
+
+
+
 Step 3:: Commit to repo
 +
 [source,shell]
