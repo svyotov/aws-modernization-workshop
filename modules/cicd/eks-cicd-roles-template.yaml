@@ -3,48 +3,48 @@ Description: Roles for CICD module of the aws-modernization-workshop.
 Metadata: {}
 Parameters: {}
 Resources:
-#  LambdaExecutionRole:
-#    Type: 'AWS::IAM::Role'
-#    Properties:
-#      AssumeRolePolicyDocument:
-#        Version: 2012-10-17
-#        Statement:
-#          - Effect: Allow
-#            Principal:
-#              Service:
-#                - lambda.amazonaws.com
-#            Action:
-#              - 'sts:AssumeRole'
-#      Path: /
-#      Policies:
-#        - PolicyName: root
-#          PolicyDocument:
-#            Version: 2012-10-17
-#            Statement:
-#              - Effect: Allow
-#                Action:
-#                  - 'logs:CreateLogGroup'
-#                  - 'logs:CreateLogStream'
-#                  - 'logs:PutLogEvents'
-#                Resource: 'arn:aws:logs:*:*:*'
-#              - Effect: Allow
-#                Action:
-#                  - 'cloudformation:DescribeStacks'
-#                  - 'cloudformation:DescribeStackEvents'
-#                  - 'cloudformation:DescribeStackResource'
-#                  - 'cloudformation:DescribeStackResources'
-#                  - 'ec2:DescribeInstances'
-#                  - 'ec2:AssociateIamInstanceProfile'
-#                  - 'ec2:ReplaceIamInstanceProfileAssociation'
-#                  - 'iam:ListInstanceProfiles'
-#                  - 'iam:PassRole'
-#                  - 'codepipeline:*'
-#                  - 'ecr:*'
-#                Resource: '*'
-#              - Effect: Allow
-#                Action:
-#                  - 's3:*'
-#                Resource: '*'
+  LambdaExecutionRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: /
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'logs:CreateLogGroup'
+                  - 'logs:CreateLogStream'
+                  - 'logs:PutLogEvents'
+                Resource: 'arn:aws:logs:*:*:*'
+              - Effect: Allow
+                Action:
+                  - 'cloudformation:DescribeStacks'
+                  - 'cloudformation:DescribeStackEvents'
+                  - 'cloudformation:DescribeStackResource'
+                  - 'cloudformation:DescribeStackResources'
+                  - 'ec2:DescribeInstances'
+                  - 'ec2:AssociateIamInstanceProfile'
+                  - 'ec2:ReplaceIamInstanceProfileAssociation'
+                  - 'iam:ListInstanceProfiles'
+                  - 'iam:PassRole'
+                  - 'codepipeline:*'
+                  - 'ecr:*'
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - 's3:*'
+                Resource: '*'
   CodepipleServiceRole:
     Type: 'AWS::IAM::Role'
     Properties:
