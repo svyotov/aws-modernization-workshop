@@ -3,6 +3,11 @@ Description: Roles for CICD module of the aws-modernization-workshop.
 Metadata: {}
 Parameters: {}
 Resources:
+  ekscicddemobucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      VersioningConfiguration:
+        Status: Enabled
   LambdaExecutionRole:
     Type: 'AWS::IAM::Role'
     Properties:

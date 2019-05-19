@@ -65,7 +65,29 @@ Example Output:
 }
 ----
 +
-Step 3:: Next we will create an AWS CodeCommit repository to store the source code for our sample EKS project. This is the source code for the application we are "developing" and will eventually push to "production" using our CI/CD Pipeline. Execute the following command in the Ckoud9 `terminal`.
+Step 3:: As we saw with the other examples in this workshop, we will need to store our demo applications' docker containers, so next we'll create an AWS ECR respository for the application contianers by running the following command:
++ 
+[source,shell]
+----
+aws ecr create-repository --repository-name eks-cicd-demo-repo --region us-west-2
+----
++
+Example Output:
++
+[.output]
+----
+{
+    "repository": {
+        "registryId": "<REDACTED>", 
+        "repositoryName": "eks-cicd-demo-repo", 
+        "repositoryArn": "arn:aws:ecr:us-west-2:<.REDACTED>:repository/eks-cicd-demo-repo", 
+        "createdAt": 1558127545.0, 
+        "repositoryUri": "<REDACTED>.dkr.ecr.us-west-2.amazonaws.com/eks-cicd-demo-repo"
+    }
+}
+----
++
+Step 4:: Next we will create an AWS CodeCommit repository to store the source code for our sample EKS project. This is the source code for the application we are "developing" and will eventually push to "production" using our CI/CD Pipeline. Execute the following command in the Ckoud9 `terminal`.
 +
 [source,shell]
 ----
@@ -91,34 +113,7 @@ Example Output:
 }
 ----
 +
-Step 4:: As we saw with the other examples in this workshop, we will need to store our demo applications' docker containers. Next, we'll create an AWS ECR respository for the application contianers by running the following command:
-+ 
-[source,shell]
-----
-aws ecr create-repository --repository-name eks-cicd-demo-repo --region us-west-2
-----
-+
-Example Output:
-+
-[.output]
-----
-{
-    "repository": {
-        "registryId": "<REDACTED>", 
-        "repositoryName": "eks-cicd-demo-repo", 
-        "repositoryArn": "arn:aws:ecr:us-west-2:<.REDACTED>:repository/eks-cicd-demo-repo", 
-        "createdAt": 1558127545.0, 
-        "repositoryUri": "<REDACTED>.dkr.ecr.us-west-2.amazonaws.com/eks-cicd-demo-repo"
-    }
-}
-----
-
-
-[red yellow-background big]*TO BE CONTINUED*
-
-
-
-Step 3:: Commit to repo
+Step 5:: Next we will commit out sample application to the CodeCommit reposutory created above, by running the following commands:
 +
 [source,shell]
 ----
@@ -128,21 +123,66 @@ git config --global credential.UseHttpPath true
 
 git clone https://git-codecommit.us-west-2.amazonaws.com/v1/repos/eks-cicd-demo-repo
 
-cp aws-eks-cicd-essentials/sample-app/* eks-cicd-demo-repo/
+cp ./sample-app/* eks-cicd-demo-repo/
 
 cd eks-cicd-demo-repo
 
-git add . && git commit -m "initial commit ofsample app" && git push origin master
+git add . && git commit -m "initial commit of sample app" && git push origin master
 ----
 +
-Step 4:: Create pipeline
+Step 6:: Now that we have a place to store our docker container, a source code repository and the necessary Service roles, we can create our CI/CD Pipeline. Open a broweser tab and navigate to the link:https://us-west-2.console.aws.amazon.com/codesuite/codepipeline/pipelines[AWS CodePipeline] Service Console. Click on *Create pipeline*.
 +
-BLAH BLAH
+image:create-pipeline.png[Create Pipeline]
 +
-Step 5:: Add build stage
+Step 7:: After the *Create new pipline* wizard opens, the first step is to configure the *Pipeline settings*. Enter `EKS-CICD-Demo` as the *Pipeline name*. Select *Existing service role* and from the drop-down, select the IAM role we created in *Step 2*.
 +
-BLAH BLAH BLAH
+NOTE: The *Role name* should start with `eks-cicd-demo-roles-CodepipleServiceRole-...`.
 +
+Step 8:: Under *Artifact store*, click *Custom location*. From the *Bucket* drop-down list, select the S3 Buvket created in *Step 2*.
++
+NOTE: The *Bucket* name should start with `eks-cicd-demo-roles-ekscicddemobucket-...`.
++
+Step 9:: Click on *Next* to continue.
++
+image:pipeline-settings.png[Pipeline Settings]
++
+Step 10:: Next we'll configure the *Source stage*. Click the drop-down and select *AWS CodeComkit* as the *Source provider*.
++
+Step 11:: For the *Repository name*, click the drop-down to select the repository we created in *Step 4*, `eks-cicd-demo-repo`.
++
+Step 12:: Select the `master` branch from the drop-down for *Brnach name*.
++
+Step 13:: Kepp the default recommended setting for *Change detection options* as *Amazon CloudWatch* and click *Next*.
++
+image:pipeline-source.png[Pipeline Source]
++
+Step 14:: Now we configure the *Build stage*. Click the drop-down and select *AWS CodeBuild* and then click the *Create project* link to create a new CodeBuild project.
++
+image:create-project.png[Create Build]
++
+Step 15:: A new browser window will open to create a new build project. Under the *Project configuration* section, enter `eks-build-project` as the *Project name* and provide an option *Description*.
++
+image:build-project.png[Project Name]
++
+TIP: Even though it's not required for this workshop, it's always a good practice to tag your AWS resources for _Cost Allocation_, _Access Control_, _Business Organization_ and _Automation_. You can read more about Tagging Strategies link:https://aws.amazon.com/answers/account-management/aws-tagging-strategies/[here].
++
+Step 16:: Under the *Environment* section, ensure that *Managed image* is selected.
++
+Step 17:: From the *Operating system* drop-down box, select *Ubuntu*.
++
+Step 18:: Leave the *Runtime* as *Standard* and ensure that the you select `aws/codebuild/standard:2.0` as the *Image*.
++
+Step 19:: For the *Service role*, select *Existing service role* and choose the role we created in *Step 2*.
++
+NOTE: The *Role name* should start with `eks-cicd-demo-roles-CodeBuildServiceRole-...`.
++
+Step 20:: Uncheck the *Allow AWS CodeBuild to modify this service role* check-box.
++
+image:build-environment.png[Build Environment]
+
+[red yellow-background big]*TO BE CONTINUED*
+
+
 Step 6:: Lambda client for Kubernetes
 +
 [source,shell]
