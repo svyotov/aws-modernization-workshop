@@ -201,7 +201,27 @@ image:build-complete.png[Build Complete]
 +
 Step 18:: Click *Skip deploy stage* and confirm.
 +
-NOTE: We will not create a *Deployment Stage* to our pipeline because we will leverage an AWS Lambda function to act as a Kubernetes client to deploy our aplication.
+NOTE: We will not create a *Deployment Stage* to our pipeline because we will leverage an link:version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      docker: 18
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...          
+      - docker build -t $IMAGE_REPO_NAME:latest .
+      - docker tag $IMAGE_REPO_NAME:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:latest
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker image...
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:latest[AWS Lambda] function to act as a Kubernetes client to deploy our aplication.
 +
 image:skip-deployment.png[Skip Deploy Stage]
 +
@@ -209,8 +229,18 @@ Setp 19:: Review the CodePipeline configuration and click *Create Pipeline*.
 +
 image:pipeline-success.png[Build Complete]
 
+==== Deploying the Application to EKS
+Now that we have created and tested the build of our pipeline in CodePipeline, we will next create an AWS Lambda function to as as a Kubernetes client and deploy the application to EKS.
 
+Step 1:: Let's get started setting up the lambda function by first ensuring we are the paret of the modules' working directory. In the Cloud9 IDE `terminal`, run the following command:
++
 [red yellow-background big]*TO BE CONTINUED*
++
+[source,shell]
+----
+
+----
+
 
 
 Step 6:: Lambda client for Kubernetes
