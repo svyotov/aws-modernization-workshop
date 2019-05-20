@@ -6,9 +6,6 @@
 # Set base image to python
 FROM python:3.5
 
-# File Author / Maintainer
-MAINTAINER Karthik T
-
 # Copy source file and python req's
 COPY hello.py /usr/src/app/
 COPY requirements.txt /
