@@ -212,29 +212,31 @@ image:pipeline-success.png[Build Complete]
 ==== Deploying the Application to EKS
 Now that we have created and tested the build of our pipeline in CodePipeline, we will next create an AWS Lambda function to as as a Kubernetes client and deploy the application to EKS.
 
-Step 1:: Let's get started setting up the lambda function by first ensuring we are the paret of the modules' working directory. In the Cloud9 IDE `terminal`, run the following command:
+Step 1:: Let's get started setting up the lambda function by first ensuring we are using this part of the modules' working directory. In the Cloud9 IDE `terminal`, run the following command:
 +
 [source,shell]
 ----
+cd ~/environment/aws-modernization-workshop/modules/cicd/lambda-eks
+----
++
+Step 2:: Next we will add some of our EKS parameters to the lambda configuration, by running the following commands:
++
+NOTE: Running the above command assumes a working EKS cluster, called `petstore`, created in *Amazon EKS* module.
++
+[source,shell]
+----
+sed -i -e "s#\$EKS_CA#$(aws eks describe-cluster --name petstore --query cluster.certificateAuthority.data --output text)#g" ./config
 
+sed -i -e "s#\$EKS_CLUSTER_HOST#$(aws eks describe-cluster --name k8s-workshop --query cluster.endpoint --output text)#g" ./config
+
+sed -i -e "s#\$EKS_CLUSTER_NAME#k8s-workshop#g" ./config
+
+sed -i -e "s#\$EKS_CLUSTER_USER_NAME#lambda#g" ./config
 ----
 
 [red yellow-background big]*TO BE CONTINUED*
 
-Step 6:: Lambda client for Kubernetes
-+
-[source,shell]
-----
-cd ..
-git clone https://github.com/BranLiang/lambda-eks
-cd lambda-eks
 
-sed -i -e "s#\$EKS_CA#$(aws eks describe-cluster --name k8s-workshop --query cluster.certificateAuthority.data --output text)#g" ./config
-sed -i -e "s#\$EKS_CLUSTER_HOST#$(aws eks describe-cluster --name k8s-workshop --query cluster.endpoint --output text)#g" ./config
-sed -i -e "s#\$EKS_CLUSTER_NAME#k8s-workshop#g" ./config
-sed -i -e "s#\$EKS_CLUSTER_USER_NAME#lambda#g" ./config
-----
-+
 Step 7:: Check secrets
 +
 [source,shell]
