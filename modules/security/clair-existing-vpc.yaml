@@ -28,6 +28,7 @@ Parameters:
     Description: The initial Clair RDS Password.
     NoEcho: true
     Type: String
+    Default: Passw0rd
   ClairImage:
     Default: 'jasonumiker/clair:latest'
     Description: The Clair container image to deploy.
