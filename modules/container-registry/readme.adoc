@@ -47,7 +47,7 @@ aws cloudformation create-stack \
   --capabilities CAPABILITY_NAMED_IAM
 ----
 
-Step 3:: Wait for the Template to finish deploying
+Step 3:: Wait for the Template to finish deploying.
 
 [source,shell]
 ----
