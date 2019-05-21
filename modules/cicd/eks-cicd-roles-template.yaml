@@ -159,4 +159,8 @@ Resources:
                   - 'ssm:GetParameters'
                 Resource:
                   - '*'
-Outputs: {}
+Outputs:
+  LambdaExecutionRoleArn:
+    Value: !GetAtt
+      - LambdaExecutionRole
+      - Arn
