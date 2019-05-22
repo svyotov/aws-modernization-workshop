@@ -24,9 +24,9 @@ NOTE: If you do not have access to an AWS Account, please see the AWS Instructor
 
 === Create the Workshop environment using CloudFormation
 
-Ensure that you have the appropriate permissions to provision resources in your AWS account. Then, log into the AWS account provided to you and click *Deplot to AWS*:
+Ensure that you have the appropriate permissions to provision resources in your AWS account. Then, log into the AWS account provided to you and click *Deploy to AWS*:
 
-image:deploy-to-aws.png["Deploy to AWS", role,="right", link="https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/create/review?stackName=AWSModernizationWorkshop&templateURL=https://s3-us-west-2.amazonaws.com/modernization-workshop-west-2/create-environment/templates/workshop_env_master.yaml"]
+image:deploy-to-aws.png["Deploy to AWS",align="left",link="https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/create/review?stackName=AWSModernizationWorkshop&templateURL=https://s3-us-west-2.amazonaws.com/modernization-workshop-west-2/create-environment/templates/workshop_env_master.yaml"]
 
 ****
 The CloudFormation Template will create the following resources in your AWS Account:
