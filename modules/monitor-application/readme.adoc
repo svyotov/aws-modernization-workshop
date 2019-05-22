@@ -799,7 +799,7 @@ cat <<EoF > /tmp/eks-logs-policy.json
 }
 EoF
 
-aws iam put-role-policy --role-name $ROLE_NAME --policy-name Logs-Policy-For-Worker --policy-document file://tmp/eks-logs-policy.json
+aws iam put-role-policy --role-name $ROLE_NAME --policy-name Logs-Policy-For-Worker --policy-document file:///tmp/eks-logs-policy.json
 ----
 +
 Steo 3:: Validate that the policy has been attached to the worker node role.
@@ -1015,4 +1015,4 @@ Now we can see all the logs for the various containers in our `kube-system`.
 +
 image:cw-streams.png[CloudWatch Streams]
 
-This conludes the *Application Monitoring* module. Please contonue to the next module.
+This conludes the *Application Monitoring* module. Please continue to the next module.
