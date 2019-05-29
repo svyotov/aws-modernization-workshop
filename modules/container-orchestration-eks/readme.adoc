@@ -74,7 +74,7 @@ items:
     capacity:
       storage: 20Gi
     accessModes:
-      - ReadWriteOnce
+      - ReadWriteMany
     hostPath:
       path: "/mnt/data"
 
@@ -86,7 +86,7 @@ items:
   spec:
     storageClassName: gp2
     accessModes:
-      - ReadWriteMany
+      - ReadWriteOnce
     resources:
       requests:
         storage: 20Gi
@@ -120,7 +120,7 @@ items:
           app: postgres
       spec:
         containers:
-        - image: <YourAccountID>.dkr.ecr.us-west-2.amazonaws.com/petstore_postgres:latest
+        - image: <YourAccountID>.dkr.ecr.us-west-2.amazonaws.com/<UserName>-petstore_postgres:latest
           name: postgres
           env:
           - name: POSTGRES_PASSWORD
@@ -177,13 +177,13 @@ items:
       spec:
         initContainers:
         - name: init-frontend
-          image: <YourAccountID>.dkr.ecr.us-west-2.amazonaws.com/petstore_postgres:latest
+          image: <YourAccountID>.dkr.ecr.us-west-2.amazonaws.com/<UserName>-petstore_postgres:latest
           command: ['sh', '-c',
                     'until pg_isready -h postgres.petstore.svc -p 5432;
                     do echo waiting for database; sleep 2; done;']
         containers:
         - name: frontend
-          image: <YourAccountID>.dkr.ecr.us-west-2.amazonaws.com/petstore_frontend:latest
+          image: <YourAccountID>.dkr.ecr.us-west-2.amazonaws.com/<UserName>-petstore_frontend:latest
           resources:
             requests:
               memory: "512m"
@@ -206,17 +206,20 @@ items:
             value: admin
           - name: DB_PASS
             value: password
+
 ----
 +
 NOTE: Amazon EKS clusters that were created prior to Kubernetes version 1.11 were not created with any storage classes. Since we are running the version `1.12`, the default `StorageClass` has already been set to link:https://aws.amazon.com/ebs/[Amazon Elastic Block Store (EBS)]. Therefore there is no `StorageClass` definition int he `petstore-eks-manifest.yaml` file.
 +
-Step 4:: Close the `petstore-eks-manifest.yaml`. Run the following commands in the Cloud9 IDE `terminale` to replace the *<YourAccountID>* placeholders with your AWS Account ID.
+Step 4:: Close the `petstore-eks-manifest.yaml`. Run the following commands in the Cloud9 IDE `terminale` to replace the *<YourAccountID>* and *<UserName>* placeholders with your AWS Account ID.
 +
 [source,shell]
 ----
 ACCOUNT_ID=$(aws sts get-caller-identity --output text --query 'Account')
 
 sed -i "s/<YourAccountID>/${ACCOUNT_ID}/" petstore-eks-manifest.yaml
+
+sed -i "s/<UserName>/${User_Name}/" petstore-eks-manifest.yaml
 ----
 +
 Step 5:: Apply your manifest by running this command in your Cloud9 IDE `terminal`:

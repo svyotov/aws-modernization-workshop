@@ -313,33 +313,15 @@ Step 2:: Add the healthcheck values to the `postgres` and `petstore` sections of
 {
   "family": "petstore",
   "networkMode": "awsvpc",
-  "containerDefinitions": [{
-      "name": "postgres",
-      "image": "<YourAccountID>.dkr.ecr.us-west-2.amazonaws.com/petstore_postgres:latest",
-      "cpu": 512,
-      "memoryReservation": 1024,
-      "environment": [{
-          "name": "POSTGRES_DB",
-          "value": "petstore"
-        },
-        {
-          "name": "POSTGRES_USER",
-          "value": "admin"
-        },
-        {
-          "name": "POSTGRES_PASSWORD",
-          "value": "password"
-        }
-      ],
-      "portMappings": [{
-        "containerPort": 5432
-      }],
+
+...
+
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "petstore",
+          "awslogs-group": "<UserName>-petstore",
           "awslogs-region": "us-west-2",
-          "awslogs-stream-prefix": "petstore/postgres"
+          "awslogs-stream-prefix": "<UserName>-petstore/postgres"
         }
       },
       "healthCheck": {
@@ -351,46 +333,15 @@ Step 2:: Add the healthcheck values to the `postgres` and `petstore` sections of
   
       }
     },
-    {
-      "name": "petstore",
-      "image": "<YourAccountID>.dkr.ecr.us-west-2.amazonaws.com/petstore_frontend:latest",
-      "cpu": 512,
-      "memoryReservation": 1024,
-      "environment": [
-        {
-          "name": "DB_HOST",
-          "value": "127.0.0.1"
-        },
-        {
-          "name": "DB_NAME",
-          "value": "petstore"
-        },
-        {
-          "name": "DB_PASS",
-          "value": "password"
-        },
-        {
-          "name": "DB_PORT",
-          "value": "5432"
-        },
-        {
-          "name": "DB_URL",
-          "value": "jdbc:postgresql://127.0.0.1:5432/petstore?ApplicationName=applicationPetstore"
-        },
-        {
-          "name": "DB_USER",
-          "value": "admin"
-        }
-      ],
-      "portMappings": [{
-        "containerPort": 8080
-      }],
+
+...
+
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "petstore",
+          "awslogs-group": "<UserName>-petstore",
           "awslogs-region": "us-west-2",
-          "awslogs-stream-prefix": "petstore/frontend"
+          "awslogs-stream-prefix": "<UserName>-petstore/frontend"
         }
       },
       "healthCheck": {
@@ -399,17 +350,8 @@ Step 2:: Add the healthcheck values to the `postgres` and `petstore` sections of
         "timeout": 5,
         "retries": 2,
         "startPeriod": 300
-  
-      }
-    }
-  ],
-  "executionRoleArn": "arn:aws:iam::<YourAccountID>:role/petstoreExecutionRole",
-  "requiresCompatibilities": [
-    "FARGATE"
-  ],
-  "cpu": "1 vcpu",
-  "memory": "2 gb"
-}
+
+...
 ----
 +
 Step 3:: Save the `petstore-fargate-task-definition.json` file.
@@ -423,14 +365,14 @@ Step 4:: Update the petstore task definition from the JSON file by running this 
 aws ecs register-task-definition --cli-input-json file://~/environment/aws-modernization-workshop/modules/container-orchestration-ecs/petstore-fargate-task-definition.json
 ----
 +
-Step 5:: Update the `petstore` service in the `petstore-workshop` cluster with the latest version of the `petstore` task definition by running the below command. This will also pull the latest version of the petstore_frontend container we uploaded previously.
+Step 5:: Update the `petstore` service in the `[red yellow-background]#<User Name>#-petstore-workshop` cluster with the latest version of the `petstore` task definition by running the below command. This will also pull the latest version of the petstore_frontend container we uploaded previously.
 +
 [source,shell]
 ----
-aws ecs update-service --cluster petstore-workshop --service petstore --task-definition petstore --region us-west-2
+aws ecs update-service --cluster ${User_Name}-petstore-workshop --service petstore --task-definition petstore --region us-west-2
 ----
 + 
-Replacing the older version of your task will take a couple of minutes. To view the status navigate back to the `petstore-workshop` cluster created in a previous module and view the *petstore* service to view your tasks. You should see the new task being scheduled but you will have to wait for your task to transition to *RUNNING*.
+Replacing the older version of your task will take a couple of minutes. To view the status navigate back to the `[red yellow-background]#<User Name>#-petstore-workshop` cluster created in a previous module and view the *petstore* service to view your tasks. You should see the new task being scheduled but you will have to wait for your task to transition to *RUNNING*.
 +
 Step 6:: Once the *petstore* service is *RUNNING*, click on task. You will notice this version of the task should have a *Health Status* of *HEALTHY*. This is due to the new healthchecks we added to our task definition earlier. An example is hown below:
 +
@@ -510,10 +452,10 @@ kubectl get pod liveness-app
 Expected Output:
 +
 [.output]
-----
+....
 NAME           READY   STATUS    RESTARTS   AGE
 liveness-app   1/1     Running   0          6s
-----
+....
 +
 NOTE: The number of `RESTARTS` is `0`.
 +
@@ -703,7 +645,7 @@ TIP: Our Liveness Probe example used `HTTP` request and Readiness Probe executed
 ==== Amazon ECS
 As you are inspecting the properties of your task, each container in the task should have a link under *Log Configuration* that says `Log driver: awslogs View logs in CloudWatch`. To navigate to this link, open the link:https://us-west-2.console.aws.amazon.com/ecs/[Amazon ECS] service console and click *Clusters*. 
 
-Step 1:: Select the `petstore-workshop` cluster and click on the *Tasks* tab. Select the *Running* task.
+Step 1:: Select the `[red yellow-background]#<User Name>#-petstore-workshop` cluster and click on the *Tasks* tab. Select the *Running* task.
 +
 image:ecs-task.png[Running Task]
 +
@@ -728,9 +670,9 @@ The reason we have the ability to view our containers logs in CloudWatch is due 
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "petstore",
+          "awslogs-group": "<UserName>-petstore",
           "awslogs-region": "us-west-2",
-          "awslogs-stream-prefix": "petstore/postgres"
+          "awslogs-stream-prefix": "<UserName>-petstore/postgres"
         }
 
 ...
@@ -742,7 +684,7 @@ The reason we have the ability to view our containers logs in CloudWatch is due 
 ----
 ...
 
-  "executionRoleArn": "arn:aws:iam::<YourAccountID>:role/petstoreExecutionRole",
+  "executionRoleArn": "arn:aws:iam::<YourAccountID>:role/<UserName>-petstoreExecutionRole",
   "requiresCompatibilities": [
     "FARGATE"
   ],
@@ -769,7 +711,7 @@ INSTANCE_PROFILE_NAME=$(aws iam list-instance-profiles | jq -r '.InstanceProfile
 
 INSTANCE_PROFILE_ARN=$(aws iam get-instance-profile --instance-profile-name $INSTANCE_PROFILE_NAME | jq -r '.InstanceProfile.Arn')
 
-ROLE_NAME=$(aws iam get-instance-profile --instance-profile-name $INSTANCE_PROFILE_NAME | jq -r '.InstanceProfile.Roles[] | .RoleName')
+ROLE_NAME=${User_Name}-$(aws iam get-instance-profile --instance-profile-name $INSTANCE_PROFILE_NAME | jq -r '.InstanceProfile.Roles[] | .RoleName')
 
 echo "export ROLE_NAME=${ROLE_NAME}" >> ~/.bash_profile
 
@@ -1007,7 +949,7 @@ kube-proxy-r84rb           1/1     Running   0          4h
 +
 Step 7:: Now we can view the CloudWatch log streams for the containers in our `kube-system`. To do this, open a browser tab and navigate to the link:https://us-west-2.console.aws.amazon.com/cloudwatch/[CloudWatch Console] and click *Logs* in the navigation pane. All the CloudWatch Log Groups will be displayed.
 +
-Step 8:: In the *Filter:* box, enter `eks` and press `[ENTER]` to filter the Log Group for our EKS cluster. Click on the `/eks/petstore/containers` Log Group.
+Step 8:: In the *Filter:* box, enter `eks` and press `[ENTER]` to filter the Log Group for our EKS cluster. Click on the `/eks/[red yellow-background]#<User Name>#-petstore/containers` Log Group.
 +
 image:cw-logs.png[Log Group]
 +

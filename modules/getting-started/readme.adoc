@@ -24,25 +24,38 @@ In order for you to succeed in this workshop, we need you to run through a few s
 
 image::cloud9-launch.png[Ope IDE]
 
+=== Update IAM User Name Settings
+
+Throughout the workshop you will be tagging and naming resources that you create, in order to differentiate your resources from the other workshop attendess. Since the majority of the AWS resources being created will leverage the *AWS CLI*, we will automatically create a variable to substiture the *IAM User* name into these commands. Create `User_Name` variable by running the following command, substituting your [red yellow-background]#<User Name>#:
+[source,shell]
+----
+export User_Name=<User_Name>
+
+echo "export User_Name=$User_Name" >> ~/.bashrc
+
+source ~/.bashrc
+----
+
+
 === Update and install the necessary tools
 
-The first step is to update the `AWS CLI` and `pip` packages, as well as other pre-installed packages. Open a new `terminal` by pressing the combination keys `[alt + t]` (Windows/Linux) or `[⌥ + t]` (Mac OS). Once the new `terminal` is open, run the following commands:
+Now update the `AWS CLI` and `pip` packages, as well as other pre-installed packages. Open a new `terminal` by pressing the combination keys `[alt + t]` (Windows/Linux) or `[⌥ + t]` (Mac OS). Once the new `terminal` is open, run the following commands:
 [source,shell]
-****
+----
 sudo yum update -y && \
 sudo yum install -y jq gettext && \
 pip install --upgrade --user awscli pip
 
 exec $SHELL
-****
+----
 
 === Configure the AWS Environment
 
 After you have the installed the latest `awscli` and `pip` we need to configure our environment further.
 [source,shell]
-****
+----
 aws configure set region us-west-2
-****
+----
 
 === Update the IAM Instance Profile
 
@@ -55,11 +68,11 @@ image::cloud9-credentials.png[Cloud9 Managed Credentials]
 === Clone the source repository for this workshop.
 Now we want to clone the repository that contains all the content and files you need to complete this workshop.
 [source,shell]
-****
+----
 cd ~/environment
 
 git clone https://github.com/darkreapyre/aws-modernization-workshop.git
-****
+----
 
 === Installing 3rd Party CLIs
 During the workshop we will be using a couple of 3^rd^ party CLI tools like `eksctl` to configure our EKS cluster, and `kubectl` to interact with our Kubernetes cluster. Follow the steps below to ensure that these tools have been installed:
@@ -107,9 +120,9 @@ NOTE: When prompted to enter a passphrase, press [ENTER]
 Step 2::
 Now that we have the key, let's launch the EKS Cluster.
 [source,shell]
-****
-eksctl create cluster --full-ecr-access --name=**[red yellow-background]#<User Name>#**-petstore --nodes-min=2 --nodes-max=4
-****
+----
+eksctl create cluster --full-ecr-access --name=${User_Name}-petstore --nodes-min=2 --nodes-max=4
+----
 
 Step 3::
 You can expect to see an output like the one below...

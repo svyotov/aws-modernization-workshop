@@ -33,49 +33,45 @@ CloudFormation creates the following resources:
 ****
 
 Step 1:: Using the Cloud9 `terminal`, change to this modules' directory by running:
++
 [source,shell]
 ----
 cd ~/environment/aws-modernization-workshop/modules/container-registry
 ----
-
-Step 2:: Deploy the CloudFormation template using the `aws cli` tool. 
++
+Step 2:: Using the the left-hand navigation pane of the Cloud9 IDE, open the `petstore-ecr-cf-resources.yaml` file. Replace [red yellow-background]#<User Name># with your AWS IAM user name and save the file.
++
+Step 3:: Deploy the CloudFormation template using the `aws cli` tool. 
++
 [source,shell]
 ----
-aws cloudformation create-stack \
-  --stack-name "petstore-ecr" \
-  --template-body file://petstore-ecr-cf-resources.yaml \
-  --capabilities CAPABILITY_NAMED_IAM
+aws cloudformation create-stack --stack-name "${User_Name}-petstore-ecr" --template-body file://petstore-ecr-cf-resources.yaml --capabilities CAPABILITY_NAMED_IAM
 ----
-
++
 Step 3:: Wait for the Template to finish deploying.
-
-[source,shell]
-----
-until [[ `aws cloudformation describe-stacks --stack-name "petstore-ecr" --query "Stacks[0].[StackStatus]" --output text` == "CREATE_COMPLETE" ]]; do  echo "The stack is NOT in a state of CREATE_COMPLETE at `date`";   sleep 30; done && echo "The Stack is built at `date` - Please proceed"
-----
 
 ===== Pushing the Petstore images to Amazon Elastic Container Registry (ECR)
 
 Before we can deploy our Petstore application to an orchestrator, we need to push our Petstore images to *ECR*. 
 
 Step 1:: Log into your Amazon ECR registry using the helper provided by the AWS CLI.
-
++
 [source,shell]
 ----
 eval $(aws ecr get-login --no-include-email)
 ----
-
++
 NOTE: Ignore any `WARNNING` messages.
-
++
 Step 2:: Use the AWS CLI to get information about the two Amazon ECR repositories that were created for you by the CloudFormation template. One repository will be for the Petstore PostgreSQL backend and the other will be for the Petstore web frontend.
-
++
 [source,shell]
 ----
-aws ecr describe-repositories --repository-name petstore_postgres petstore_frontend
+aws ecr describe-repositories --repository-name ${USsere_Name}-petstore_postgres ${User_Name}-petstore_frontend
 ----
-
++
 Expceted output:
-
++
 [.output]
 ....
 {
@@ -83,30 +79,30 @@ Expceted output:
         {
             "registryId": "123456789012",
             "repositoryName": "petstore_postgres",
-            "repositoryArn": "arn:aws:ecr:us-west-2:123456789012:repository/petstore_postgres",
+            "repositoryArn": "arn:aws:ecr:us-west-2:123456789012:repository/<User Name>-petstore_postgres",
             "createdAt": 1533757748.0,
-            "repositoryUri": "123456789012.dkr.ecr.us-west-2.amazonaws.com/petstore_postgres"
+            "repositoryUri": "123456789012.dkr.ecr.us-west-2.amazonaws.com/<User NAme>-petstore_postgres"
         },
         {
             "registryId": "123456789012",
             "repositoryName": "petstore_frontend",
-            "repositoryArn": "arn:aws:ecr:us-west-2:123456789012:repository/petstore_frontend",
+            "repositoryArn": "arn:aws:ecr:us-west-2:123456789012:repository/<User Name>-petstore_frontend",
             "createdAt": 1533757751.0,
-            "repositoryUri": "123456789012.dkr.ecr.us-west-2.amazonaws.com/petstore_frontend"
+            "repositoryUri": "123456789012.dkr.ecr.us-west-2.amazonaws.com/<User Name>-petstore_frontend"
         }
     ]
 }
 ....
-
++
 Step 3:: Verify that your Docker images exist by running the docker images command.
-
++
 [source,shell]
 ----
 docker images
 ----
-
++
 Expected Output:
-
++
 [.output]
 ....
 REPOSITORY                          TAG                 IMAGE ID            CREATED             SIZE
@@ -120,26 +116,27 @@ lambci/lambda                       nodejs8.10          edf1f613772c        4 we
 jboss/wildfly                       11.0.0.Final        a12aa93a45f7        3 months ago        700MB
 maven                               3.5-jdk-7           5f03adaf2bbf        7 months ago        483MB
 ....
-
++
 Step 4:: Tag the local docker images with the locations of the remote ECR repositories we created using our CloudFormation template. 
-
++
 [source,shell]
 ----
-docker tag postgres:9.6 $(aws ecr describe-repositories --repository-name petstore_postgres --query=repositories[0].repositoryUri --output=text):latest
+docker tag postgres:9.6 $(aws ecr describe-repositories --repository-name ${User_Name}-petstore_postgres --query=repositories[0].repositoryUri --output=text):latest
 
-docker tag containerize-application_petstore:latest $(aws ecr describe-repositories --repository-name petstore_frontend --query=repositories[0].repositoryUri --output=text):latest
+docker tag containerize-application_petstore:latest $(aws ecr describe-repositories --repository-name ${User_Name}-petstore_frontend --query=repositories[0].repositoryUri --output=text):latest
 ----
-
++
 Step 5:: Once the images have been tagged, push them to the remote repository.
-
++
 [source,shell]
 ----
-docker push $(aws ecr describe-repositories --repository-name petstore_postgres --query=repositories[0].repositoryUri --output=text):latest
+docker push $(aws ecr describe-repositories --repository-name ${User_Name}-petstore_postgres --query=repositories[0].repositoryUri --output=text):latest
 
-docker push $(aws ecr describe-repositories --repository-name petstore_frontend --query=repositories[0].repositoryUri --output=text):latest
+docker push $(aws ecr describe-repositories --repository-name ${User_Name}-petstore_frontend --query=repositories[0].repositoryUri --output=text):latest
 ----
-
++
 You should see the Docker images being pushed with an output similar to this:
++
 [.output]
 ....
 The push refers to repository [123456789012.dkr.ecr.us-west-2.amazonaws.com/petstore_postgres]

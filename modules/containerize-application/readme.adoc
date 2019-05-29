@@ -24,7 +24,6 @@ The Pet Store application is a Java 7 based application that runs on top of the 
 
 ==== Building the Dockerfile
 
-
 image:docker-image.png[Docker Image]
 
 Step 1:: To get started, switch to the `containerize-application` folder within this repository.
@@ -135,6 +134,7 @@ CMD [ "-b", "0.0.0.0", "-bmanagement", "0.0.0.0" ]
 For this workshop we use the tool `docker-compose` to simulate a full-stack development environment that consists of multiple containers communicating with each other. 
 
 Step 1:: Download the docker-compose binary by using the `terminal`.
++
 [source,shell]
 ----
 sudo curl -kLo ~/bin/docker-compose https://github.com/docker/compose/releases/download/1.24.0/docker-compose-$(uname -s)-$(uname -m)
@@ -143,9 +143,9 @@ sudo chmod +x ~/bin/docker-compose
 
 exec $SHELL
 ----
-
++
 Next, we need to define how our application will run. We do this by defining the structure of our application and it's dependencies in a `docker-compose.yml` file. This file contains the complete environment required for our application. 
-
++
 Step 2:: Open the file called `docker-compose.yml`. Let's review the contents. To start your file should look like this:
 +
 [.output]

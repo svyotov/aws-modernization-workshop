@@ -3,7 +3,7 @@
   "networkMode": "awsvpc",
   "containerDefinitions": [{
       "name": "postgres",
-      "image": "<YourAccountID>.dkr.ecr.us-west-2.amazonaws.com/petstore_postgres:latest",
+      "image": "<YourAccountID>.dkr.ecr.us-west-2.amazonaws.com/<UserName>-petstore_postgres:latest",
       "cpu": 512,
       "memoryReservation": 1024,
       "environment": [{
@@ -25,15 +25,15 @@
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "petstore",
+          "awslogs-group": "<UserName>-petstore",
           "awslogs-region": "us-west-2",
-          "awslogs-stream-prefix": "petstore/postgres"
+          "awslogs-stream-prefix": "<UserName>-petstore/postgres"
         }
       }
     },
     {
       "name": "petstore",
-      "image": "<YourAccountID>.dkr.ecr.us-west-2.amazonaws.com/petstore_frontend:latest",
+      "image": "<YourAccountID>.dkr.ecr.us-west-2.amazonaws.com/<UserName>-petstore_frontend:latest",
       "cpu": 512,
       "memoryReservation": 1024,
       "environment": [
@@ -68,14 +68,14 @@
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "petstore",
+          "awslogs-group": "<UserName>-petstore",
           "awslogs-region": "us-west-2",
-          "awslogs-stream-prefix": "petstore/frontend"
+          "awslogs-stream-prefix": "<UserName>-petstore/frontend"
         }
       }
     }
   ],
-  "executionRoleArn": "arn:aws:iam::<YourAccountID>:role/petstoreExecutionRole",
+  "executionRoleArn": "arn:aws:iam::<YourAccountID>:role/<UserName>-petstoreExecutionRole",
   "requiresCompatibilities": [
     "FARGATE"
   ],
