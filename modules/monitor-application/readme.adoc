@@ -369,7 +369,7 @@ Step 5:: Update the `petstore` service in the `[red yellow-background]#<User Nam
 +
 [source,shell]
 ----
-aws ecs update-service --cluster ${User_Name}-petstore-workshop --service petstore --task-definition petstore --region us-west-2
+aws ecs update-service --cluster ${USER_NAME}-petstore-workshop --service petstore --task-definition petstore --region us-west-2
 ----
 + 
 Replacing the older version of your task will take a couple of minutes. To view the status navigate back to the `[red yellow-background]#<User Name>#-petstore-workshop` cluster created in a previous module and view the *petstore* service to view your tasks. You should see the new task being scheduled but you will have to wait for your task to transition to *RUNNING*.
@@ -711,7 +711,7 @@ INSTANCE_PROFILE_NAME=$(aws iam list-instance-profiles | jq -r '.InstanceProfile
 
 INSTANCE_PROFILE_ARN=$(aws iam get-instance-profile --instance-profile-name $INSTANCE_PROFILE_NAME | jq -r '.InstanceProfile.Arn')
 
-ROLE_NAME=${User_Name}-$(aws iam get-instance-profile --instance-profile-name $INSTANCE_PROFILE_NAME | jq -r '.InstanceProfile.Roles[] | .RoleName')
+ROLE_NAME=${USER_NAME}-$(aws iam get-instance-profile --instance-profile-name $INSTANCE_PROFILE_NAME | jq -r '.InstanceProfile.Roles[] | .RoleName')
 
 echo "export ROLE_NAME=${ROLE_NAME}" >> ~/.bash_profile
 

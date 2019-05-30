@@ -219,7 +219,7 @@ ACCOUNT_ID=$(aws sts get-caller-identity --output text --query 'Account')
 
 sed -i "s/<YourAccountID>/${ACCOUNT_ID}/" petstore-eks-manifest.yaml
 
-sed -i "s/<UserName>/${User_Name}/" petstore-eks-manifest.yaml
+sed -i "s/<UserName>/${USER_NAME}/" petstore-eks-manifest.yaml
 ----
 +
 Step 5:: Apply your manifest by running this command in your Cloud9 IDE `terminal`:

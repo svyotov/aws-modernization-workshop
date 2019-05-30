@@ -11,15 +11,7 @@ modules:
     name: Amazon ECS & Fargate
   modules_container-orchestration-eks_readme:
     name: Amazon EKS
-  modules_artifactory_readme:
-    name: Artifactory
-  modules_cicd_readme:
-    name: CI/CD Automation
   modules_monitor-application_readme:
     name: Container Application Monitoring
-  modules_security_readme:
-    name: Security Practices
-  modules_container-elasticity_readme:
-    name: Container Elasticity
   modules_feedback_readme:
     name: Feedback

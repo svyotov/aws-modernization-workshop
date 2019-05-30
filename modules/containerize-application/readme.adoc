@@ -26,7 +26,7 @@ The Pet Store application is a Java 7 based application that runs on top of the 
 
 image:docker-image.png[Docker Image]
 
-Step 1:: To get started, switch to the `containerize-application` folder within this repository.
+Step 1:: To get started, make sure you are using a new `terminal` window and switch to the `containerize-application` folder within this repository.
 +
 [source,shell]
 ----
@@ -259,7 +259,9 @@ Status: Downloaded newer image for maven:3.5-jdk-7
  ---> 5f03adaf2bbf
 Step 2/19 : WORKDIR /usr/src/app
  ---> Running in 7e4ee451b8b6
- ...
+
+...
+
 Step 18/19 : ENTRYPOINT [ "/opt/jboss/docker-entrypoint.sh" ]
  ---> Running in 8a21e4479ffc
 Removing intermediate container 8a21e4479ffc

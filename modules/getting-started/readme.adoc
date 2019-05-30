@@ -20,18 +20,21 @@ None
 15-20 minutes
 ****
 
-In order for you to succeed in this workshop, we need you to run through a few steps to finalize the configuration of your AWS Cloud9 environment. Your AWS Cloud9 environment is accessable from the link:https://us-west-2.console.aws.amazon.com/cloud9/home?region=us-west-2#[AWS Console]. Once you've accessed the console, open the `[red yellow-background]#<User Name>#-AWSModernizationWorkshop-IDEStack` IDE.
+In order for you to successfully complete the workshop, we need you to run through a few steps to finalize the configuration of your AWS Cloud9 environment. Your AWS Cloud9 environment is accessable from the link:https://us-west-2.console.aws.amazon.com/cloud9/home?region=us-west-2#[AWS Console]. Once you've accessed the console, open the `[red yellow-background]#<User Name>#-AWSModernizationWorkshop-IDEStack` IDE.
 
 image::cloud9-launch.png[Ope IDE]
 
 === Update IAM User Name Settings
 
-Throughout the workshop you will be tagging and naming resources that you create, in order to differentiate your resources from the other workshop attendess. Since the majority of the AWS resources being created will leverage the *AWS CLI*, we will automatically create a variable to substiture the *IAM User* name into these commands. Create `User_Name` variable by running the following command, substituting your [red yellow-background]#<User Name>#:
+Throughout the workshop you will be tagging and naming resources that you create, in order to differentiate your resources from the other workshop attendess. Since the majority of the AWS resources being created will leverage the *AWS CLI*, we will automatically create a variable to substiture the *IAM User* name into these commands. Create `USER_NAME` variable by running the following command, substituting your [red yellow-background]#<User Name>#
+
+WARNING: The parameter value for [red yellow-background]#<User Name># *MUST* be lower case!
+
 [source,shell]
 ----
-export User_Name=<User_Name>
+export USER_NAME=<LOWER CASE IAM USER NAME>
 
-echo "export User_Name=$User_Name" >> ~/.bashrc
+echo "export USER_NAME=$USER_NAME" >> ~/.bashrc
 
 source ~/.bashrc
 ----
@@ -121,7 +124,7 @@ Step 2::
 Now that we have the key, let's launch the EKS Cluster.
 [source,shell]
 ----
-eksctl create cluster --full-ecr-access --name=${User_Name}-petstore --nodes-min=2 --nodes-max=4
+eksctl create cluster --full-ecr-access --name=${USER_NAME}-petstore --nodes-min=2 --nodes-max=4
 ----
 
 Step 3::

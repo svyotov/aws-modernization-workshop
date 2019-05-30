@@ -55,7 +55,7 @@ Step 2:: Deploy the CloudFormation template to create your new VPC.
 +
 [source,shell]
 ----
-aws cloudformation create-stack --stack-name "${User_Name}-petstore" \
+aws cloudformation create-stack --stack-name "${USER_NAME}-petstore" \
 --template-body file://petstore-fargate-cf-resources.yaml \
 --capabilities CAPABILITY_NAMED_IAM
 ----
@@ -177,7 +177,7 @@ echo ${ACCOUNT_ID}
 
 sed -i "s/<YourAccountID>/${ACCOUNT_ID}/" ~/environment/aws-modernization-workshop/modules/container-orchestration-ecs/petstore-fargate-task-definition.json
 
-sed -i "s/<UserName>/${User_Name}/" ~/environment/aws-modernization-workshop/modules/container-orchestration-ecs/petstore-fargate-task-definition.json
+sed -i "s/<UserName>/${USER_NAME}/" ~/environment/aws-modernization-workshop/modules/container-orchestration-ecs/petstore-fargate-task-definition.json
 ----
 +
 Step 3:: Create a new task definition from the JSON file by running this command:
@@ -227,7 +227,7 @@ To find the *petstore* VPC, mouse over the VPC's listed to find the one that end
 
 [source,shell]
 ----
-aws cloudformation describe-stacks --stack-name "${User_Name}-petstore" --query "Stacks[0].Outputs[?OutputKey=='VPC'].OutputValue"
+aws cloudformation describe-stacks --stack-name "${USER_NAME}-petstore" --query "Stacks[0].Outputs[?OutputKey=='VPC'].OutputValue"
 ----
 ====
 +
@@ -283,7 +283,7 @@ Step 25:: Get the URL for your running application by running the following comm
 +
 [source,shell]
 ----
-printf "http://%s\n" $(aws elbv2 describe-load-balancers --names="${User_Name}-petstore-lb" --query="LoadBalancers[0].DNSName" --output=text)
+printf "http://%s\n" $(aws elbv2 describe-load-balancers --names="${USER_NAME}-petstore-lb" --query="LoadBalancers[0].DNSName" --output=text)
 ----
 +
 Step 26:: Open the URL output above in your Browser.
