@@ -65,7 +65,7 @@ Expected Output:
 [.output]
 ....
 {
-    "StackId": "arn:aws:cloudformation:us-west-2:<REDACTED>:stack/petstore/5ce363e0-773c-11e9-9589-02c3ece5f9fa"
+    "StackId": "arn:aws:cloudformation:us-west-2:<REDACTED>:stack/<User Name>-petstore/5ce363e0-773c-11e9-9589-02c3ece5f9fa"
 }
 ....
 +
@@ -171,7 +171,7 @@ Step 2:: We need to replace the placeholder for your account id in the template 
 +
 [source,shell]
 ----
-ACCOUNT_ID=$(aws ecr describe-repositories --repository-name [red yellow-background]#<User Name>#-petstore_frontend --query=repositories[0].repositoryUri --output=text | cut -d"." -f1)
+ACCOUNT_ID=$(aws ecr describe-repositories --repository-name ${USER_NAME}-petstore_frontend --query=repositories[0].repositoryUri --output=text | cut -d"." -f1)
 
 echo ${ACCOUNT_ID}
 

@@ -1,5 +1,5 @@
 {
-  "family": "petstore",
+  "family": "<UserName>-petstore",
   "networkMode": "awsvpc",
   "containerDefinitions": [{
       "name": "postgres",
