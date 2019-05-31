@@ -26,9 +26,9 @@ image::cloud9-launch.png[Ope IDE]
 
 === Update IAM User Name Settings
 
-Throughout the workshop you will be tagging and naming resources that you create, in order to differentiate your resources from the other workshop attendess. Since the majority of the AWS resources being created will leverage the *AWS CLI*, we will automatically create a variable to substiture the *IAM User* name into these commands. Create `USER_NAME` variable by running the following command, substituting your [red yellow-background]#<User Name>#
+Throughout the workshop you will be tagging and naming resources that you create, in order to differentiate your resources from the other workshop attendess. Since the majority of the AWS resources being created will leverage the *AWS CLI*, we will automatically create a variable to substiture the *IAM User* name into these commands. Create `USER_NAME` variable by running the following command, substituting your [red yellow-background]#<User Name>#. To get started, open a new `terminal` by pressing the combination keys `[alt + t]` (Windows/Linux) or `[⌥ + t]` (Mac OS).
 
-WARNING: The parameter value for [red yellow-background]#<User Name># *MUST* be lower case!
+WARNING: The parameter value for [red yellow-background]#<User Name># [underline]#MUST# be lower case!
 
 [source,shell]
 ----
@@ -42,7 +42,7 @@ source ~/.bashrc
 
 === Update and install the necessary tools
 
-Now update the `AWS CLI` and `pip` packages, as well as other pre-installed packages. Open a new `terminal` by pressing the combination keys `[alt + t]` (Windows/Linux) or `[⌥ + t]` (Mac OS). Once the new `terminal` is open, run the following commands:
+Now update the `AWS CLI` and `pip` packages, as well as other pre-installed packages. Once the new `terminal` is open, run the following commands:
 [source,shell]
 ----
 sudo yum update -y && \
@@ -86,9 +86,7 @@ Step 1::
 Let's make a `bin` folder where these binaries will be stored and change our directory to the new location.
 [source,shell]
 ----
-mkdir ~/bin
-
-cd ~/bin
+mkdir ~/bin && cd ~/bin
 ----
 
 Step 2::

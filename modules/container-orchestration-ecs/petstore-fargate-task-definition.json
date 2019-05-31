@@ -1,5 +1,5 @@
 {
-  "family": "<UserName>-petstore",
+  "family": "<UserName>",
   "networkMode": "awsvpc",
   "containerDefinitions": [{
       "name": "postgres",
@@ -25,9 +25,9 @@
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "<UserName>-petstore",
+          "awslogs-group": "<UserName>-petstore-LogGroup",
           "awslogs-region": "us-west-2",
-          "awslogs-stream-prefix": "<UserName>-petstore/postgres"
+          "awslogs-stream-prefix": "petstore/postgress"
         }
       }
     },
@@ -68,14 +68,14 @@
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "<UserName>-petstore",
+          "awslogs-group": "<UserName>-petstore-LogGroup",
           "awslogs-region": "us-west-2",
-          "awslogs-stream-prefix": "<UserName>-petstore/frontend"
+          "awslogs-stream-prefix": "petstore/frontend"
         }
       }
     }
   ],
-  "executionRoleArn": "arn:aws:iam::<YourAccountID>:role/<UserName>-petstoreExecutionRole",
+  "executionRoleArn": "arn:aws:iam::<YourAccountID>:role/<UserName>-petstore-ExecutionRole",
   "requiresCompatibilities": [
     "FARGATE"
   ],

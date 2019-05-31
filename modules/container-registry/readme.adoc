@@ -39,9 +39,15 @@ Step 1:: Using the Cloud9 `terminal`, change to this modules' directory by runni
 cd ~/environment/aws-modernization-workshop/modules/container-registry
 ----
 +
-Step 2:: Using the the left-hand navigation pane of the Cloud9 IDE, open the `petstore-ecr-cf-resources.yaml` file. Replace [red yellow-background]#<User Name># with your AWS IAM user name and save the file.
+Step 2:: 
+
+
+Step 2:: We need to replace the placeholder for user name in the template file, so as to distinguish tour ECR Repository from those used by the other Workshop attendees.
 +
-WARNING: The parameter value for [red yellow-background]#<User Name># *MUST* be lower case!
+[source,shell]
+----
+sed -i "s/<UserName>/${USER_NAME}/" ~/environment/aws-modernization-workshop/modules/container-registry/petstore-ecr-cf-resources.yaml
+----
 +
 Step 3:: Deploy the CloudFormation template using the `aws cli` tool. 
 +
@@ -52,7 +58,12 @@ aws cloudformation create-stack --stack-name "${USER_NAME}-petstore-ecr" \
 --capabilities CAPABILITY_NAMED_IAM
 ----
 +
-Step 3:: Wait for the Template to finish deploying.
+Step 3:: Wait for the Template to finish deploying by running the following command:
++
+[source,shell]
+----
+until [[ `aws cloudformation describe-stacks --stack-name "${USER_NAME}-petstore-ecr" --query "Stacks[0].[StackStatus]" --output text` == "CREATE_COMPLETE" ]]; do  echo "The stack is NOT in a state of CREATE_COMPLETE at `date`";   sleep 30; done && echo "The Stack is built at `date` - Please proceed"
+----
 
 ===== Pushing the Petstore images to Amazon Elastic Container Registry (ECR)
 

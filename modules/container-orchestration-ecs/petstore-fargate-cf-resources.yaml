@@ -2,8 +2,8 @@ Resources:
   CloudwatchLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: "petstore"
-      RetentionInDays: 30
+      LogGroupName: !Sub "${AWS::StackName}-LogGroup"
+      RetentionInDays: 1
   ECSExecutionRole:
     Type: AWS::IAM::Role
     Properties:
@@ -20,7 +20,7 @@ Resources:
       ManagedPolicyArns:
         - "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
         - "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
-      RoleName: "petstoreExecutionRole"
+      RoleName: !Sub "${AWS::StackName}-ExecutionRole"
   PubPrivateVPC:
     Type: 'AWS::EC2::VPC'
     Properties:
@@ -146,7 +146,7 @@ Resources:
   PetStoreLbSecurityGroup:
     Type: "AWS::EC2::SecurityGroup"
     Properties:
-      GroupName: "PetStoreLbSecurityGroup"
+      GroupName: !Sub "${AWS::StackName}LbSG"
       GroupDescription: "Security group the the Petstore Application Load Balancer"
       SecurityGroupEgress:
        - IpProtocol: 'tcp'
@@ -172,7 +172,7 @@ Resources:
   PetStoreLoadBalancer:
     Type: "AWS::ElasticLoadBalancingV2::LoadBalancer"
     Properties:
-      Name: "petstore-lb"
+      Name: !Sub "${AWS::StackName}Lb"
       Scheme: "internet-facing"
       SecurityGroups:
         - !Ref PetStoreLbSecurityGroup
