@@ -39,9 +39,6 @@ Step 1:: Using the Cloud9 `terminal`, change to this modules' directory by runni
 cd ~/environment/aws-modernization-workshop/modules/container-registry
 ----
 +
-Step 2:: 
-
-
 Step 2:: We need to replace the placeholder for user name in the template file, so as to distinguish tour ECR Repository from those used by the other Workshop attendees.
 +
 [source,shell]
