@@ -39,12 +39,14 @@ Step 1:: Using the Cloud9 `terminal`, change to this modules' directory by runni
 cd ~/environment/aws-modernization-workshop/modules/container-registry
 ----
 +
-Step 2:: We need to replace the placeholder for user name in the template file, so as to distinguish tour ECR Repository from those used by the other Workshop attendees.
+Step 2:: We need to customize the ECR repository names so as to distinguish them from those used by the other Workshop attendees. To do this, run the following command. This  command will replace the [underline]#<UserName># placeholder in the CloudFormation template with your unique user name.
 +
 [source,shell]
 ----
 sed -i "s/<UserName>/${USER_NAME}/" ~/environment/aws-modernization-workshop/modules/container-registry/petstore-ecr-cf-resources.yaml
 ----
++
+NOTE:
 +
 Step 3:: Deploy the CloudFormation template using the `aws cli` tool. 
 +
@@ -55,7 +57,7 @@ aws cloudformation create-stack --stack-name "${USER_NAME}-petstore-ecr" \
 --capabilities CAPABILITY_NAMED_IAM
 ----
 +
-Step 3:: Wait for the Template to finish deploying by running the following command:
+Step 4:: Wait for the Template to finish deploying by running the following command:
 +
 [source,shell]
 ----
