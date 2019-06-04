@@ -8,25 +8,24 @@
 NOTE: *This lab focusses on orchestrating our workload into production using Amazon ECS and AWS Fargate. Should you wish to focus on using Amazon EKS, please skip to the next lab.*
 ////
 ****
-*Expected Outcome:*
+*[undderline]#Expected Outcome#:*
 
 * 200 level usage of Amazon ECS and Fargate.
 
-*Lab Requirements:*
+*[underline]#Lab Requirements#:*
 Cloud9 IDE
-
-*Average Lab Time:*
+ 
+*[underline]#Average Lab Time#:*
 30-45 minutes
 ****
 
 === Introduction
 
-In this module, we're going to deploy applications using link:http://aws.amazon.com/ecs/[Amazon Elastic Container Service (Amazon ECS)] to orchestrate our containers on top of link:http://aws.amazon.com/fargate/[AWS Fargate].
+In this module, we're going to deploy out Petstore applications using link:http://aws.amazon.com/ecs/[Amazon Elastic Container Service (Amazon ECS)] to orchestrate our containers on top of link:http://aws.amazon.com/fargate/[AWS Fargate].
 
 image:ecs.png[ECS]
 
 ==== Getting Started with Amazon ECS using AWS Fargate
-
 Before we get started, here are some definitions you need to understand in order to deploy your application when creating your first Amazon ECS cluster.
 
 [options="header"]
@@ -41,7 +40,6 @@ Before we get started, here are some definitions you need to understand in order
 You'll deploy a service via Amazon ECS using AWS Fargate as the launch type. The Fargate launch type allows you to run your containerized applications without the need to provision and manage the back-end infrastructure. Amazon ECS can also launch tasks and services using the EC2 launch type which runs containerized applications on Amazon EC2 instances that *you* manage. Amazon ECS is the orchestration service responsible for running docker containers and AWS Fargate is the underlying compute platform where the containers will run.
 
 ===== Deploy our VPC
-
 We will first deploy our CloudFormation template which configures our ECS VPC.
 
 Step 1:: Change to this modules directory by running:
@@ -60,7 +58,7 @@ aws cloudformation create-stack --stack-name "${USER_NAME}-petstore" \
 --capabilities CAPABILITY_NAMED_IAM
 ----
 +
-Expected Output:
+Example Output:
 +
 [.output]
 ....
@@ -73,7 +71,10 @@ Step 3:: Wait for the Template to finish deploying by running the following comm
 +
 [source,shell]
 ----
-until [[ `aws cloudformation describe-stacks --stack-name "${USER_NAME}-petstore" --query "Stacks[0].[StackStatus]" --output text` == "CREATE_COMPLETE" ]]; do  echo "The stack is NOT in a state of CREATE_COMPLETE at `date`";   sleep 30; done && echo "The Stack is built at `date` - Please proceed"
+until [[ `aws cloudformation describe-stacks --stack-name "${USER_NAME}-petstore" \
+--query "Stacks[0].[StackStatus]" --output text` == "CREATE_COMPLETE" ]]; \
+do  echo "The stack is NOT in a state of CREATE_COMPLETE at `date`";  \
+sleep 30; done && echo "The Stack is built at `date` - Please proceed"
 ----
 
 ===== Amazon ECS Task definitions
@@ -172,20 +173,26 @@ The file has the following content:
 }
 ....
 +
-Step 2:: We need to replace the placeholder for your account id in the template file, so that is aware of your account. The following commands will do that for you automatically using the `sed` and `aws` cli tools. These should be executed in the in the Cloud9 `terminal`.
+Step 2:: We need to replace the placeholder for the AWS account id, as well as your user name, in the CloudFormation template file. This will differentiate your CloudFormation stack from the other workshop attendees. The following command will do that for you automatically using the `sed` and `aws` cli tools to replace the [underline]#<AccountID># placeholder in the CloudFormation template.
++
+NOTE: These should be executed in the in the Cloud9 `terminal`.
 +
 [source,shell]
 ----
-ACCOUNT_ID=$(aws ecr describe-repositories --repository-name ${USER_NAME}-petstore_frontend --query=repositories[0].repositoryUri --output=text | cut -d"." -f1)
-
-echo ${ACCOUNT_ID}
-
+ACCOUNT_ID=$(aws ecr describe-repositories --repository-name ${USER_NAME}-petstore_frontend \
+--query=repositories[0].repositoryUri --output=text | cut -d"." -f1) && \
+echo ${ACCOUNT_ID} && \
 sed -i "s/<YourAccountID>/${ACCOUNT_ID}/" ~/environment/aws-modernization-workshop/modules/container-orchestration-ecs/petstore-fargate-task-definition.json
-
+----
++
+Next we apply the same proceedure to replace the [underline]#<UserName># in the CloudFormation template with your unique user name.
++
+[source,shell]
+----
 sed -i "s/<UserName>/${USER_NAME}/" ~/environment/aws-modernization-workshop/modules/container-orchestration-ecs/petstore-fargate-task-definition.json
 ----
 +
-Step 3:: Create a new task definition from the JSON file by running this command:
+Step 3:: Create a new task definition from the, now customized, JSON file by running this command:
 +
 [source,shell]
 ----
@@ -193,6 +200,7 @@ aws ecs register-task-definition --cli-input-json file://~/environment/aws-moder
 ----
 
 ===== Create the Petstore Service with Amazon ECS using Fargate
+Now that we have an ECS Task Definition, we will register this as a service by first creating a cluster.
 
 Step 1:: Go to the *AWS Management Console*, click *Services* then select *ECS* under the *Compute* heading.
 +
@@ -206,7 +214,7 @@ Step 3:: On the *Select cluster template* screen select *Networking only* which 
 +
 image:cluster-template.png[Cluster Template]
 +
-Step 4:: Enter a Cluster name of *[red yellow-background]#<User Name>#-petstore-workshop* and leave the *Create VPC* check-box [underline]#*unchecked*#. Click *Create*.
+Step 4:: Enter a Cluster name as *[red yellow-background]#<User Name>#-petstore-workshop*, substituting your user name. Leave the *Create VPC* check-box [underline]#*unchecked*#. Click *Create*.
 +
 image:configure-ecs-cluster.png[Configure Cluster]
 +
@@ -216,19 +224,19 @@ image:create-fargate.png[View Cluster]
 +
 Step 6:: Select a *Launch type* of *FARGATE*
 +
-Step 7:: Select *[red yellow-background]#<User Name>#* and the latest *revision* for the *Task Definition*.
+Step 7:: For *Task Definition*, select the *Famaily* we created in the previous section. It should be the same as your *[red yellow-background]#<User Name>#*.  For the task deinfition *Revision*, make sure to select the *LATEST*.
 +
-Step 8:: Enter *[red yellow-background]#<User Name>#* for the *Service name*.
+Step 8:: For the *Service name*, enter your user name.
 +
 Step 9:: Enter *1* into *Number of tasks* and click *Next step*.
 +
 image:configure-fargate-service.png[Configure Service]
 +
-Step 10:: Select the *[red yellow-background]#<User Name>#-petstore* VPC for *Cluster VPC*.
+Step 10:: For the *Cluster VPC*, select the VPC that was created from the CLoudFormation template.
 +
 [TIP]
 ====
-To find the *petstore* VPC, mouse over the VPC's listed to find the one that ends with `petstore` *_OR_* run the following command in the Cloud9 `terminal`:
+To find the *petstore* VPC, mouse over the VPC's listed to find the one that starts with your user name. Alternativley, run the following command in the Cloud9 IDE `terminal`:
 
 [source,shell]
 ----
@@ -238,7 +246,9 @@ aws cloudformation describe-stacks --stack-name "${USER_NAME}-petstore" --query 
 +
 Step 11:: Select the two *Public* petstore Subnets for *Subnets*.
 +
-Step 12:: For *Security Groups* click *Edit* then click *Select an existing Security Group*. Select the *default* Security Group and click *Save*. You will notice that the default Security Group only allows port `8080` from `PetStoreLbSG` to secure our petstore application.
+Step 12:: For *Security Groups* click *Edit* then click *Select an existing Security Group*. Select the *default* Security Group and click *Save*.
++
+You will notice that the default Security Group only allows port `8080` from `PetStoreLbSG` to secure our petstore application.
 +
 image:ecs-sg.png[Security Group]
 +
@@ -250,17 +260,17 @@ Step 14:: Set the *Health check grace period* to *300*.
 +
 NOTE: This is the period of time, in seconds, that the Amazon ECS service scheduler should ignore unhealthy Elastic Load Balancing target health checks after a task has first started. This is only valid if your service is configured to use a load balancer. If your service's tasks take a while to start and respond to health checks, you can specify a health check grace period of up to `7,200` seconds during which the ECS service scheduler ignores the health check status. This grace period can prevent the ECS service scheduler from marking tasks as unhealthy and stopping them before they have time to come up.
 +
-Step 15:: Under the *Load Balancing* section, select *Application Load Balancer* and make sure *[red yellow-background]#<User Name>#-petstoreLb* is selected.
+Step 15:: Under the *Load Balancing* section, select *Application Load Balancer* and make sure to select the load balancer created by the CloudFormation template. It should be called *[red yellow-background]#<User Name>#-petstoreLb* (_substituting your user name_).
 +
 image:petstore-lb.png[Petstore-LB]
 +
-Step 16:: For *Container to load balance* select *[red yellow-background]#<User Name>#-petstore:8080:8080* from the drop-down list and click *Add to load balancer*.
+Step 16:: From the drop-down *Container to load balance* drop-down list, select the container you created. Is should be called *[red yellow-background]#<User Name>#-petstore:8080:8080* (_substituting your user name_). Click rthe *Add to load balancer* button.
 +
 image:add-to-lb.png[Container to LB]
 +
 Step 17:: Type in `80` for the *Listener port* and ensure it is set to *create new*.
 +
-Step 18:: Ensure that *Target group name* is set to *create new* and the name should be simialr to *ecs-[red yellow-background]#<User Name>#*.
+Step 18:: Ensure that *Target group name* is set to *create new*. The name of the target group should be automatically generated for you.
 +
 image:petstore-8080.png[Container to LB]
 +
@@ -276,21 +286,21 @@ Step 21:: Review your settings and click *Create Service*.
 +
 Step 22:: The service will now start your task. Click *View Service* and you will have to wait for your task to transition to *RUNNING*. Feel free to inspect the logs for your task while you wait.
 +
-Step 23:: Once the task is running, view the *Details* of the petstore *Service*. Under *Load Balancing* click the *[red yellow-background]#<User Name>#-ecs-petsto-petstore* Target Group link to view the Tasks being registered into the Target Group under *Targets*.
+Step 23:: Once the task is running, view the *Details* of the petstore *Service*. Under *Load Balancing* click the under *Target Group Name* to view the Tasks being registered into the Target Group. You can view thier status under *Targets* tab.
 +
 image:ecs-view-target.png[View Target Group]
 +
-Step 24:: Once your Registered Target is registered as *Healthy* you can view the service through the Application Load Balancer.
+Once your Registered Target is registered as *Healthy* you can view the service through the Application Load Balancer.
 +
 image:ecs-target-healthy.png[Healthy Target]
 +
-Step 25:: Get the URL for your running application by running the following command in the Cloud9 `terminal`:
+Step 24:: Get the URL for your running application by running the following command in the Cloud9 IDE `terminal`:
 +
 [source,shell]
 ----
 printf "http://%s\n" $(aws elbv2 describe-load-balancers --names="${USER_NAME}-petstoreLb" --query="LoadBalancers[0].DNSName" --output=text)
 ----
 +
-Step 26:: Open the URL output above in your Browser.
+Step 25:: Open the URL output above in your Browser.
 
 Now that we have a Fargate cluster, with a Service using our application, deployed we can move onto the next module of the workshop to duplicate this process using link:https://aws.amazon.com/eks/[Amazon EKS] as our orchestrator.

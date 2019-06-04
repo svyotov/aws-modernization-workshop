@@ -6,294 +6,31 @@
 == Monitoring the Application
 
 ****
-*Expected Outcome:*
+*[underline]#Expected Outcome#:*
 
-//// 
-* 200 level understaing of Healthchecks to the Pet Store Docker artifacts.
-////
 * 200 level understanding of Container Healthchecks using ECS & Fargate.
 * 200 level understanding of Container Healthchecks using EKS.
 * 200 level understanding of shipping container logs for to CloudWatch.
 
-*Lab Requirements:*
+*[underline]#Lab Requirements#:*
 
 * Clou9 IDE.
 * One of the following:
 ** an Amazon Elastic Container Service Cluster.
 ** an Amazon Elastic Container Service for Kubernetes Cluster.
 
-*Average Lab Time:* 
+*[underline]#Average Lab Time#:* 
 45-60 minutes
 ****
 
 === Introduction
 When it comes to monitoring an application, a key concept to understand is you need to ensure that the application is working rather than only looking to see if server or container is running. In this module, we will go over some key concepts in monitoring and logging and how to integrate those concepts with our Pet Store application. The module will focus on the five areas, namely:
 
-////
-. Docker Healthchecks.
-. Docker Compose Healthchecks
-////
 . ECS & Fargate Healthchecks.
 . Kubernetes Healthchecks.
 . Monitoring Healthchecks using link:https://aws.amazon.com/cloudwatch/[Amazon Cloudwatch].
 
-////
-Let's start by looking at healthchecks in the container itself.
-
-==== 1. Docker Healthchecks
-The `HEALTHCHECK` instruction tells Docker how to test a container to check that it is still working. This can detect cases such as a web server that is stuck in an infinite loop and unable to handle new connections, even though the server process is still running. When a container has a healthcheck specified, it has a health status in addition to its normal status. This status is initially starting. Whenever a health check passes, it becomes `healthy` (whatever state it was previously in). After a certain number of consecutive failures, it becomes `unhealthy`.
-
-Step 1:: To get started, use the Cloud 9 IDE navigation pane to navigate to the folder where you created your `Dockerfile` in the `containerize-application` folder.  Double-click to open the `Dockerfile`.
-
-Step 2:: At the bottom of our `Dockerfile` we will add a `HEALTHCHECK` that tests our application server. Add the `HEALTHCHECK` between the `ENTRYPOINT` command in the `Dockerfile` like the example below:
-+
-[source,shell]
-----
-# run the application
-ENTRYPOINT [ "/opt/jboss/docker-entrypoint.sh" ]
-# add a Healthcheck
-HEALTHCHECK --interval=30s --timeout=5s --retries=5 --start-period=30s CMD curl --fail http://127.0.0.1:8080/ || exit 1
-CMD [ "-b", "0.0.0.0", "-bmanagement", "0.0.0.0" ]
-----
-+
-To review the above command we will go over some of the flags. The options that can appear before `CMD` in a `HEALTHCHECK` are:
-
-* `--interval=DURATION` (default: `30s`)
-* `--timeout=DURATION` (default: `30s`)
-* `--retries=N` (default: `3`)
-* `--start-period=DURATION` (default: `0s`)
-
-+
-You will notice the `CMD curl --fail http://127.0.0.1:8080/ || exit 1` in our `HEALTHCHECK`. This is how we are testing that the application is running. The commands' `exit status` indicates the health status of  the container. The possible values are:
-
-* `0`: success - the container is healthy and ready for use
-* `1`: unhealthy - the container is not working correctly
-* `2`: reserved - do not use this exit code
-
-Step 3:: Save the `Dockerfile` and move on to the next section. 
-
-NOTE: There is a working `Dockerfile` in the `monitor-application/container` folder within this repository if you need a full example.
-
-=== Healthchecks in Docker Compose
-As a refresher, Docker Compose is a tool for defining and running multi-container Docker applications. With Compose, you use a `YAML` file to configure your application’s services. Then, with a single command, you create and start all the services from your configuration.
-
-Using Compose is basically a three-step process:
-
-* Define your app’s environment with a `Dockerfile` so it can be reproduced anywhere.
-* Define the services that make up your app in `docker-compose.yml` so they can be run together in an isolated environment.
-* Run `docker-compose` up and Compose starts and runs your entire app.
-
-==== Configuring Docker compose Healthchecks
-Now we wil follow this three-step process to see out `HEALTHCHECKS` in action with `docker-compose`.
-
-Step 1:: To get started, navigate to the folder where you created your `docker-compose.yml` in the `containerize-application` folder from the previous lab within this repository. Then open the `docker-compose.yml` in the Cloud9 IDE.
-+
-Step 2:: Similar to the previous section, we are going to add healthchecks but this time we will also add one for our `postgres` container as well. 
-+
-Step 3:: Add the `healthcheck` section to `postgres` so that it looks like the example below. For our healthcheck, we are going to add a simple `CMD-SHELL` command to issue the `pg_isready` utility for checking the connection status to *PostgreSQL*. Since we are using the official *PostgreSQL* image available from Docker Hub the `pg_isready` command should be available within our container.
-+
-[source,yaml]
-----
-version: '3.4'
-
-services:
-
-  postgres:
-    image: postgres:9.6
-    ports:
-      - 5432:5432
-    environment:
-      - 'POSTGRES_DB=petstore'
-      - 'POSTGRES_USER=admin'
-      - 'POSTGRES_PASSWORD=password'
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 30s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-----
-+
-Step 4:: For the Pet Store application add the following `healthcheck` section to `petstore` so that it looks like the example below. For our healthcheck, we are simply mirroring what was already defined in the `Dockerfile` earlier.
-+
-[source,yaml]
-----
-  petstore:
-    build:
-      context: ./
-      dockerfile: Dockerfile
-    depends_on:
-      - postgres
-    ports:
-      - 8080:8080
-      - 9990:9990
-    environment:
-      - 'DB_URL=jdbc:postgresql://postgres:5432/petstore?ApplicationName=applicationPetstore'
-      - 'DB_HOST=postgres'
-      - 'DB_PORT=5432'
-      - 'DB_NAME=petstore'
-      - 'DB_USER=admin'
-      - 'DB_PASS=password'
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/"]
-      interval: 30s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-----
-+
-Step 5:: Save the `docker-compose.yml` and move on to the next section.
-
-NOTE: There is a working `docker-compose.yml` in the `monitor-application/container` folder within this repository if you need a full example.
-
-==== Testing the Healthchecks
-
-Now that we've added healtchecks to our Pet Store application, we need to rebuild the petstore container to add our changes. 
-
-Step 1:: To get started, stop and delete any running Pet Store containers that you might have running. Switch back to the `terminal` in your Cloud9 environment ensure your current working directory is `~/environment/aws-moderinzation-workshop/modules/containerize-application/` and run the following command:
-+
-[source,shell]
-----
-docker rm -f $(docker ps -aq --filter "name=containerize-application")
-----
-+
-Step 2:: Run the both the containers in the background (`-d` or daemon flag).
-+
-NOTE: Bringing up the `petstore` contianer will also start the `postgres` container as it's a dependency.
-+
-[source,shell]
-----
-docker-compose up -d petstore
-----
-+
-Step 3:: You can check the status of the healthcheck as the Docker container starts by running the following command:
-+
-[source,shell]
-----
-docker ps
-----
-+
-Expected Output:
-+
-[.output]
-....
-CONTAINER ID        IMAGE                               COMMAND                  CREATED             STATUS                            PORTS                                            NAMES
-89f1f4d60868        containerize-application_petstore   "/opt/jboss/docker-e…"   4 seconds ago       Up 2 seconds (health: starting)   0.0.0.0:8080->8080/tcp, 0.0.0.0:9990->9990/tcp   containerize-application_petstore_1
-23d1a16bbe4f        postgres:9.6                        "docker-entrypoint.s…"   4 seconds ago       Up 3 seconds (health: starting)   0.0.0.0:5432->5432/tcp                           containerize-application_postgres_1
-....
-+
-Notice how `health: starting status` is reported in the `STATUS` column. Checking after about `30` seconds shows the status:
-+
-[source,shell]
-----
-docker ps
-----
-+
-Expected Output:
-+
-[.output]
-....
-CONTAINER ID        IMAGE                               COMMAND                  CREATED             STATUS                    PORTS                                            NAMES
-3c4a241a76a1        containerize-application_petstore   "/opt/jboss/docker-e…"   37 seconds ago      Up 36 seconds (healthy)   0.0.0.0:8080->8080/tcp, 0.0.0.0:9990->9990/tcp   containerize-application_petstore_1
-af6abaa72091        postgres:9.6                        "docker-entrypoint.s…"   38 seconds ago      Up 37 seconds (healthy)   0.0.0.0:5432->5432/tcp                           containerize-application_postgres_1
-....
-+
-Step 6:: Now that our containers are healthy for our Pet Store application, let's examine the healthchecks using `docker-inspect`.
-+
-[source,shell]
-----
-docker inspect --format='{{json .State.Health}}' containerize-application_petstore_1
-----
-+
-Expected Output (_redacted for brevity_):
-+
-[.output]
-....
-[
-    {
-        "Id": "3c4a241a76a1c426415d629839ce92882c07cf0dac64ab7a01b9d25b770b9690",
-        "Created": "2019-05-16T20:58:27.27982249Z",
-        "Path": "/opt/jboss/docker-entrypoint.sh",
-        "Args": [
-            "-b",
-            "0.0.0.0",
-            "-bmanagement",
-            "0.0.0.0"
-        ],
-        "State": {
-            "Status": "running",
-            "Running": true,
-            "Paused": false,
-            "Restarting": false,
-            "OOMKilled": false,
-
-...
-
-                    "Gateway": "172.18.0.1",
-                    "IPAddress": "172.18.0.3",
-                    "IPPrefixLen": 16,
-                    "IPv6Gateway": "",
-                    "GlobalIPv6Address": "",
-                    "GlobalIPv6PrefixLen": 0,
-                    "MacAddress": "02:42:ac:12:00:03",
-                    "DriverOpts": null
-                }
-            }
-        }
-    }
-]
-....
-+
-You can see the status of the healthchecks but they are not easy to read. A simple utility you can install on your Cloud9 environment helps make them readable is `jq`. You can learn more about it link:https://stedolan.github.io/jq/[here]. To install `jq` run the following command in your Cloud9 `terminal`:
-+
-[source,shell]
-----
-sudo yum install jq -y
-----
-+
-Once jq is installed, let's examine the healthchecks again by running the below command. Notice they are easier to read and you should see `"Status": "healthy"` as well as `"ExitCode": 0` which as you remember from above means the container is healthy and ready for use.
-+
-[source,shell]
-----
-docker inspect containerize-application_petstore_1 | jq '.[].State.Health'
-----
-+
-Expected Output (_redacted for brevity_):
-+
-[.output]
-....
-{
-  "Status": "healthy",
-  "FailingStreak": 0,
-  "Log": [
-    {
-      "Start": "2019-05-16T21:02:28.702181894Z",
-      "End": "2019-05-16T21:02:28.774809936Z",
-      "ExitCode": 0,
-      "Output": "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r100   289  100   289    0     0  38339      0 --:--:-- --:--:-- --:--:-- 41285\n<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n<html>\n<head>\n    <meta http-equiv=\"refresh\" content=\"0; url=shopping/main.xhtml\"/>\n    <title>Redirect...</title>\n</head>\n<body>\n\n</body>\n</html>"
-    },
-
-...
-
-    {
-      "Start": "2019-05-16T21:04:29.039449884Z",
-      "End": "2019-05-16T21:04:29.122731919Z",
-      "ExitCode": 0,
-      "Output": "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r100   289  100   289    0     0  22768      0 --:--:-- --:--:-- --:--:-- 24083\n<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n<html>\n<head>\n    <meta http-equiv=\"refresh\" content=\"0; url=shopping/main.xhtml\"/>\n    <title>Redirect...</title>\n</head>\n<body>\n\n</body>\n</html>"
-    }
-  ]
-}
-....
-+
-Step 7:: Once you've confirmed that our Pet Store application is working with healthchecks, stop the docker containers by running the following command:
-+
-[source,shell]
-----
-docker rm -f $(docker ps -aq --filter "name=containerize-application")
-----
-////
 === Healthchecks in Amazon ECS & Fargate
-
 NOTE: The following part of the module assumes a working ECS cluster, created in the *Amazon ECS & Fargate* module.
 
 Amazon Elastic Container Service (ECS) now supports Docker container health checks. This gives you more control over monitoring the health of your tasks and improves the ability of the ECS service scheduler to ensure your services are healthy. 
@@ -377,12 +114,16 @@ We need to replace the placeholder for your account id in the template file, so 
 +
 [source,shell]
 ----
-ACCOUNT_ID=$(aws ecr describe-repositories --repository-name ${USER_NAME}-petstore_frontend --query=repositories[0].repositoryUri --output=text | cut -d"." -f1)
-
-echo ${ACCOUNT_ID}
-
+ACCOUNT_ID=$(aws ecr describe-repositories --repository-name ${USER_NAME}-petstore_frontend --query=repositories[0].repositoryUri --output=text | cut -d"." -f1) && echo ${ACCOUNT_ID}
+----
++
+[source,shell]
+----
 sed -i "s/<YourAccountID>/${ACCOUNT_ID}/" ~/environment/aws-modernization-workshop/modules/monitor-application/task-definition/petstore-fargate-task-definition.json
-
+----
++
+[source,shell]
+----
 sed -i "s/<UserName>/${USER_NAME}/" ~/environment/aws-modernization-workshop/modules/monitor-application/task-definition/petstore-fargate-task-definition.json
 ----
 +
@@ -424,7 +165,6 @@ In this section, we will understand how link:https://kubernetes.io/docs/tasks/co
 We will review some examples in this module to understand different options for configuring liveness and readiness probes.
 
 ==== Configuring the Liveness Probe
-
 As with any Amazon EKS or Kubernetes cluster, we will use manifest file to decelaritively deploy a simple liveness probe.
 
 Step 1:: In the Cloud9 IDE `terminal`, ensure you have switched to this modules' working directory.
@@ -493,8 +233,7 @@ step 5:: Use `kubectl describe` command will show an event history which will sh
 ----
 kubectl describe pod liveness-app | grep -A20 Events
 ----
-+
-Expected Output:
+Examnple Output:
 +
 [.output]
 ----
@@ -516,7 +255,7 @@ kubectl exec -it liveness-app -- /bin/kill -s SIGUSR1 1
 +
 Step 7:: After 15-20 seconds, re-run the `kubectl describe` command to view the `Events` output again and see what atctions the `kubelet` took.
 +
-Expected Output:
+Exmaple Output:
 +
 [.output]
 ----
@@ -600,7 +339,7 @@ Step 3:: View the deployment by executing the folloing `kubectl` command:
 kubectl get pods -l app=readiness-deployment
 ----
 +
-Expected Output:
+Example Output:
 +
 [.output]
 ----
@@ -638,7 +377,7 @@ Step 6:: View the deployment once again by running the following command:
 kubectl get pods -l app=readiness-deployment
 ----
 +
-Expected Output:
+Example Output:
 +
 [.output]
 ----
@@ -738,13 +477,25 @@ Step 1:: For this part of the module we will need to ensure that the `Role Name`
 [source,shell]
 ----
 INSTANCE_PROFILE_NAME=$(aws iam list-instance-profiles | jq -r '.InstanceProfiles[].InstanceProfileName' | grep ${USER_NAME}-petstore-nodegroup)
-
+----
++
+[source,shell]
+----
 INSTANCE_PROFILE_ARN=$(aws iam get-instance-profile --instance-profile-name $INSTANCE_PROFILE_NAME | jq -r '.InstanceProfile.Arn')
-
+----
++
+[source,shell]
+----
 ROLE_NAME=$(aws iam get-instance-profile --instance-profile-name $INSTANCE_PROFILE_NAME | jq -r '.InstanceProfile.Roles[] | .RoleName')
-
+----
++
+[source,shell]
+----
 echo "export ROLE_NAME=${ROLE_NAME}" >> ~/.bashrc
-
+----
++
+[source,shell]
+----
 echo "export INSTANCE_PROFILE_ARN=${INSTANCE_PROFILE_ARN}" >> ~/.bashrc
 ----
 +
@@ -770,7 +521,10 @@ cat <<EoF > /tmp/eks-logs-policy.json
     ]
 }
 EoF
-
+----
++
+[source,shell]
+----
 aws iam put-role-policy --role-name $ROLE_NAME --policy-name ${USER_NAME}_WorkerLogPolicy --policy-document file:///tmp/eks-logs-policy.json
 ----
 +
@@ -1046,7 +800,7 @@ spec:
           path: /run/log/journal
 ----
 +
-Step 5:: First we have to update the `log_group_name` so it's uniquely identifiable.
+Step 5:: First we have to update the `log_group_name` so it's uniquely identifiable. The following command will substitute the *[underline]#<UserName>#* paramater in the manifest with your unique username.
 +
 [source,shell]
 ----

@@ -6,27 +6,25 @@
 == Container Orchestration
 
 ****
-*Expected Outcome:*
+*[underline]#Expected Outcome#:*
 
 * 200 level usage of Amazon EKS.
 
-*Lab Requirements:*
+*[underline]#Lab Requirements#:*
 
 * Cloud9 IDE.
 * EKS Cluster created in the *Getting Started* module.
 
-*Average Lab Time:*
+*[underline]#Average Lab Time#:*
 20-30 minutes
 ****
 
 === Introduction
-
 In this module, we're going to deploy applications using http://aws.amazon.com/eks/[Amazon Elastic Container Service for Kubernetes (Amazon EKS)].
 
 image:eks.png[ECS]
 
-==== Getting Started with Amazon Elastic Container Service for Kubernetes (EKS)
-
+=== Getting Started with Amazon EKS
 Before we get started, here are some terms you need to understand in order to deploy your application when creating your first Amazon EKS cluster.
 
 [options="header"]
@@ -37,8 +35,7 @@ Before we get started, here are some terms you need to understand in order to de
 | *Service* | Configuration file that declares the ingress into the container, these can be used to create Load Balancers automatically.
 |=======================
 
-===== Amazon EKS and Kubernetes Manifests
-
+=== Amazon EKS and Kubernetes Manifests
 To use Amazon EKS or any Kubernetes cluster you must write a manifest or a config file, these config files are used to declaritively document what is needed to deploy an individual application. More information can be found https://kubernetes.io/docs/concepts/workloads/controllers/deployment/[here].
 
 Step 1:: In the Cloud9 IDE `terminal`, switch to this modules' working directory.
@@ -206,23 +203,28 @@ items:
             value: admin
           - name: DB_PASS
             value: password
-
 ----
 +
 NOTE: Amazon EKS clusters that were created prior to Kubernetes version 1.11 were not created with any storage classes. Since we are running the version `1.12`, the default `StorageClass` has already been set to link:https://aws.amazon.com/ebs/[Amazon Elastic Block Store (EBS)]. Therefore there is no `StorageClass` definition int he `petstore-eks-manifest.yaml` file.
 +
-Step 4:: Close the `petstore-eks-manifest.yaml`. Run the following commands in the Cloud9 IDE `terminale` to replace the *<YourAccountID>* and *<UserName>* placeholders with your AWS Account ID.
+Step 4:: Close the `petstore-eks-manifest.yaml`. Run the following commands in the Cloud9 IDE `terminale`. These command will replace the *<YourAccountID>* and *<UserName>* placeholders with your AWS Account ID and user name.
 +
 [source,shell]
 ----
 ACCOUNT_ID=$(aws sts get-caller-identity --output text --query 'Account')
-
+----
++
+[source,shell]
+----
 sed -i "s/<YourAccountID>/${ACCOUNT_ID}/" petstore-eks-manifest.yaml
-
+----
++
+[source,shell]
+----
 sed -i "s/<UserName>/${USER_NAME}/" petstore-eks-manifest.yaml
 ----
 +
-Step 5:: Apply your manifest by running this command in your Cloud9 IDE `terminal`:
+Step 5:: Apply your custmized manifest by running this command in your Cloud9 IDE `terminal`:
 +
 [source,shell]
 ----
@@ -242,7 +244,7 @@ service/frontend created
 deployment.apps/frontend created
 ....
 +
-Step 6:: As you can see above this manifest created and configured several components in your Kubernetes cluster, we've created a *namespace*, *persistentvolume*, *persistentvolumeclaim*, 2 *services*, and 2 *deployments*.
+Step 6:: As you can see from the above output, this manifest created and configured several components in your Kubernetes cluster. We've created a *namespace*, *persistentvolume*, *persistentvolumeclaim*, 2 *services*, and 2 *deployments*.
 +
 [options="header"]
 |=======================
@@ -254,14 +256,14 @@ Step 6:: As you can see above this manifest created and configured several compo
 | *Deployment* | Deployment controller provides declarative updates for Pods and ReplicaSets.
 |=======================
 +
-Step 7:: Now that the scheduler knows that you want to run this application, it will find available *disk*, *cpu* and *memory* and will place the pods on *Worker Nodes*. Let's watch as they get provisioned.
+Step 7:: Now that the scheduler knows that you want to run this application, it will find available *disk*, *cpu* and *memory* and will place the pods on *Worker Nodes*. Let's watch as they get provisioned, by running the following command:
 +
 [source,shell]
 ----
 kubectl get pods --namespace petstore --watch
 ----
 +
-Expected Output:
+Example Output:
 +
 [.output]
 ....
@@ -271,14 +273,14 @@ frontend-869db5db6b-j5nfj   0/1       Init:0/1            0          3m
 postgres-678864b7-vs5zj     0/1       ContainerCreating   5          3m
 ....
 +
-Step 8:: Once the *STATUS* changes to *Running* for all 3 of your containers we can then load the services and navigate to the exposed application (you will need to `[ctrl + c]` since its watching).
+Step 8:: Once the *STATUS* changes to *Running* for all 3 of your containers, we can then load the services and navigate to the exposed application (you will need to `[ctrl + c]` since its watching).
 +
 [source,shell]
 ----
 kubectl get services --namespace petstore -o wide
 ----
 +
-Expected Output:
+Exanple Output:
 +
 [.output]
 ....
