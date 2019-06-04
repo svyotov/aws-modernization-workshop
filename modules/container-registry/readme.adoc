@@ -155,6 +155,7 @@ docker push $(aws ecr describe-repositories --repository-name ${USER_NAME}-petst
 --query=repositories[0].repositoryUri --output=text):latest
 ----
 +
+[source,shell]
 ----
 docker push $(aws ecr describe-repositories --repository-name ${USER_NAME}-petstore_frontend \
 --query=repositories[0].repositoryUri --output=text):latest
