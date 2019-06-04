@@ -4,11 +4,9 @@
 :icons: font
 
 == Container Orchestration
-////
-NOTE: *This lab focusses on orchestrating our workload into production using Amazon ECS and AWS Fargate. Should you wish to focus on using Amazon EKS, please skip to the next lab.*
-////
+
 ****
-*[undderline]#Expected Outcome#:*
+*[underline]#Expected Outcome#:*
 
 * 200 level usage of Amazon ECS and Fargate.
 
@@ -264,7 +262,9 @@ Step 15:: Under the *Load Balancing* section, select *Application Load Balancer*
 +
 image:petstore-lb.png[Petstore-LB]
 +
-Step 16:: From the drop-down *Container to load balance* drop-down list, select the container you created. Is should be called *[red yellow-background]#<User Name>#-petstore:8080:8080* (_substituting your user name_). Click rthe *Add to load balancer* button.
+Step 16:: You have created two containers. One for the Petstore Front-end and one for the Postgress Database. We only want to load balance our front-end. Therefore, from the drop-down *Container to load balance* drop-down list, select the *petstore* container.
++
+Now click the *Add to load balancer* button.
 +
 image:add-to-lb.png[Container to LB]
 +
