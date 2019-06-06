@@ -27,7 +27,7 @@ We will first deploy a CloudFormation template which configures our ECR Reposito
 ****
 CloudFormation creates the following resources:
 
-* `PetStorePostgreSQLRepository` - ECR Respository for PostgresSQL containers.
+* `PetStorePostgreSQLRepository` - ECR Repository for PostgresSQL containers.
 * `PetStoreFrontendRepository` - ECR Repository for the front-end containers.
 ****
 

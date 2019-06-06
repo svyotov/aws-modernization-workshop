@@ -77,7 +77,7 @@ sleep 30; done && echo "The Stack is built at `date` - Please proceed"
 
 ===== Amazon ECS Task definitions
 
-link:https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definitions.html[Amazon ECS Task definitions] are required to run Docker containers in Amazon ECS. For our pestore application, we will review the key pieces of a task definition before we deploy it.
+link:https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definitions.html[Amazon ECS Task definitions] are required to run Docker containers in Amazon ECS. For our Pestore application, we will review the key pieces of a task definition before we deploy it.
 
 Step 1:: In the left-hand navigation pane, navigate to the `continer-orchestration-ecs` folder and open the `petstore-fargate-task-definition.json` file.
 +
@@ -183,7 +183,7 @@ echo ${ACCOUNT_ID} && \
 sed -i "s/<YourAccountID>/${ACCOUNT_ID}/" ~/environment/aws-modernization-workshop/modules/container-orchestration-ecs/petstore-fargate-task-definition.json
 ----
 +
-Next we apply the same proceedure to replace the [underline]#<UserName># in the CloudFormation template with your unique user name.
+Next, we apply the same procedure to replace the [underline]#<UserName># in the CloudFormation template with your unique user name.
 +
 [source,shell]
 ----
@@ -204,7 +204,7 @@ Step 1:: Go to the *AWS Management Console*, click *Services* then select *ECS* 
 +
 image:ecs-service.png[Select ECS]
 +
-Step 2:: On the left hand navigation ensure *Clusters* is selected and click *Create Cluster*.
+Step 2:: On the left-hand navigation ensure *Clusters* is selected and click *Create Cluster*.
 +
 image:create-cluster.png[Create Cluster]
 +
@@ -222,7 +222,7 @@ image:create-fargate.png[View Cluster]
 +
 Step 6:: Select a *Launch type* of *FARGATE*
 +
-Step 7:: For *Task Definition*, select the *Famaily* we created in the previous section. It should be the same as your *[red yellow-background]#<User Name>#*.  For the task deinfition *Revision*, make sure to select the *LATEST*.
+Step 7:: For *Task Definition*, select the *Family* we created in the previous section. It should be the same as your *[red yellow-background]#<User Name>#*.  For the task definition *Revision*, make sure to select the *LATEST*.
 +
 Step 8:: For the *Service name*, enter your user name.
 +
@@ -230,11 +230,11 @@ Step 9:: Enter *1* into *Number of tasks* and click *Next step*.
 +
 image:configure-fargate-service.png[Configure Service]
 +
-Step 10:: For the *Cluster VPC*, select the VPC that was created from the CLoudFormation template.
+Step 10:: For the *Cluster VPC*, select the VPC that was created from the CloudFormation template.
 +
 [TIP]
 ====
-To find the *petstore* VPC, mouse over the VPC's listed to find the one that starts with your user name. Alternativley, run the following command in the Cloud9 IDE `terminal`:
+To find the *petstore* VPC, mouse over the VPC's listed to find the one that starts with your user name. Alternatively, run the following command in the Cloud9 IDE `terminal`:
 
 [source,shell]
 ----
@@ -246,7 +246,7 @@ Step 11:: Select the two *Public* petstore Subnets for *Subnets*.
 +
 Step 12:: For *Security Groups* click *Edit* then click *Select an existing Security Group*. Select the *default* Security Group and click *Save*.
 +
-You will notice that the default Security Group only allows port `8080` from `PetStoreLbSG` to secure our petstore application.
+You will notice that the default Security Group only allows port `8080` from `PetStoreLbSG` to secure our Petstore application.
 +
 image:ecs-sg.png[Security Group]
 +
@@ -286,7 +286,7 @@ Step 21:: Review your settings and click *Create Service*.
 +
 Step 22:: The service will now start your task. Click *View Service* and you will have to wait for your task to transition to *RUNNING*. Feel free to inspect the logs for your task while you wait.
 +
-Step 23:: Once the task is running, view the *Details* of the petstore *Service*. Under *Load Balancing* click the under *Target Group Name* to view the Tasks being registered into the Target Group. You can view thier status under *Targets* tab.
+Step 23:: Once the task is running, view the *Details* of the petstore *Service*. Under *Load Balancing* click the under *Target Group Name* to view the Tasks being registered into the Target Group. You can view their status under *Targets* tab.
 +
 image:ecs-view-target.png[View Target Group]
 +

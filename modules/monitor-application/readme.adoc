@@ -28,7 +28,7 @@ When it comes to monitoring an application, a key concept to understand is you n
 
 . ECS & Fargate Healthchecks.
 . Kubernetes Healthchecks.
-. Monitoring Healthchecks using link:https://aws.amazon.com/cloudwatch/[Amazon Cloudwatch].
+. Monitoring Healthchecks using link:https://aws.amazon.com/cloudwatch/[Amazon CloudWatch].
 
 === Healthchecks in Amazon ECS & Fargate
 NOTE: The following part of the module assumes a working ECS cluster, created in the *Amazon ECS & Fargate* module.
@@ -143,11 +143,11 @@ aws ecs update-service --cluster ${USER_NAME}-petstore-workshop --service ${USER
 + 
 Replacing the older version of your task will take a couple of minutes. To view the status navigate back to the `[red yellow-background]#<User Name>#-petstore-workshop` cluster created in a previous module and view the [red yellow-background]#<User Name># service to view your tasks. You should see the new task being scheduled but you will have to wait for your task to transition to *RUNNING*.
 +
-Step 6:: Once the *petstore* service is *RUNNING*, click on task. You will notice this version of the task should have a *Health Status* of *HEALTHY*. This is due to the new healthchecks we added to our task definition earlier. An example is hown below:
+Step 6:: Once the *petstore* service is *RUNNING*, click on task. You will notice this version of the task should have a *Health Status* of *HEALTHY*. This is due to the new healthchecks we added to our task definition earlier. An example is shown below:
 +
 image::ecs-task-healthy.png[Healthy Task]
 +
-Step 7:: Take some time to inspect the logs for the petstore container in the new task. You should see the healtchecks every `30` seconds like below:
+Step 7:: Take some time to inspect the logs for the petstore container in the new task. You should see the healthchecks every `30` seconds like below:
 +
 image::ecs-task-logs.png[Task Logs]
 
@@ -157,7 +157,7 @@ NOTE: The following section of the module assumes a working EKS cluster, created
 
 By default, Kubernetes will restart a container if it crashes for any reason. It uses Liveness and Readiness probes which can be configured for running a robust application by identifying the healthy containers to send traffic to and restarting the ones when required.
 
-In this section, we will understand how link:https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/[liveness and readiness probes] are defined and test the same against different states of a pod. Below is the high level description of how these probes work.
+In this section, we will understand how link:https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/[liveness and readiness probes] are defined and test the same against different states of a pod. Below is the high-level description of how these probes work.
 
 * *Liveness probes* are used in Kubernetes to know when a pod is alive or dead. A pod can be in a dead state for different reasons while Kubernetes kills and recreates the pod when liveness probe does not pass.
 * *Readiness probes* are used in Kubernetes to know when a pod is ready to serve traffic. Only when the readiness probe passes, a pod will receive traffic from the service. When readiness probe fails, traffic will not be sent to a pod until it passes.
@@ -165,7 +165,7 @@ In this section, we will understand how link:https://kubernetes.io/docs/tasks/co
 We will review some examples in this module to understand different options for configuring liveness and readiness probes.
 
 ==== Configuring the Liveness Probe
-As with any Amazon EKS or Kubernetes cluster, we will use manifest file to decelaritively deploy a simple liveness probe.
+As with any Amazon EKS or Kubernetes cluster, we will use manifest file to declaratively deploy a simple liveness probe.
 
 Step 1:: In the Cloud9 IDE `terminal`, ensure you have switched to this modules' working directory.
 +
@@ -233,7 +233,7 @@ step 5:: Use `kubectl describe` command will show an event history which will sh
 ----
 kubectl describe pod liveness-app | grep -A20 Events
 ----
-Examnple Output:
+Example Output:
 +
 [.output]
 ----
@@ -253,9 +253,9 @@ Step 6:: We will now introduce a failure inside the docker runtime by sending th
 kubectl exec -it liveness-app -- /bin/kill -s SIGUSR1 1
 ----
 +
-Step 7:: After 15-20 seconds, re-run the `kubectl describe` command to view the `Events` output again and see what atctions the `kubelet` took.
+Step 7:: After 15-20 seconds, re-run the `kubectl describe` command to view the `Events` output again and see what actions the `kubelet` took.
 +
-Exmaple Output:
+Example Output:
 +
 [.output]
 ----
@@ -290,9 +290,9 @@ liveness-app   1/1     Running   1          6m42s
 NOTE: The number of `RESTARTS` is now `1`.
 
 ==== Configuring the Readiness Probe
-The `readinessProbe` definition explains how a linux command can be configured as healthcheck. We create an empty file called `/tmp/healthy`, to configure readiness probe and use the same to understand how kubelet helps to update a deployment with only healthy pods.
+The `readinessProbe` definition explains how a Linux command can be configured as healthcheck. We create an empty file called `/tmp/healthy`, to configure readiness probe and use the same to understand how kubelet helps to update a deployment with only healthy pods.
 
-Step 1:: Open the `readiness-deployment.yaml` file by double clicking the filename in the lefthand navigation of the Cloud9 IDE.
+Step 1:: Open the `readiness-deployment.yaml` file by double clicking the filename in the left-hand navigation of the Cloud9 IDE.
 +
 The file has the following contents:
 +
@@ -332,7 +332,7 @@ Step 2:: We now create a deployment to test the readiness probe. The deployment 
 kubectl apply -f readiness-deployment.yaml
 ----
 +
-Step 3:: View the deployment by executing the folloing `kubectl` command:
+Step 3:: View the deployment by executing the following `kubectl` command:
 +
 [source,shell]
 ----
@@ -363,7 +363,7 @@ Expected Output:
 Replicas:               3 desired | 3 updated | 3 total | 3 available | 0 unavailable
 ----
 +
-Step 5:: We will now introduce a failure inside the docker runtime by deleting the `/tmp/healthy` file inside the docker runtime, since this file must be present in order for the readiness check to pass. Pick one of the 3 available pods from the output of *Step 4* to introduce a failure. Exeecute the following command, substituing the name of the pod you've selected:
+Step 5:: We will now introduce a failure inside the docker runtime by deleting the `/tmp/healthy` file inside the docker runtime, since this file must be present in order for the readiness check to pass. Pick one of the 3 available pods from the output of *Step 4* to introduce a failure. Execute the following command, substituting the name of the pod you've selected:
 +
 [source,shell]
 ----
@@ -415,11 +415,11 @@ Step 1:: Select the `[red yellow-background]#<User Name>#-petstore-workshop` clu
 +
 image:ecs-task.png[Running Task]
 +
-Step 2:: Scroll down to the *Containers* section and expand on the container for which you wish to see the CloudWatch logs. Click on the `Log driver: awslogs View logs in CloudWatch` to open the CLoudWatch logs for the specific container.
+Step 2:: Scroll down to the *Containers* section and expand on the container for which you wish to see the CloudWatch logs. Click on the `Log driver: awslogs View logs in CloudWatch` to open the CloudWatch logs for the specific container.
 +
 image:ecs-task-containers.png[CloudWatch Task Logs]
 +
-Once the CloudWatch service consle is open, we can view the specific logs pertaining to our task.
+Once the CloudWatch service console is open, we can view the specific logs pertaining to our task.
 +
 image:cw-ecs-task.png[Task Logs]
 
@@ -464,15 +464,15 @@ The reason we have the ability to view our containers logs in CloudWatch is due 
 ==== Amazon EKS
 NOTE: The following section of the module assumes a working EKS cluster, created in the *Amazon EKS* module.
 
-A typical logging patern in Kubernetes and hence EKS is to leverage a pattern known as the *EFK stack*, which is comprised of:
+A typical logging pattern in Kubernetes and hence EKS is to leverage a pattern known as the *EFK stack*, which is comprised of:
 
 * link:https://www.fluentd.org/[Fluentd]
 * link:https://www.elastic.co/products/elasticsearch[Elasticsearch]
 * link:https://www.elastic.co/products/kibana[Kibana]
 
-However, in this part of the module, we will only focus on *Fluentd* as it will be the mechanism that forwards the logs from the indivudual worker nodes in the cluster to the central loggin backend, CkoudWatch. We will be deploying Fluentd as a DaemonSet, or one pod per worker node. The fluentd log daemon will collect logs and forward to CloudWatch Logs. This will require the nodes to have permissions to send logs and create log groups and log streams.
+However, in this part of the module, we will only focus on *Fluentd* as it will be the mechanism that forwards the logs from the individual worker nodes in the cluster to the central logging backend, CkoudWatch. We will be deploying Fluentd as a DaemonSet, or one pod per worker node. The fluentd log daemon will collect logs and forward to CloudWatch Logs. This will require the nodes to have permissions to send logs and create log groups and log streams.
 
-Step 1:: For this part of the module we will need to ensure that the `Role Name` that the EKS worker nodes use has the necessary policy. Execute the following commands in the CLoud9 IDE `terminal` to configure the worker roles varaibales:
+Step 1:: For this part of the module we will need to ensure that the `Role Name` that the EKS worker nodes use has the necessary policy. Execute the following commands in the CLoud9 IDE `terminal` to configure the worker roles variables:
 +
 [source,shell]
 ----
@@ -800,7 +800,7 @@ spec:
           path: /run/log/journal
 ----
 +
-Step 5:: First we have to update the `log_group_name` so it's uniquely identifiable. The following command will substitute the *[underline]#<UserName>#* paramater in the manifest with your unique username.
+Step 5:: First we have to update the `log_group_name` so it's uniquely identifiable. The following command will substitute the *[underline]#<UserName>#* parameter in the manifest with your unique username.
 +
 [source,shell]
 ----
@@ -809,21 +809,21 @@ sed -i "s/<UserName>/${USER_NAME}/" ~/environment/aws-modernization-workshop/mod
 +
 Step 6:: Apply the manifest to create the fluentd DaemonSet.
 +
-NOTE: Ensure that you are working in this modules directory. i.e. `~/environment/aws-modernization-workshop/modules/monitor-application/eks`
+NOTE: Ensure that you are working in this module's directory. i.e. `~/environment/aws-modernization-workshop/modules/monitor-application/eks`
 +
 [source,shell]
 ----
 kubectl apply -f fluentd.yml
 ----
 +
-Step 7:: We can confirm that all the pods chnage to `Running` status by executing the following command:
+Step 7:: We can confirm that all the pods change to `Running` status by executing the following command:
 +
 [source,shell]
 ----
 kubectl get pods -w --namespace=kube-system
 ----
 +
-Ecpected Output:
+Expected Output:
 +
 [.output]
 ----
@@ -848,4 +848,4 @@ Now we can see all the logs for the various containers in our `kube-system`.
 +
 image:cw-streams.png[CloudWatch Streams]
 
-This conludes the *Application Monitoring* module. Please continue to the next module.
+This concludes the *Application Monitoring* module. Please continue to the next module.

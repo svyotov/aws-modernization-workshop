@@ -154,7 +154,7 @@ version: '3.4'
 services:
 ....
 +
-The next section defines the PostgreSQL service. The PostgreSQL service will run our database. We will use the official PostgreSQL image available from *Docker Hub*. Next, we will map the PostgreSQL port `5432` to the our machine port for easy access.
+The next section defines the PostgreSQL service. The PostgreSQL service will run our database. We will use the official PostgreSQL image available from *Docker Hub*. Next, we will map the PostgreSQL port `5432` to the machine port for easy access.
 +
 Finally, we will define a few environment variables to configure our instance.
 +
@@ -193,7 +193,7 @@ Step 3:: Now we will define our Pet Store application. Docker Compose supports b
 ....
 
 === Running the Application
-To run the application we will execute the following Docker Compose commands from the `terminal`.
+To run the application, we will execute the following Docker Compose commands from the `terminal`.
 
 NOTE: Make sure the `terminal` sessions' current working directory is `~/environment/aws-modernization-workshop/modules/containerize-application/` working directory.
 
@@ -274,7 +274,7 @@ Successfully built ac38f026e2e0
 Successfully tagged containerize-application_petstore:latest
 ....
 +
-Step 3:: Run the application container in the foreground and live stream the logs to stdout. If you hit an error hit `[Ctrl + C]`, make the necessary updates to the Dockerfile and re-build the container by re-running the *step 2* command.
+Step 3:: Run the application container in the foreground and live stream the logs to `stdout`. If you hit an error hit `[Ctrl + C]`, make the necessary updates to the Dockerfile and re-build the container by re-running the *step 2* command.
 +
 [source,shell]
 ----
@@ -313,10 +313,10 @@ petstore_1  | 18:53:39,563 INFO  [org.xnio] (MSC service thread 1-2) XNIO versio
 petstore_1  | 18:53:39,588 INFO  [org.xnio.nio] (MSC service thread 1-2) XNIO NIO Implementation Version 3.5.4.Final
 ....
 +
-Step 4:: To preview the application you will need to click *Preview* from the top menu of the Cloud9 environment, then *Preview Running Application*. This will open a new window and pre-populate the full URL to your preview domain.
+Step 4:: To preview the application, you will need to click *Preview* from the top menu of the Cloud9 environment, then *Preview Running Application*. This will open a new window and pre-populate the full URL to your preview domain.
 +
 image::preview.png[preview]
 +
-Now that we have confirmed that the container is functioning, press `[Ctrl + c]` in the `terminal` to stop the running container and clouse the *Preview* tab.
+Now that we have confirmed that the container is functioning, press `[Ctrl + c]` in the `terminal` to stop the running container and close the *Preview* tab.
 
 In the next module, we will look at how to lay the ground work for deploying the application into production, by creating an link:https://aws.amazon.com/ecr/[Amazon Elastic Container Registry (ECR)].
