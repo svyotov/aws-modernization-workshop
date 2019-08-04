@@ -1,4 +1,4 @@
 # Digital Modernization Workshop
 
-original repository: [https://github.com/darkreapyre/aws-modernization-workshop](https://github.com/darkreapyre/aws-modernization-workshop)
-fork homepage: [https://svyotov.github.io/aws-modernization-workshop/#/](https://svyotov.github.io/aws-modernization-workshop/#/)
+- Original repository(https://github.com/darkreapyre/aws-modernization-workshop)
+- Fork [homepage](https://svyotov.github.io/aws-modernization-workshop/#/)
