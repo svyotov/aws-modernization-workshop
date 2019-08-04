@@ -1,0 +1,10 @@
+# Getting started
+
+- [create environment](modules/create-environment/readme.md "Create Workshop Environment")
+- [getting started](modules/getting-started/readme.md "Getting Started")
+- [containerize application](modules/containerize-application/readme.md "Modern Container Application")
+- [container registry](modules/container-registry/readme.md "Container Registry")
+- [container orchestration-ecs](modules/container-orchestration-ecs/readme.md "Amazon ECS & Fargate")
+- [container orchestration-eks](modules/container-orchestration-eks/readme.md "Amazon EKS")
+- [monitor application](modules/monitor-application/readme.md "Container Application Monitoring")
+- [feedback](modules/feedback/readme.md "Feedback")
