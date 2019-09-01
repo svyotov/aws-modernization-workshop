@@ -18,6 +18,8 @@ Dashboard is a web-based Kubernetes user interface. You can use Dashboard to dep
 
 Dashboard also provides information on the state of Kubernetes resources in your cluster and on any errors that may have occurred.
 
+![Kubernetes Dashboard UI](../../images/docs/ui-dashboard.png)
+
 ## Deploying the Dashboard UI
 
 The Dashboard UI is not deployed by default. To deploy it, run the following command:
@@ -35,11 +37,11 @@ To protect your cluster data, Dashboard deploys with a minimal RBAC configuratio
 ### Command line proxy
 You can access Dashboard using the kubectl command-line tool by running the following command:
 
-```
+```shell
 kubectl proxy
 ```
 
-Kubectl will make Dashboard available at http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/.
+Kubectl will make Dashboard available at [http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/](http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/).
 
 The UI can _only_ be accessed from the machine where the command is executed. See `kubectl proxy --help` for more options.
 
@@ -49,7 +51,7 @@ The UI can _only_ be accessed from the machine where the command is executed. Se
 
 When you access Dashboard on an empty cluster, you'll see the welcome page. This page contains a link to this document as well as a button to deploy your first application. In addition, you can view which system applications are running by default in the `kube-system` [namespace](/docs/tasks/administer-cluster/namespaces/) of your cluster, for example the Dashboard itself.
 
-![Kubernetes Dashboard welcome page](/images/docs/ui-dashboard-zerostate.png)
+![Kubernetes Dashboard welcome page](../../images/docs/ui-dashboard-zerostate.png)
 
 ## Deploying containerized applications
 
@@ -148,7 +150,7 @@ Shows all Kubernetes resources that are used for live configuration of applicati
 #### Logs viewer
 Pod lists and detail pages link to a logs viewer that is built into Dashboard. The viewer allows for drilling down logs from containers belonging to a single Pod.
 
-![Logs viewer](/images/docs/ui-dashboard-logs-view.png)
+![Logs viewer](../../images/docs/ui-dashboard-logs-view.png)
 
 For more information, see the
 [Kubernetes Dashboard project page](https://github.com/kubernetes/dashboard).
