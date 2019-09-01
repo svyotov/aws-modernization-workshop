@@ -135,7 +135,6 @@ Example Output:
     jboss/wildfly                       11.0.0.Final        a12aa93a45f7        3 months ago        700MB
     maven                               3.5-jdk-7           5f03adaf2bbf        7 months ago        483MB
 
-
 #### Step 4
 
 Tag the local docker images with the locations of the remote ECR
