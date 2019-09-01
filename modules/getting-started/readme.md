@@ -1,5 +1,4 @@
-Getting Started with the Workshop
-=================================
+# Getting Started with the Workshop
 
 **Expected Outcomes:**
 
@@ -25,8 +24,7 @@ IDE.
 
 ![Ope IDE](../../images/cloud9-launch.png)
 
-Update Unique User Name Settings
---------------------------------
+## Update Unique User Name Settings
 
 Since the majority of the AWS resources being created will leverage the
 **AWS CLI**, we will automatically create a variable to substitute your
@@ -59,8 +57,7 @@ workshop.
 
     echo "export USER_NAME=$USER_NAME" >> ~/.bashrc && source ~/.bashrc
 
-Update and install the necessary tools
---------------------------------------
+## Update and install the necessary tools
 
 Now update the `AWS CLI` and other pre-installed packages by running the
 following command:
@@ -75,8 +72,7 @@ configure our environment further.
 
     aws configure set region us-west-2
 
-Update the IAM Instance Profile
--------------------------------
+## Update the IAM Instance Profile
 
 Next we need to turn off the **AWS Managed Temporary credentials** as
 the Cloud9 IDE needs to use the assigned IAM Instance profile. Open the
@@ -86,8 +82,7 @@ diagram below:
 
 ![Cloud9 Managed Credentials](../../images/cloud9-credentials.png)
 
-Clone the source repository for this workshop.
-----------------------------------------------
+## Clone the source repository for this workshop
 
 Now we want to clone the repository that contains all the content and
 files you need to complete this workshop.
@@ -95,8 +90,7 @@ files you need to complete this workshop.
     cd ~/environment && \
     git clone https://github.com/svyotov/aws-modernization-workshop.git
 
-Installing 3rd Party CLIs
--------------------------
+## Installing 3rd Party CLIs
 
 During the workshop we will be using a couple of 3<sup>rd</sup> party
 CLI tools like `eksctl` to configure our EKS cluster, and `kubectl` to
@@ -109,13 +103,15 @@ that these tools have been installed:
 > [blog](https://aws.amazon.com/blogs/opensource/eksctl-eks-cluster-one-command/)
 > post.
 
-##### Step 1
+### Step 1
+
 Let’s make a `bin` folder where these binaries will be stored and change
 our directory to the new location.
 
     mkdir ~/bin && cd ~/bin
 
-##### Step 2
+### Step 2
+
 Download the required 3<sup>rd</sup> party `CLI` tools from their
 locations and make them "runnable", and add them to our `$PATH`.
 
@@ -129,15 +125,15 @@ locations and make them "runnable", and add them to our `$PATH`.
     echo "export PATH=~/bin:\${PATH}" >> ~/.bashrc &&\
     exec $SHELL
 
-Launch an EKS Cluster
----------------------
+## Launch an EKS Cluster
 
 It takes a few minutes to launch an EKS cluster, so we will have you
 launch one now, so that the installation can complete while you continue
 with the initial modules. We will launch our EKS Cluster using the
 `eksctl` tool.
 
-##### Step 1
+### Step 1
+
 `eksctl` requires an SSH Key to configure your EKS nodes with.
 
     ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa
@@ -146,7 +142,8 @@ with the initial modules. We will launch our EKS Cluster using the
 >
 > When prompted to enter a passphrase, press \[ENTER\]
 
-##### Step 2
+### Step 2
+
 Now that we have the key, let’s launch the EKS Cluster. Our **EKS**
 cluster will be called `#<User Name>-petstore`
 and will consist of the default, four `m5.large` **EC2** instances.
