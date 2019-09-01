@@ -361,6 +361,10 @@ In the next module, we will look at how to lay the ground work for
 deploying the application into production, by creating an [Amazon
 Elastic Container Registry (ECR)](https://aws.amazon.com/ecr/).
 
+**Note:** If you are running this tutorial locally instead of Cloud9 you can now use [http://localhost:8080](http://localhost:8080) to preview your application.
+
+**Note:** (do not run here) If you would like you could bring everything together up using `docker-compose up` and then when done tear down the components using `docker-compose down`.
+
 ## Other languages
 
 This tutorial showed how to build a Java based docker. It is possible to containerize other languages such as Python [[1]](https://blog.realkinetic.com/building-minimal-docker-containers-for-python-applications-37d0272c52f3), Golang [[1]](https://medium.com/@chemidy/create-the-smallest-and-secured-golang-docker-image-based-on-scratch-4752223b7324)[[2]](https://blog.codeship.com/building-minimal-docker-containers-for-go-applications/)[[3]](https://github.com/chemidy/smallest-secured-golang-docker-image)[[4]](https://flaviocopes.com/golang-docker/), and C# [[1]](https://codefresh.io/docker-tutorial/c-sharp-in-docker/).
