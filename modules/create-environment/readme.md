@@ -1,5 +1,4 @@
-Creating the Workshop Environment
-=================================
+# Creating the Workshop Environment
 
 **Lab Requirements:**
 
@@ -15,8 +14,7 @@ Creating the Workshop Environment
 - Any resources created during the workshop must be named with the
     **IAM User** provided.
 
-Workshop Introduction
----------------------
+## Workshop Introduction
 
 Welcome to the workshop on AWS Digital Modernization. The steps outlined
 below will allow you to quickly create an environment that will allow
@@ -27,8 +25,7 @@ you to work with the instructions contained throughout this workshop.
 > If you do not receive an e-mail with the **AWS Account** and **IAM
 > User**, please see the AWS Instructor.
 
-Create the Workshop environment using CloudFormation
-----------------------------------------------------
+## Create the Workshop environment using CloudFormation
 
 Throughout the workshop you will be tagging and naming resources that
 you create so as to differentiate your resources from the other workshop
@@ -42,7 +39,8 @@ During the workshop, we will refer to this unique username with the
 **&lt;USER\_NAME&gt;** parameter. So whenever you see this, substitute
 your unique user name.
 
-#### Step 1
+### Step 1
+
 To get started, log into the **AWS account** with the **IAM User** name
 (*this should be your e-mail address*), that was provided to you by the
 AWS Instructor.
@@ -51,7 +49,8 @@ Click **Deploy to AWS**.
 
 [![Deploy to AWS](../../images/deploy-to-aws.png)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/create/review?stackName=%3CUSER%20NAME%3E-AWSModernizationWorkshop&templateURL=https%3A%2F%2Fs3-us-west-2.amazonaws.com%2F500842391574-trimble-workshop-us-west-2%2Fcreate-environment%2Ftemplates%2Fworkshop_env_master.yaml)
 
-#### Step 2
+### Step 2
+
 Provide a unique **Stack name** by replacing **&lt;USER NAME&gt;** with
 your unique user name to the beginning of `AWSModernizationWorkshop`.
 
@@ -66,20 +65,24 @@ This will allow your CloudFormation stack to be uniquely identifiable.
 >
 >     bobcat1-AWSModernizationWorkshop
 
-#### Step 3
+### Step 3
+
 Select `t2.large` as the **Cloud9 Instance type**.
 
 ![t2.large](../../images/t2-medium.png)
 
-#### Step 4
+### Step 4
+
 Keep the other parameters at their default.
 
-#### Step 5
+### Step 5
+
 Check both **Capabilities** check-boxes.
 
 ![Capabilities](../../images/cfn-capabilities.png)
 
-#### Step 6
+### Step 6
+
 Click **Create Stack**.
 
 The CloudFormation Template will create the following resources in your

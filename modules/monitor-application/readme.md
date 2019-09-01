@@ -1,5 +1,4 @@
-Monitoring the Application
-==========================
+# Monitoring the Application
 
 **Expected Outcome:**
 
@@ -17,14 +16,13 @@ Monitoring the Application
 
 - One of the following:
 
-    - an Amazon Elastic Container Service Cluster.
+  - an Amazon Elastic Container Service Cluster.
 
-    - an Amazon Elastic Container Service for Kubernetes Cluster.
+  - an Amazon Elastic Container Service for Kubernetes Cluster.
 
 **Average Lab Time:** 45-60 minutes
 
-Introduction
-------------
+## Introduction
 
 When it comes to monitoring an application, a key concept to understand
 is you need to ensure that the application is working rather than only
@@ -40,8 +38,7 @@ focus on the five areas, namely:
 3.  Monitoring Healthchecks using [Amazon
     CloudWatch](https://aws.amazon.com/cloudwatch/).
 
-Healthchecks in Amazon ECS & Fargate
-------------------------------------
+## Healthchecks in Amazon ECS & Fargate
 
 > **Note**
 >
@@ -77,19 +74,22 @@ rolling-updates of services.
 > are specified in a container definition override any Docker health
 > checks that exist in the container image.
 
-#### Step 1
+### Step 1
+
 Change to this modules directory by running:
 
     cd ~/environment/aws-modernization-workshop/modules/monitor-application/
 
-#### Step 2
+### Step 2
+
 To get started, navigate to the
 `aws-modernization-workshop/modules/monitor-application/task-definition`
 folder where you will see the `petstore-fargate-task-definition.json`
 file. Open the `petstore-fargate-task-definition.json` in the Cloud9
 IDE.
 
-#### Step 3
+### Step 3
+
 You will not that this task definition file is a little different from
 the one you already loaded in that we now have added healthcheck values
 to the `postgres` and `petstore` sections of `containerDefinitions`, so
@@ -160,13 +160,15 @@ should be executed in the in the Cloud9 `terminal`.
 
     sed -i "s/<UserName>/${USER_NAME}/" ~/environment/aws-modernization-workshop/modules/monitor-application/task-definition/petstore-fargate-task-definition.json
 
-#### Step 4
+### Step 4
+
 Update the petstore task definition from the JSON file by running this
 command in your Cloud9 terminal:
 
     aws ecs register-task-definition --cli-input-json file://~/environment/aws-modernization-workshop/modules/monitor-application/task-definition/petstore-fargate-task-definition.json
 
-#### Step 5
+### Step 5
+
 Update the `petstore` service in the
 `#<User Name>#-petstore-workshop` cluster with
 the latest version of the `petstore` task definition by running the
@@ -182,7 +184,8 @@ in a previous module and view the &lt;User Name&gt; service to view your
 tasks. You should see the new task being scheduled but you will have to
 wait for your task to transition to **RUNNING**.
 
-#### Step 6
+### Step 6
+
 Once the **petstore** service is **RUNNING**, click on task. You will
 notice this version of the task should have a **Health Status** of
 **HEALTHY**. This is due to the new healthchecks we added to our task
@@ -190,14 +193,14 @@ definition earlier. An example is shown below:
 
 ![Healthy Task](../../images/ecs-task-healthy.png)
 
-#### Step 7
+### Step 7
+
 Take some time to inspect the logs for the petstore container in the new
 task. You should see the healthchecks every `30` seconds like below:
 
 ![Task Logs](../../images/ecs-task-logs.png)
 
-Healthchecks in Amazon EKS
---------------------------
+### Healthchecks in Amazon EKS
 
 > **Note**
 >
@@ -233,12 +236,14 @@ As with any Amazon EKS or Kubernetes cluster, we will use manifest file
 to declaratively deploy a simple liveness probe.
 
 #### Step 1
+
 In the Cloud9 IDE ‘terminal\`, ensure you have switched to this modules’
 working directory.
 
     cd ~/environment/aws-modernization-workshop/modules/monitor-application/eks/
 
 #### Step 2
+
 In the left-hand navigation pane of the Cloud9 IDE, navigate to the same
 folder as above and open the `liveness-app.yaml` file by double clicking
 the file.
@@ -261,6 +266,7 @@ The file has the following contents:
           periodSeconds: 5
 
 #### Step 3
+
 Close the file and apply the manifest by running this command in your
 Cloud9 IDE `terminal`:
 
@@ -271,6 +277,7 @@ Expected Output:
     pod/liveness-app created
 
 #### Step 4
+
 Confirm that the pod is running by executing the following command:
 
     kubectl get pod liveness-app
@@ -285,6 +292,7 @@ Expected Output:
 > The number of `RESTARTS` is `0`.
 
 #### Step 5
+
 Use `kubectl describe` command will show an event history which will
 show any probe failures or restarts, as follows:
 
@@ -356,6 +364,7 @@ understand how kubelet helps to update a deployment with only healthy
 pods.
 
 #### Step 1
+
 Open the `readiness-deployment.yaml` file by double clicking the
 filename in the left-hand navigation of the Cloud9 IDE.
 
@@ -388,12 +397,14 @@ The file has the following contents:
               periodSeconds: 3
 
 #### Step 2
+
 We now create a deployment to test the readiness probe. The deployment
 consists of 3 replicas of the readiness probe.
 
     kubectl apply -f readiness-deployment.yaml
 
 #### Step 3
+
 View the deployment by executing the following `kubectl` command:
 
     kubectl get pods -l app=readiness-deployment
@@ -406,6 +417,7 @@ Example Output:
     readiness-deployment-6b95b8dd66-x2mwn   0/1     Running   0          8s
 
 #### Step 4
+
 Confirm that all replicas are available to serve traffic when a service
 is pointed to this deployment.
 
@@ -416,6 +428,7 @@ Expected Output:
     Replicas:               3 desired | 3 updated | 3 total | 3 available | 0 unavailable
 
 #### Step 5
+
 We will now introduce a failure inside the docker runtime by deleting
 the `/tmp/healthy` file inside the docker runtime, since this file must
 be present in order for the readiness check to pass. Pick one of the 3
@@ -426,6 +439,7 @@ selected:
     kubectl exec -it <YOUR-READINESS-POD-NAME> -- rm /tmp/healthy
 
 #### Step 6
+
 View the deployment once again by running the following command:
 
     kubectl get pods -l app=readiness-deployment
@@ -444,6 +458,7 @@ Example Output:
 > not pass and hence was marked as not ready.
 
 #### Step 7
+
 We will now check for the replicas that are available to serve traffic
 when a service is pointed to this deployment.
 
@@ -464,8 +479,7 @@ pod.
 > using a `TCP` request as described in the
 > [documentation](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/).
 
-Understanding Shipping Logs to CloudWatch from Amazon ECS and EKS
------------------------------------------------------------------
+## Understanding Shipping Logs to CloudWatch from Amazon ECS and EKS
 
 ### Amazon ECS
 
@@ -476,12 +490,14 @@ open the [Amazon ECS](https://us-west-2.console.aws.amazon.com/ecs/)
 service console and click **Clusters**.
 
 #### Step 1
+
 Select the `#<User Name>#-petstore-workshop`
 cluster and click on the **Tasks** tab. Select the **Running** task.
 
 ![Running Task](../../images/ecs-task.png)
 
 #### Step 2
+
 Scroll down to the **Containers** section and expand on the container
 for which you wish to see the CloudWatch logs. Click on the
 `Log driver: awslogs View logs in CloudWatch` to open the CloudWatch
@@ -559,6 +575,7 @@ This will require the nodes to have permissions to send logs and create
 log groups and log streams.
 
 #### Step 1
+
 For this part of the module we will need to ensure that the `Role Name`
 that the EKS worker nodes use has the necessary policy. Execute the
 following commands in the CLoud9 IDE `terminal` to configure the worker
@@ -575,6 +592,7 @@ roles variables:
     echo "export INSTANCE_PROFILE_ARN=${INSTANCE_PROFILE_ARN}" >> ~/.bashrc
 
 #### Step 2
+
 Next we configure a policy for CloudWatch access and apply it to the
 worker nodes.
 
@@ -599,7 +617,8 @@ worker nodes.
 
     aws iam put-role-policy --role-name $ROLE_NAME --policy-name ${USER_NAME}_WorkerLogPolicy --policy-document file:///tmp/eks-logs-policy.json
 
-Steo 3
+#### Step 3
+
 Validate that the policy has been attached to the worker node role.
 
     aws iam get-role-policy --role-name $ROLE_NAME --policy-name ${USER_NAME}_WorkerLogPolicy
@@ -628,6 +647,7 @@ Expected Output:
     }
 
 #### Step 4
+
 Now we can deploy Fluentd. To get started, navigate to the folder for
 this module and open the `fluentd.yaml` in the Cloud9 IDE. Although it
 is a large manifest for deploying Fluentd as a **DaemonSet**, i.e. one
@@ -869,6 +889,7 @@ Kubernetes **ConfigMap** as shown below:
               path: /run/log/journal
 
 #### Step 5
+
 First we have to update the `log_group_name` so it’s uniquely
 identifiable. The following command will substitute the
 **&lt;UserName&gt;** parameter in the manifest with your unique
@@ -877,6 +898,7 @@ username.
     sed -i "s/<UserName>/${USER_NAME}/" ~/environment/aws-modernization-workshop/modules/monitor-application/eks/fluentd.yml
 
 #### Step 6
+
 Apply the manifest to create the fluentd DaemonSet.
 
 > **Note**
@@ -887,6 +909,7 @@ Apply the manifest to create the fluentd DaemonSet.
     kubectl apply -f fluentd.yml
 
 #### Step 7
+
 We can confirm that all the pods change to `Running` status by executing
 the following command:
 
@@ -905,6 +928,7 @@ Expected Output:
     kube-proxy-r84rb           1/1     Running   0          4h
 
 #### Step 8
+
 Now we can view the CloudWatch log streams for the containers in our
 `kube-system`. To do this, open a browser tab and navigate to the
 [CloudWatch
@@ -913,6 +937,7 @@ Console](https://us-west-2.console.aws.amazon.com/cloudwatch/) and click
 displayed.
 
 #### Step 9
+
 In the **Filter:** box, enter `eks` and press `[ENTER]` to filter the
 Log Group for our EKS cluster. Click on the
 `/eks/[red yellow-background]#<User Name>#/containers` Log Group.

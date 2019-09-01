@@ -1,5 +1,4 @@
-Container Orchestration
-=======================
+# Container Orchestration
 
 **Expected Outcome:**
 
@@ -13,8 +12,7 @@ Container Orchestration
 
 **Average Lab Time:** 20-30 minutes
 
-Introduction
-------------
+## Introduction
 
 In this module, we’re going to deploy applications using [Amazon Elastic
 Container Service for Kubernetes (Amazon
@@ -22,8 +20,7 @@ EKS)](http://aws.amazon.com/eks/).
 
 ![ECS](../../images/eks.png)
 
-Getting Started with Amazon EKS
--------------------------------
+## Getting Started with Amazon EKS
 
 Before we get started, here are some terms you need to understand in
 order to deploy your application when creating your first Amazon EKS
@@ -56,8 +53,7 @@ cluster.
 </tbody>
 </table>
 
-Amazon EKS and Kubernetes Manifests
------------------------------------
+## Amazon EKS and Kubernetes Manifests
 
 To use Amazon EKS or any Kubernetes cluster you must write a manifest or
 a config file, these config files are used to declaratively document
@@ -66,12 +62,14 @@ be found
 [here](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/).
 
 ##### Step 1
+
 In the Cloud9 IDE ‘terminal\`, switch to this modules’ working
 directory.
 
     cd ~/environment/aws-modernization-workshop/modules/container-orchestration-eks
 
 ##### Step 2
+
 Using the navigation pane of the Cloud9 IDE, open to the
 `aws-modernization-workshop/modules/container-orchestration-eks` folder
 and double-click on the `petstore-eks-manifest.yaml` file to open it.
@@ -241,10 +239,8 @@ The file has the following contents:
 > `petstore-eks-manifest.yaml` file.
 
 ##### Step 3
-Close the `petstore-eks-manifest.yaml`. Run the following commands in
-the Cloud9 IDE `terminale`. These commands will replace the
-**&lt;YourAccountID&gt;** and **&lt;UserName&gt;** placeholders with
-your AWS Account ID and user name.
+
+Close the `petstore-eks-manifest.yaml`. Run the following commands in the Cloud9 IDE `terminale`. These commands will replace the **&lt;YourAccountID&gt;** and **&lt;UserName&gt;** placeholders with your AWS Account ID and user name.
 
     ACCOUNT_ID=$(aws sts get-caller-identity --output text --query 'Account')
 
@@ -253,6 +249,7 @@ your AWS Account ID and user name.
     sed -i "s/<UserName>/${USER_NAME}/" petstore-eks-manifest.yaml
 
 ##### Step 4
+
 Apply your customized manifest by running this command in your Cloud9
 IDE `terminal`:
 
@@ -269,10 +266,8 @@ Expected Output:
     deployment.apps/frontend created
 
 ##### Step 5
-As you can see from the above output, this manifest created and
-configured several components in your Kubernetes cluster. We’ve created
-a **namespace**, **persistentvolume**, **persistentvolumeclaim**, 2
-**services**, and 2 **deployments**.
+
+As you can see from the above output, this manifest created and configured several components in your Kubernetes cluster. We’ve created a **namespace**, **persistentvolume**, **persistentvolumeclaim**, 2 **services**, and 2 **deployments**.
 
 <table>
 <colgroup>
@@ -310,6 +305,7 @@ a **namespace**, **persistentvolume**, **persistentvolumeclaim**, 2
 </table>
 
 ##### Step 6
+
 Now that the scheduler knows that you want to run this application, it
 will find available **disk**, **cpu** and **memory** and will place the
 pods on **Worker Nodes**. Let’s watch as they get provisioned, by
@@ -325,6 +321,7 @@ Example Output:
     postgres-678864b7-vs5zj     0/1       ContainerCreating   5          3m
 
 ##### Step 7
+
 Once the **STATUS** changes to **Running** for all 3 of your containers,
 we can then load the services and navigate to the exposed application
 (you will need to `[ctrl + c]` since its watching).
@@ -338,6 +335,7 @@ Example Output:
     postgres   ClusterIP      None            <none>                                                                    5432/TCP                                    6m
 
 ##### Step 8
+
 Here we can see that we’re exposing the **frontend** using an ELB, which
 is available at the **EXTERNAL-IP** field. Copy and paste this into a
 new browser tab.
