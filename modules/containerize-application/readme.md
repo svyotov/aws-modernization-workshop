@@ -1,5 +1,4 @@
-Modern Container Application
-============================
+# Modern Container Application
 
 **Expected Outcome:**
 
@@ -14,8 +13,7 @@ Modern Container Application
 
 **Average Lab Time:** 30-45 minutes
 
-Introduction
-------------
+## Introduction
 
 In this module, we will start exploring our **Modern Container
 Application**, the **Pet Store** application.
@@ -27,25 +25,25 @@ using a Maven container then deploy our WAR file to the Wildfly
 container. We will be using multi-stage builds to facilitate creating a
 minimal docker container.
 
-Building the Dockerfile
------------------------
+## Building the Dockerfile
 
 ![Docker Image](../../images/docker-image.png)
 
-Step 1  
+### Step 1
+
 To get started, make sure you are using a new `terminal` window and
 switch to the `containerize-application` folder within this repository.
 
     cd ~/environment/aws-modernization-workshop/modules/containerize-application/
 
-Step 2  
+### Step 2
+
 Double-click to open the `Dockerfile` in the Cloud9 editor, using the
 **Environment** navigation pane, as shows below:
 
 ![Dockerfile](../../images/dockerfile-nav.png)
 
-Reviewing the Dockerfile
-------------------------
+## Reviewing the Dockerfile
 
 ![Dockerfile layers](../../images/dockerfile-layers.png)
 
@@ -151,14 +149,14 @@ for Wildfly management. We then set up the prerequisites for the
     ENTRYPOINT [ "/opt/jboss/wildfly/bin/standalone.sh" ]
     CMD [ "-b", "0.0.0.0", "-bmanagement", "0.0.0.0" ]
 
-Defining the Application
-------------------------
+## Defining the Application
 
 For this workshop we use the tool `docker-compose` to simulate a
 full-stack development environment that consists of multiple containers
 communicating with each other.
 
-Step 1  
+### Step 1
+
 Download the docker-compose binary by using the `terminal`.
 
     sudo curl -kLo ~/bin/docker-compose https://github.com/docker/compose/releases/download/1.24.0/docker-compose-$(uname -s)-$(uname -m) && \
@@ -170,7 +168,8 @@ defining the structure of our application and it’s dependencies in a
 `docker-compose.yml` file. This file contains the complete environment
 required for our application.
 
-Step 2  
+### Step 2
+
 Open the file called `docker-compose.yml`. Let’s review the contents. To
 start your file should look like this:
 
@@ -199,7 +198,8 @@ instance.
           - 'POSTGRES_USER=admin'
           - 'POSTGRES_PASSWORD=password'
 
-Step 3  
+### Step 3
+
 Now we will define our Pet Store application. Docker Compose supports
 building containers as well, so we will use a special syntax for
 defining this container. In our `yaml` file we will create a new service
@@ -223,8 +223,7 @@ variables to configure our database with the application.
           - 'DB_USER=admin'
           - 'DB_PASS=password'
 
-Running the Application
------------------------
+## Running the Application
 
 To run the application, we will execute the following Docker Compose
 commands from the `terminal`.
@@ -235,7 +234,8 @@ commands from the `terminal`.
 > `~/environment/aws-modernization-workshop/modules/containerize-application/`
 > working directory.
 
-Step 1  
+### Step 1
+
 Run the database container in the background (`-d` or daemon flag). We
 don’t need the database logs to clog our application logs.
 
@@ -264,7 +264,8 @@ Example output:
     Status: Downloaded newer image for postgres:9.6
     Creating containerize-application_postgres_1 ... done
 
-Step 2  
+### Step 2
+
 Build out petstore application.
 
     docker-compose build petstore
@@ -304,7 +305,8 @@ Example output (*redacted for brevity*):
     Successfully built ac38f026e2e0
     Successfully tagged containerize-application_petstore:latest
 
-Step 3  
+### Step 3
+
 Run the application container in the foreground and live stream the logs
 to `stdout`. If you hit an error hit `[Ctrl + C]`, make the necessary
 updates to the Dockerfile and re-build the container by re-running the
@@ -342,7 +344,8 @@ Example output:
     petstore_1  | 18:53:39,563 INFO  [org.xnio] (MSC service thread 1-2) XNIO version 3.5.4.Final
     petstore_1  | 18:53:39,588 INFO  [org.xnio.nio] (MSC service thread 1-2) XNIO NIO Implementation Version 3.5.4.Final
 
-Step 4  
+### Step 4
+
 To preview the application, you will need to click **Preview** from the
 top menu of the Cloud9 environment, then **Preview Running
 Application**. This will open a new window and pre-populate the full URL
@@ -357,3 +360,65 @@ the **Preview** tab.
 In the next module, we will look at how to lay the ground work for
 deploying the application into production, by creating an [Amazon
 Elastic Container Registry (ECR)](https://aws.amazon.com/ecr/).
+
+## Other languages
+
+This tutorial showed how to build a Java based docker. It is possible to containerize other languages such as Python [[1]](https://blog.realkinetic.com/building-minimal-docker-containers-for-python-applications-37d0272c52f3), Golang [[1]](https://medium.com/@chemidy/create-the-smallest-and-secured-golang-docker-image-based-on-scratch-4752223b7324)[[2]](https://blog.codeship.com/building-minimal-docker-containers-for-go-applications/)[[3]](https://github.com/chemidy/smallest-secured-golang-docker-image), and C# [[1]](https://codefresh.io/docker-tutorial/c-sharp-in-docker/).
+
+Having multiple stages or using alpine as base total image size drastically. Bellow are a couple of non working examples to explain docker image size reduction. For the full details please see the links above.
+
+Non working example of using a single stage (largest)
+
+```Dockerfile
+FROM golang:1.8.3 as builder
+WORKDIR /go/src/github.com/flaviocopes/findlinks
+RUN go get -d -v golang.org/x/net/html
+COPY findlinks.go  .
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o findlinks .
+RUN yum --no-cache add ca-certificates
+WORKDIR /root/
+CMD ["/go/src/github.com/flaviocopes/findlinks/findlinks"]
+```
+
+Non working example of docker build using alpine (smaller)
+
+```Dockerfile
+FROM golang:1.8.3 as builder
+WORKDIR /go/src/github.com/flaviocopes/findlinks
+RUN go get -d -v golang.org/x/net/html
+COPY findlinks.go  .
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o findlinks .
+
+FROM alpine:latest
+RUN apk --no-cache add ca-certificates
+WORKDIR /root/
+COPY --from=builder /go/src/github.com/flaviocopes/findlinks/findlinks .
+CMD ["./findlinks"]
+```
+
+Non working example of docker build using scratch, which will result in ~ 21.2MB with everything required for the go application, compared to images of 500Mb when not using multi stages.
+
+```Dockerfile
+############################
+# STEP 1 build executable binary
+############################
+FROM golang:alpine AS builder
+# Install git.
+# Git is required for fetching the dependencies.
+RUN apk update && apk add --no-cache git
+WORKDIR $GOPATH/src/mypackage/myapp/
+COPY . .
+# Fetch dependencies.
+# Using go get.
+RUN go get -d -v
+# Build the binary.
+RUN go build -o /go/bin/hello
+############################
+# STEP 2 build a small image
+############################
+FROM scratch
+# Copy our static executable.
+COPY --from=builder /go/bin/hello /go/bin/hello
+# Run the hello binary.
+ENTRYPOINT ["/go/bin/hello"]
+```

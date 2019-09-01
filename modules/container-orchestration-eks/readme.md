@@ -65,13 +65,13 @@ what is needed to deploy an individual application. More information can
 be found
 [here](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/).
 
-Step 1  
+##### Step 1
 In the Cloud9 IDE ‘terminal\`, switch to this modules’ working
 directory.
 
     cd ~/environment/aws-modernization-workshop/modules/container-orchestration-eks
 
-Step 2  
+##### Step 2
 Using the navigation pane of the Cloud9 IDE, open to the
 `aws-modernization-workshop/modules/container-orchestration-eks` folder
 and double-click on the `petstore-eks-manifest.yaml` file to open it.
@@ -240,7 +240,7 @@ The file has the following contents:
 > Therefore, there is no `StorageClass` definition in the
 > `petstore-eks-manifest.yaml` file.
 
-Step 3  
+##### Step 3
 Close the `petstore-eks-manifest.yaml`. Run the following commands in
 the Cloud9 IDE `terminale`. These commands will replace the
 **&lt;YourAccountID&gt;** and **&lt;UserName&gt;** placeholders with
@@ -252,7 +252,7 @@ your AWS Account ID and user name.
 
     sed -i "s/<UserName>/${USER_NAME}/" petstore-eks-manifest.yaml
 
-Step 4  
+##### Step 4
 Apply your customized manifest by running this command in your Cloud9
 IDE `terminal`:
 
@@ -268,7 +268,7 @@ Expected Output:
     service/frontend created
     deployment.apps/frontend created
 
-Step 5  
+##### Step 5
 As you can see from the above output, this manifest created and
 configured several components in your Kubernetes cluster. We’ve created
 a **namespace**, **persistentvolume**, **persistentvolumeclaim**, 2
@@ -309,7 +309,7 @@ a **namespace**, **persistentvolume**, **persistentvolumeclaim**, 2
 </tbody>
 </table>
 
-Step 6  
+##### Step 6
 Now that the scheduler knows that you want to run this application, it
 will find available **disk**, **cpu** and **memory** and will place the
 pods on **Worker Nodes**. Let’s watch as they get provisioned, by
@@ -324,7 +324,7 @@ Example Output:
     frontend-869db5db6b-j5nfj   0/1       Init:0/1            0          3m
     postgres-678864b7-vs5zj     0/1       ContainerCreating   5          3m
 
-Step 7  
+##### Step 7
 Once the **STATUS** changes to **Running** for all 3 of your containers,
 we can then load the services and navigate to the exposed application
 (you will need to `[ctrl + c]` since its watching).
@@ -337,7 +337,7 @@ Example Output:
     frontend   LoadBalancer   10.100.20.251   ac7059d97a51611e88f630213e88d018-2093299179.us-west-2.elb.amazonaws.com   80:30327/TCP,443:32177/TCP,9990:30543/TCP   6m
     postgres   ClusterIP      None            <none>                                                                    5432/TCP                                    6m
 
-Step 8  
+##### Step 8
 Here we can see that we’re exposing the **frontend** using an ELB, which
 is available at the **EXTERNAL-IP** field. Copy and paste this into a
 new browser tab.

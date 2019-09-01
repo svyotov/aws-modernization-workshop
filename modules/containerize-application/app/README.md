@@ -62,7 +62,7 @@ The `persistence.xml` defines a persistence unit called `applicationPetstorePU` 
 ```
 
 ### H2
- 
+
 By default, the application uses the in-memory H2 database. If you log into the WildFly [Admin Console](http://localhost:9990/), go to [http://localhost:9990/console/App.html#profile/datasources;name=ExampleDS]() and you will see the H2 Driver as well as the Connection URL pointing at the in-memory H2 database `jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE`
 
 ### Postgresql
@@ -71,7 +71,7 @@ If instead a H2 in-memory database you want to use PostgreSQL, you need to do th
 
 #### Install the PostgreSQL driver into Wildfly
 
-This [good article](http://ralph.soika.com/wildfly-install-postgresql-jdbc-driver-as-a-module/) explains you how. 
+This [good article](http://ralph.soika.com/wildfly-install-postgresql-jdbc-driver-as-a-module/) explains you how.
 
 1) Go to `$WILDFLY_HOME/modules/system/layers/base/` and create the folder `org/postgresql/main`
 2) Copy the Postgresql [JDBC driver jar](https://jdbc.postgresql.org/download.html) file (eg. `postgresql-42.1.4.jar`) to the new folder `$WILDFLY_HOME/modules/system/layers/base/org/postgresql/main`
@@ -131,7 +131,7 @@ When, like me, you have no web designer skills at all and your web pages look ug
 ## Icons
 
 I use:
- 
+
 * [Font Awesome](http://fontawesome.io/)
 * [Silk Icons](http://www.famfamfam.com/lab/icons/silk/) which are in Creative Commons
 

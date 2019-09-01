@@ -20,7 +20,7 @@ run through a few steps to finalize the configuration of your AWS Cloud9
 environment. Your AWS Cloud9 environment is accessible from the [AWS
 Console](https://us-west-2.console.aws.amazon.com/cloud9/home?region=us-west-2#).
 Once you’ve accessed the console, open the
-`[red yellow-background]#<User Name>#-AWSModernizationWorkshop-IDEStack`
+`<User Name>-AWSModernizationWorkshop-IDEStack`
 IDE.
 
 ![Ope IDE](../../images/cloud9-launch.png)
@@ -93,7 +93,7 @@ Now we want to clone the repository that contains all the content and
 files you need to complete this workshop.
 
     cd ~/environment && \
-    git clone https://github.com/darkreapyre/aws-modernization-workshop.git
+    git clone https://github.com/svyotov/aws-modernization-workshop.git
 
 Installing 3rd Party CLIs
 -------------------------
@@ -109,13 +109,13 @@ that these tools have been installed:
 > [blog](https://aws.amazon.com/blogs/opensource/eksctl-eks-cluster-one-command/)
 > post.
 
-Step 1  
+##### Step 1
 Let’s make a `bin` folder where these binaries will be stored and change
 our directory to the new location.
 
     mkdir ~/bin && cd ~/bin
 
-Step 2  
+##### Step 2
 Download the required 3<sup>rd</sup> party `CLI` tools from their
 locations and make them "runnable", and add them to our `$PATH`.
 
@@ -137,7 +137,7 @@ launch one now, so that the installation can complete while you continue
 with the initial modules. We will launch our EKS Cluster using the
 `eksctl` tool.
 
-Step 1  
+##### Step 1
 `eksctl` requires an SSH Key to configure your EKS nodes with.
 
     ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa
@@ -146,9 +146,9 @@ Step 1
 >
 > When prompted to enter a passphrase, press \[ENTER\]
 
-Step 2  
+##### Step 2
 Now that we have the key, let’s launch the EKS Cluster. Our **EKS**
-cluster will be called `[red yellow-background]#<User Name>#-petstore`
+cluster will be called `#<User Name>-petstore`
 and will consist of the default, four `m5.large` **EC2** instances.
 
     eksctl create cluster --full-ecr-access --name=${USER_NAME}-petstore --nodes-min=2 --nodes-max=4
