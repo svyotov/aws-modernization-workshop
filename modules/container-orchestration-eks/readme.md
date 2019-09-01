@@ -258,7 +258,7 @@ Apply your customized manifest by using [kubectl](https://kubernetes.io/docs/ref
 If it fails with error(s) try to re-authenticate to the cluster:
 
 ```shell
-aws eks --region region update-kubeconfig --name cluster_name
+aws eks --region us-west-2 update-kubeconfig --name ${USER_NAME}-petstore
 ```
 
 Expected Output:
