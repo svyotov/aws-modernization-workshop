@@ -68,7 +68,7 @@ command:
     do  echo "The stack is NOT in a state of CREATE_COMPLETE at `date`";   \
     sleep 30; done && echo "The Stack is built at `date` - Please proceed"
 
-#### Pushing the Petstore images to Amazon Elastic Container Registry (ECR)
+### Pushing the Petstore images to Amazon Elastic Container Registry (ECR)
 
 Before we can deploy our Petstore application to an orchestrator, we
 need to push our Petstore images to **ECR**.
