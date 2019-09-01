@@ -1,5 +1,5 @@
 # Digital Modernization Workshop
 
-- [Original repository](https://github.com/darkreapyre/aws-modernization-workshop)
+- Source Code: [Original](https://github.com/darkreapyre/aws-modernization-workshop), [Current](https://github.com/svyotov/aws-modernization-workshop)
 - [Homepage](https://svyotov.github.io/aws-modernization-workshop/#/)
 - [Contents](https://svyotov.github.io/aws-modernization-workshop/#/docs/_navigation.md)
