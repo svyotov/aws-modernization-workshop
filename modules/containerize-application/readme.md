@@ -363,7 +363,22 @@ Elastic Container Registry (ECR)](https://aws.amazon.com/ecr/).
 
 ## Other languages
 
-This tutorial showed how to build a Java based docker. It is possible to containerize other languages such as Python [[1]](https://blog.realkinetic.com/building-minimal-docker-containers-for-python-applications-37d0272c52f3), Golang [[1]](https://medium.com/@chemidy/create-the-smallest-and-secured-golang-docker-image-based-on-scratch-4752223b7324)[[2]](https://blog.codeship.com/building-minimal-docker-containers-for-go-applications/)[[3]](https://github.com/chemidy/smallest-secured-golang-docker-image), and C# [[1]](https://codefresh.io/docker-tutorial/c-sharp-in-docker/).
+This tutorial showed how to build a Java based docker. It is possible to containerize other languages such as Python [[1]](https://blog.realkinetic.com/building-minimal-docker-containers-for-python-applications-37d0272c52f3), Golang [[1]](https://medium.com/@chemidy/create-the-smallest-and-secured-golang-docker-image-based-on-scratch-4752223b7324)[[2]](https://blog.codeship.com/building-minimal-docker-containers-for-go-applications/)[[3]](https://github.com/chemidy/smallest-secured-golang-docker-image)[[4]](https://flaviocopes.com/golang-docker/), and C# [[1]](https://codefresh.io/docker-tutorial/c-sharp-in-docker/).
+
+## Best practices
+
+It is useful to go though docker best practices [[1]](https://docs.docker.com/develop/develop-images/dockerfile_best-practices/) and [[2]](https://snyk.io/blog/10-docker-image-security-best-practices/).
+
+Some of the major ones are
+
+1. Prefer minimal base images (see examples bellow)
+2. Clean yum, apt, apk cache after install or use --no-cache
+3. Least privileged user (`USER <something>` instead of `USER root`)
+4. Don't leak sensitive information to Docker images (certificates, passwords etc)
+5. Beware of recursive copy `COPY . .`
+6. Use metadata labels `LABEL maintainer="me@example.com"`
+7. Use multi-stage build for small and secure images
+8. Use a linter such as [hadolint](https://github.com/hadolint/hadolint)
 
 Having multiple stages or using alpine as base total image size drastically. Bellow are a couple of non working examples to explain docker image size reduction. For the full details please see the links above.
 
@@ -407,6 +422,8 @@ FROM golang:alpine AS builder
 # Git is required for fetching the dependencies.
 RUN apk update && apk add --no-cache git
 WORKDIR $GOPATH/src/mypackage/myapp/
+# this recursive copy is happening in the builder
+# and the files will not be in the final docker image
 COPY . .
 # Fetch dependencies.
 # Using go get.
