@@ -49,7 +49,7 @@ AWS Instructor.
 
 Click **Deploy to AWS**.
 
-![Deploy to AWS](../../images/deploy-to-aws.png)
+[![Deploy to AWS](../../images/deploy-to-aws.png)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/create/review?stackName=<USER NAME>-AWSModernizationWorkshop&templateURL=https://s3-us-west-2.amazonaws.com/500842391574-trimble-workshop-us-west-2/create-environment/templates/workshop_env_master.yaml)
 
 Step 2  
 Provide a unique **Stack name** by replacing **&lt;USER NAME&gt;** with
