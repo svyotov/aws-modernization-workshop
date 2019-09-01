@@ -3,23 +3,23 @@ Monitoring the Application
 
 **Expected Outcome:**
 
--   200 level understanding of Container Healthchecks using ECS &
+- 200 level understanding of Container Healthchecks using ECS &
     Fargate.
 
--   200 level understanding of Container Healthchecks using EKS.
+- 200 level understanding of Container Healthchecks using EKS.
 
--   200 level understanding of shipping container logs for to
+- 200 level understanding of shipping container logs for to
     CloudWatch.
 
 **Lab Requirements:**
 
--   Clou9 IDE.
+- Clou9 IDE.
 
--   One of the following:
+- One of the following:
 
-    -   an Amazon Elastic Container Service Cluster.
+    - an Amazon Elastic Container Service Cluster.
 
-    -   an Amazon Elastic Container Service for Kubernetes Cluster.
+    - an Amazon Elastic Container Service for Kubernetes Cluster.
 
 **Average Lab Time:** 45-60 minutes
 
@@ -214,12 +214,12 @@ probes](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liven
 are defined and test the same against different states of a pod. Below
 is the high-level description of how these probes work.
 
--   **Liveness probes** are used in Kubernetes to know when a pod is
+- **Liveness probes** are used in Kubernetes to know when a pod is
     alive or dead. A pod can be in a dead state for different reasons
     while Kubernetes kills and recreates the pod when liveness probe
     does not pass.
 
--   **Readiness probes** are used in Kubernetes to know when a pod is
+- **Readiness probes** are used in Kubernetes to know when a pod is
     ready to serve traffic. Only when the readiness probe passes, a pod
     will receive traffic from the service. When readiness probe fails,
     traffic will not be sent to a pod until it passes.
@@ -497,11 +497,11 @@ logs pertaining to our task.
 The reason we have the ability to view our containers logs in CloudWatch
 is due to the following reasons:
 
--   Our Pet Store application is configured to log to `STDOUT` and
+- Our Pet Store application is configured to log to `STDOUT` and
     `STDERR` which is the command output that you would normally see in
     an interactive terminal if you ran the container locally.
 
--   We defined the `logDriver` in our
+- We defined the `logDriver` in our
     `petstore-fargate-task-definition.json` as `awslogs` along with some
     settings around CloudWatch. The awslogs log driver simply passes
     these `STDOUT` and `STDERR` from Docker to CloudWatch.
@@ -519,7 +519,7 @@ is due to the following reasons:
 
         ...
 
--   In order to have our container instances send log data to CloudWatch
+- In order to have our container instances send log data to CloudWatch
     Logs, there is an IAM policy called
     `#<User Name>#-petstore-ExecutionRole` that
     allows your container instances to use the CloudWatch Logs APIs that
@@ -544,11 +544,11 @@ is due to the following reasons:
 A typical logging pattern in Kubernetes and hence EKS is to leverage a
 pattern known as the **EFK stack**, which is comprised of:
 
--   [Fluentd](https://www.fluentd.org/)
+- [Fluentd](https://www.fluentd.org/)
 
--   [Elasticsearch](https://www.elastic.co/products/elasticsearch)
+- [Elasticsearch](https://www.elastic.co/products/elasticsearch)
 
--   [Kibana](https://www.elastic.co/products/kibana)
+- [Kibana](https://www.elastic.co/products/kibana)
 
 However, in this part of the module, we will only focus on **Fluentd**
 as it will be the mechanism that forwards the logs from the individual

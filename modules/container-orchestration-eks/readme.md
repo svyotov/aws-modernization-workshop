@@ -3,13 +3,13 @@ Container Orchestration
 
 **Expected Outcome:**
 
--   200 level usage of Amazon EKS.
+- 200 level usage of Amazon EKS.
 
 **Lab Requirements:**
 
--   Cloud9 IDE.
+- Cloud9 IDE.
 
--   EKS Cluster created in the **Getting Started** module.
+- EKS Cluster created in the **Getting Started** module.
 
 **Average Lab Time:** 20-30 minutes
 

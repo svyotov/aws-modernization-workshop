@@ -3,13 +3,13 @@ Getting Started with the Workshop
 
 **Expected Outcomes:**
 
--   Configure IDE Environment and Roles.
+- Configure IDE Environment and Roles.
 
--   Update installed packages.
+- Update installed packages.
 
--   Install 3<sup>rd</sup> Party applications.
+- Install 3<sup>rd</sup> Party applications.
 
--   Launch EKS Cluster.
+- Launch EKS Cluster.
 
 **Lab Requirements:** None
 

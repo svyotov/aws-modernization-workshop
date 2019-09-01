@@ -3,16 +3,16 @@ Creating the Workshop Environment
 
 **Lab Requirements:**
 
--   An AWS account provided to you by the AWS Instructor.
+- An AWS account provided to you by the AWS Instructor.
 
--   Working Laptop with Internet Access.
+- Working Laptop with Internet Access.
 
 **Note:**
 
--   All AWS resources used for this workshop are to be created in the
+- All AWS resources used for this workshop are to be created in the
     **us-west-2** AWS Region.
 
--   Any resources created during the workshop must be named with the
+- Any resources created during the workshop must be named with the
     **IAM User** provided.
 
 Workshop Introduction
@@ -85,13 +85,13 @@ Click **Create Stack**.
 The CloudFormation Template will create the following resources in your
 AWS Account:
 
--   `C9InstanceFunctionRole` - IAM Role for access to AWS resources
+- `C9InstanceFunctionRole` - IAM Role for access to AWS resources
     created suring the Workshop.
 
--   `C9InstanceFunction` - Lambda Function to map the IAM Role to the
+- `C9InstanceFunction` - Lambda Function to map the IAM Role to the
     Cloud9 Instance.
 
--   `C9InstanceCR` - Cloud9 IDE Instance.
+- `C9InstanceCR` - Cloud9 IDE Instance.
 
 It should take around **15 minutes** for the environment to be deployed.
 Use the [AWS

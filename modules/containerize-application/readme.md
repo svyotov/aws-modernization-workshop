@@ -2,11 +2,11 @@
 
 **Expected Outcome:**
 
--   100 level install of Docker Tooling.
+- 100 level install of Docker Tooling.
 
--   Build the Pet Store application within a Container.
+- Build the Pet Store application within a Container.
 
--   Deploy the Pet Store application to a Wildfly based Application
+- Deploy the Pet Store application to a Wildfly based Application
     Server.
 
 **Lab Requirements:** Cloud9 IDE
@@ -363,7 +363,7 @@ Elastic Container Registry (ECR)](https://aws.amazon.com/ecr/).
 
 **Note:** If you are running this tutorial locally instead of Cloud9 you can now use [http://localhost:8080](http://localhost:8080) to preview your application.
 
-**Note:** (do not run here) If you would like you could bring everything together up using `docker-compose up` and then when done tear down the components using `docker-compose down`.
+**Note:** If you would like you could bring everything together up using `docker-compose up` and then when done tear down the components using `docker-compose down`.
 
 ## Other languages
 
@@ -443,3 +443,7 @@ COPY --from=builder /go/bin/hello /go/bin/hello
 # Run the hello binary.
 ENTRYPOINT ["/go/bin/hello"]
 ```
+
+## Next
+
+At this step we have completed the basic docker introduction. We can bring our running dockers down using `docker-compose down` and proceed to the next tutorial [Container registry](/modules/container-registry/readme.md "Container Registry").

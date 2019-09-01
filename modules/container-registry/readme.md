@@ -1,18 +1,16 @@
-Container Registry
-==================
+# Container Registry
 
 **Expected Outcome:**
 
--   100 level introduction to Amazon Elastic Container Registry.
+- 100 level introduction to Amazon Elastic Container Registry.
 
--   Containers pushed to ECR.
+- Containers pushed to ECR.
 
 **Lab Requirements:** Cloud9 IDE
 
 **Average Lab Time:** 10-15 minutes
 
-Introduction
-------------
+## Introduction
 
 In this module, we’re going to take our already containerized
 applications and push them to [Amazon Elastic Container Registry
@@ -29,19 +27,21 @@ Repositories.
 
 CloudFormation creates the following resources:
 
--   `PetStorePostgreSQLRepository` - ECR Repository for PostgresSQL
+- `PetStorePostgreSQLRepository` - ECR Repository for PostgresSQL
     containers.
 
--   `PetStoreFrontendRepository` - ECR Repository for the front-end
+- `PetStoreFrontendRepository` - ECR Repository for the front-end
     containers.
 
 #### Step 1
+
 Using the Cloud9 ‘terminal\`, change to this modules’ directory by
 running:
 
     cd ~/environment/aws-modernization-workshop/modules/container-registry
 
 #### Step 2
+
 We need to customize the ECR repository names so as to distinguish them
 from those used by the other Workshop attendees. To do this, run the
 following command. This command will replace the &lt;UserName&gt;
@@ -50,6 +50,7 @@ placeholder in the CloudFormation template with your unique user name.
     sed -i "s/<UserName>/${USER_NAME}/" ~/environment/aws-modernization-workshop/modules/container-registry/petstore-ecr-cf-resources.yaml
 
 #### Step 3
+
 Now deploy the CloudFormation template using the `aws cli` tool.
 
     aws cloudformation create-stack --stack-name "${USER_NAME}-petstore-ecr" \
@@ -57,6 +58,7 @@ Now deploy the CloudFormation template using the `aws cli` tool.
     --capabilities CAPABILITY_NAMED_IAM
 
 #### Step 4
+
 Wait for the Template to finish deploying by running the following
 command:
 
@@ -72,6 +74,7 @@ Before we can deploy our Petstore application to an orchestrator, we
 need to push our Petstore images to **ECR**.
 
 #### Step 1
+
 Log into your Amazon ECR registry using the helper provided by the
 AWS CLI.
 
@@ -82,6 +85,7 @@ AWS CLI.
 > Ignore any *WARNNING* messages.
 
 #### Step 2
+
 Use the AWS CLI to get information about the two Amazon ECR repositories
 that were created for you from the CloudFormation template. One
 repository will be for the Petstore PostgreSQL backend and the other
@@ -112,6 +116,7 @@ Example output:
     }
 
 #### Step 3
+
 Verify that your Docker images exist by running the docker images
 command.
 
@@ -130,7 +135,9 @@ Example Output:
     jboss/wildfly                       11.0.0.Final        a12aa93a45f7        3 months ago        700MB
     maven                               3.5-jdk-7           5f03adaf2bbf        7 months ago        483MB
 
+
 #### Step 4
+
 Tag the local docker images with the locations of the remote ECR
 repositories we created using the CloudFormation template.
 
@@ -142,6 +149,7 @@ repositories we created using the CloudFormation template.
     --query=repositories[0].repositoryUri --output=text):latest
 
 #### Step 5
+
 Once the images have been tagged, push them to the remote repository.
 
     docker push $(aws ecr describe-repositories --repository-name ${USER_NAME}-petstore_postgres \
