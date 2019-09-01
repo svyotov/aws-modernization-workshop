@@ -251,7 +251,7 @@ On the left-hand navigation ensure **Clusters** is selected and click
 On the **Select cluster template** screen select **Networking only**
 which should have a **Powered by AWS Fargate** label and click **Next
 
-##### Step**.
+##### Step 3.1
 
 ![Cluster Template](../../images/cluster-template.png)
 
