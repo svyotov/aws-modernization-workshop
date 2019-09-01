@@ -5,4 +5,5 @@
 - [Container orchestration-ecs](modules/container-orchestration-ecs/readme.md "Amazon ECS & Fargate")
 - [Container orchestration-eks](modules/container-orchestration-eks/readme.md "Amazon EKS")
 - [Monitor application](modules/monitor-application/readme.md "Container Application Monitoring")
+- [Kubernetes Web UI](modules/kubernetes-web-ui/readme.md "Kubernetes Web UI")
 - [Feedback](modules/feedback/readme.md "Feedback")

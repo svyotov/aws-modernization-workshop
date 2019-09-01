@@ -13,5 +13,7 @@ modules:
     name: Amazon EKS
   modules_monitor-application_readme:
     name: Container Application Monitoring
+  modules_kubernetes-web-ui:
+    name: Kubernetes Web UI
   modules_feedback_readme:
     name: Feedback
