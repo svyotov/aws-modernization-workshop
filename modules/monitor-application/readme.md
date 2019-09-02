@@ -940,7 +940,7 @@ displayed.
 
 In the **Filter:** box, enter `eks` and press `[ENTER]` to filter the
 Log Group for our EKS cluster. Click on the
-`/eks/[red yellow-background]#<User Name>#/containers` Log Group.
+`/eks/<User Name>/containers` Log Group.
 
 ![Log Group](../../images/cw-logs.png)
 
