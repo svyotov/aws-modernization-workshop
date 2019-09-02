@@ -170,7 +170,7 @@ command in your Cloud9 terminal:
 ### Step 5
 
 Update the `petstore` service in the
-`#<User Name>#-petstore-workshop` cluster with
+`<User Name>-petstore-workshop` cluster with
 the latest version of the `petstore` task definition by running the
 below command. This will also pull the latest version of the
 `petstore_frontend` container we uploaded previously.
@@ -179,7 +179,7 @@ below command. This will also pull the latest version of the
 
 Replacing the older version of your task will take a couple of minutes.
 To view the status navigate back to the
-`#<User Name>#-petstore-workshop` cluster created
+`<User Name>-petstore-workshop` cluster created
 in a previous module and view the &lt;User Name&gt; service to view your
 tasks. You should see the new task being scheduled but you will have to
 wait for your task to transition to **RUNNING**.
@@ -491,7 +491,7 @@ service console and click **Clusters**.
 
 #### Step 1
 
-Select the `#<User Name>#-petstore-workshop`
+Select the `<User Name>-petstore-workshop`
 cluster and click on the **Tasks** tab. Select the **Running** task.
 
 ![Running Task](../../images/ecs-task.png)
@@ -537,7 +537,7 @@ is due to the following reasons:
 
 - In order to have our container instances send log data to CloudWatch
     Logs, there is an IAM policy called
-    `#<User Name>#-petstore-ExecutionRole` that
+    `<User Name>-petstore-ExecutionRole` that
     allows your container instances to use the CloudWatch Logs APIs that
     we are defining in the `petstore-fargate-task-definition.json`.
 
