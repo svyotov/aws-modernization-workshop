@@ -254,12 +254,7 @@ Apply your customized manifest by using [kubectl](https://kubernetes.io/docs/ref
 
     kubectl apply -f petstore-eks-manifest.yaml
 
-
-If it fails with error(s) try to re-authenticate to the cluster:
-
-```shell
-aws eks --region us-west-2 update-kubeconfig --name ${USER_NAME}-petstore
-```
+If the above command fails with error(s) try to re-authenticate to the cluster using `aws eks --region us-west-2 update-kubeconfig --name ${USER_NAME}-petstore` and then retry.
 
 Expected Output:
 
@@ -353,4 +348,3 @@ application.
 ## Helm
 
 Kubernetes templates can be organized into a [helm](https://helm.sh/docs/) repository for easier maintenance and management.
-
