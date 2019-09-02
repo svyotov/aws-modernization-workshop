@@ -78,7 +78,7 @@ The UI can _only_ be accessed from the machine where the command is executed. Se
 You can access Dashboard using the kubectl command-line tool by running the following command:
 
 ```shell
-kubectl proxy --port=8080
+kubectl proxy --port=8001
 ```
 
 The Dashboard will become available at [http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/](http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/).
