@@ -22,30 +22,66 @@ Dashboard also provides information on the state of Kubernetes resources in your
 
 ## Deploying the Dashboard UI
 
+Change to this modules directory by running:
+
+```shell
+cd ~/environment/aws-modernization-workshop/modules/kubernetes-web-ui
+```
+
 The Dashboard UI is not deployed by default. To deploy it, run the following command:
 
-```
+```shell
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-beta1/aio/deploy/recommended.yaml
 ```
 
-## Accessing the Dashboard UI
+To protect your cluster data, Dashboard deploys with a minimal RBAC configuration by default. Currently, Dashboard only supports logging in with a Bearer Token. To create a token for this demo, you can follow the steps bellow:
 
-To protect your cluster data, Dashboard deploys with a minimal RBAC configuration by default. Currently, Dashboard only supports logging in with a Bearer Token. To create a token for this demo, you can follow our guide on [creating a sample user](https://github.com/kubernetes/dashboard/wiki/Creating-sample-user).
+```shell
+# Create a sample admin user for **demo** purposes only!
+kubectl apply -f k8s-ui/sample-authentication.yaml
+```
 
 **Warning**: The sample user created in the tutorial will have administrative privileges and is for educational purposes only.
 
-### Command line proxy
-You can access Dashboard using the kubectl command-line tool by running the following command:
+**Note**: original source [creating a sample user](https://github.com/kubernetes/dashboard/wiki/Creating-sample-user).
+
+## Accessing the Dashboard UI
+
+Get the bearer authentication token, required to authenticate to the Kubernetes UI:
 
 ```shell
-kubectl proxy
+export K8S_TOKEN=$(kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep admin-user | awk '{print $1}') | grep "token:" | awk '{print $2}')
+echo "${K8S_TOKEN}"
 ```
 
-Kubectl will make Dashboard available at [http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/](http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/).
+### Command line proxy (cloud9 - demo only, use localhost otherwise)
+
+Open a proxy to the Kubernetes cluster using the following command
+
+```shell
+kubectl -n kubernetes-dashboard  proxy --port=8080 --accept-hosts '.*' &
+```
+
+Get the Kubernetes UI URL
+
+```shell
+REGION=us-west-2
+echo -e "The dashboard will be available at: \nhttps://${C9_PID}.vfs.cloud9.${REGION}.amazonaws.com/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/"
+```
+
+### Command line proxy (localhost)
 
 The UI can _only_ be accessed from the machine where the command is executed. See `kubectl proxy --help` for more options.
 
 **Note**: Kubeconfig Authentication method does NOT support external identity providers or x509 certificate-based authentication.
+
+You can access Dashboard using the kubectl command-line tool by running the following command:
+
+```shell
+kubectl proxy --port=8080
+```
+
+The Dashboard will become available at [http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/](http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/).
 
 ## Welcome view
 
