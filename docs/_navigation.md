@@ -6,4 +6,5 @@
 - [Container orchestration-eks](modules/container-orchestration-eks/readme.md "Amazon EKS")
 - [Monitor application](modules/monitor-application/readme.md "Container Application Monitoring")
 - [Kubernetes Web UI](modules/kubernetes-web-ui/readme.md "Kubernetes Web UI")
+- [Cheat Sheet](modules/cheat-sheet/readme.md "Cheat Sheet")
 - [Feedback](modules/feedback/readme.md "Feedback")
