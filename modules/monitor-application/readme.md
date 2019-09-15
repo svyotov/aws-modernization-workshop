@@ -300,8 +300,9 @@ Example Output:
       Normal  Created    21s   kubelet, ip-192-168-84-75.us-west-2.compute.internal  Created container
       Normal  Started    20s   kubelet, ip-192-168-84-75.us-west-2.compute.internal  Started container
 
-#### Step 6:: We will now introduce a failure inside the docker runtime by
-sending the `kill` command, as follows:
+#### Step 6
+
+We will now introduce a failure inside the docker runtime by sending the `kill` command, as follows:
 
     kubectl exec -it liveness-app -- /bin/kill -s SIGUSR1 1
 
