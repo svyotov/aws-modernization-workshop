@@ -12,7 +12,7 @@
 
 **Lab Requirements:**
 
-- Clou9 IDE.
+- The Clou9 IDE.
 
 - One of the following:
 
@@ -24,19 +24,13 @@
 
 ## Introduction
 
-When it comes to monitoring an application, a key concept to understand
-is you need to ensure that the application is working rather than only
-looking to see if server or container is running. In this module, we
-will go over some key concepts in monitoring and logging and how to
-integrate those concepts with our Pet Store application. The module will
-focus on the five areas, namely:
+When it comes to monitoring an application, it is crucial to ensure the application is working rather than only looking to see if a server or container is running. In this module, we will go over some key concepts in monitoring and logging and how to integrate those concepts to our Pet Store application. The module will focus on the following five areas:When it comes to monitoring an application, a key concept to understand is you need to ensure that the application is working rather than only looking to see if a server or container is running. In this module, we will go over some key concepts in monitoring and logging and how to integrate those concepts to our Pet Store application. The module will focus on the following five areas:
 
-1.  ECS & Fargate Healthchecks.
+1. ECS & Fargate Healthchecks.
 
-2.  Kubernetes Healthchecks.
+2. Kubernetes Healthchecks.
 
-3.  Monitoring Healthchecks using [Amazon
-    CloudWatch](https://aws.amazon.com/cloudwatch/).
+3. Monitoring Healthchecks using [Amazon CloudWatch](https://aws.amazon.com/cloudwatch/).
 
 ## Healthchecks in Amazon ECS & Fargate
 
