@@ -284,7 +284,7 @@ As you can see from the above output, this manifest created and configured sever
 <tbody>
 <tr class="odd">
 <td><p><strong>Namespace</strong></p></td>
-<td><p>Namespaces are meant to be virtual clusters within a larger pysical cluster.</p></td>
+<td><p>Namespaces are meant to be virtual clusters within a larger physical cluster.</p></td>
 </tr>
 <tr class="even">
 <td><p><strong>PersistentValue</strong></p></td>
@@ -296,7 +296,7 @@ As you can see from the above output, this manifest created and configured sever
 </tr>
 <tr class="even">
 <td><p><strong>Service</strong></p></td>
-<td><p>Service is an abstraction which defines a logical set of Pods and a policy by which to access them.</p></td>
+<td><p>Service is an abstraction which defines a logical set of Pods and a policy to access them.</p></td>
 </tr>
 <tr class="odd">
 <td><p><strong>Deployment</strong></p></td>
@@ -325,7 +325,7 @@ Example Output:
 
 Once the **STATUS** changes to **Running** for all 3 of your containers,
 we can then load the services and navigate to the exposed application
-(you will need to `[ctrl + c]` since its watching).
+(you will need to press `[ctrl + c]` to stop `watch`).
 
     kubectl get services --namespace petstore -o wide
 
