@@ -208,7 +208,7 @@ placeholder in the CloudFormation template.
 
 > **Note**
 >
-> These should be executed in the in the Cloud9 `terminal`.
+> These should be executed in the Cloud9 `terminal`.
 
     ACCOUNT_ID=$(aws ecr describe-repositories --repository-name ${USER_NAME}-petstore_frontend \
     --query=repositories[0].repositoryUri --output=text | cut -d"." -f1) && \
@@ -398,7 +398,7 @@ to inspect the logs for your task while you wait.
 ##### Step 23
 
 Once the task is running, view the **Details** of the petstore
-**Service**. Under **Load Balancing** click the under **Target Group
+**Service**. Under **Load Balancing** click on the section under  the**Target Group
 Name** to view the Tasks being registered into the Target Group. You can
 view their status under **Targets** tab.
 

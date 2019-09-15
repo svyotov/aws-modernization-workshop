@@ -78,7 +78,7 @@ that during image build by declaring a `RUN` statement in the
       && rm -rf $JBOSS_HOME/standalone/configuration/standalone_xml_history/ \
       && rm -rf $JBOSS_HOME/standalone/log/*
 
-Let’s now review the full `Dockerfile` step for step and walk through
+Let’s now review the full `Dockerfile` step by step and walk through
 the result. The first stage will be based off our `build tools`
 container, in this case that is maven. This container could be a
 container within your organization that houses all the tools your
@@ -308,7 +308,7 @@ Example output (*redacted for brevity*):
 ### Step 3
 
 Run the application container in the foreground and live stream the logs
-to `stdout`. If you hit an error hit `[Ctrl + C]`, make the necessary
+to `stdout`. If you get an error, press `[Ctrl + C]`, make the necessary
 updates to the Dockerfile and re-build the container by re-running the
 **step 2** command.
 
@@ -384,7 +384,7 @@ Some of the major ones are
 7. Use multi-stage build for small and secure images
 8. Use a linter such as [hadolint](https://github.com/hadolint/hadolint)
 
-Having multiple stages or using alpine as base total image size drastically. Bellow are a couple of non working examples to explain docker image size reduction. For the full details please see the links above.
+Having multiple stages or using alpine as base reduces total image size drastically. Bellow are a couple of non working examples to explain docker image size reduction. For the full details please see the links above.
 
 Non working example of using a single stage (largest)
 

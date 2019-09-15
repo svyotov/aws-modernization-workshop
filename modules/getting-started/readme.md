@@ -67,7 +67,7 @@ following command:
     pip install --upgrade --user awscli pip && \
     exec $SHELL
 
-After you have the installed the latest `awscli` and `pip` we need to
+After you have installed the latest `awscli` and `pip` we need to
 configure our environment further.
 
     aws configure set region us-west-2
@@ -128,7 +128,7 @@ locations and make them "runnable", and add them to our `$PATH`.
 ## Launch an EKS Cluster
 
 It takes a few minutes to launch an EKS cluster, so we will have you
-launch one now, so that the installation can complete while you continue
+launch one now, so that the installation can be completed while you continue
 with the initial modules. We will launch our EKS Cluster using the
 `eksctl` tool.
 

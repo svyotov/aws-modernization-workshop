@@ -9,13 +9,13 @@ Resources:
     Properties:
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
-        Statement: 
-          - 
+        Statement:
+          -
             Effect: "Allow"
-            Principal: 
-              Service: 
+            Principal:
+              Service:
                 - "ecs-tasks.amazonaws.com"
-            Action: 
+            Action:
               - "sts:AssumeRole"
       ManagedPolicyArns:
         - "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
@@ -157,7 +157,7 @@ Resources:
        - IpProtocol: 'tcp'
          FromPort: '80'
          ToPort: '80'
-         CidrIp: 0.0.0.0/0        
+         CidrIp: 0.0.0.0/0
       VpcId: !Ref PubPrivateVPC
     DependsOn: PubPrivateVPC
   DefaultSecurityGroupIngress:
@@ -188,10 +188,10 @@ Resources:
 Outputs:
   VPC:
     Description: VPC ID
-    Value: !Ref PubPrivateVPC  
+    Value: !Ref PubPrivateVPC
   Subnet1:
     Description: Subnet1 ID
-    Value: !Ref PublicSubnet1  
+    Value: !Ref PublicSubnet1
   Subnet2:
     Description: Subnet2 ID
 

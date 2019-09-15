@@ -152,7 +152,7 @@ that it looks like the example below.
 We need to replace the placeholder for your account id in the template
 file, so that is aware of your account. The following commands will do
 that for you automatically using the `sed` and `aws` cli tools. These
-should be executed in the in the Cloud9 `terminal`.
+should be executed in the Cloud9 `terminal`.
 
     ACCOUNT_ID=$(aws ecr describe-repositories --repository-name ${USER_NAME}-petstore_frontend --query=repositories[0].repositoryUri --output=text | cut -d"." -f1) && echo ${ACCOUNT_ID}
 

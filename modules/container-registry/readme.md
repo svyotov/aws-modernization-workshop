@@ -82,7 +82,7 @@ AWS CLI.
 
 > **Note**
 >
-> Ignore any *WARNNING* messages.
+> Ignore any *WARNING* messages.
 
 #### Step 2
 
