@@ -84,7 +84,7 @@ IDE.
 
 ### Step 3
 
-You will not that this task definition file is a little different from
+You will notice that this task definition file is a little different from
 the one you already loaded in that we now have added healthcheck values
 to the `postgres` and `petstore` sections of `containerDefinitions`, so
 that it looks like the example below.
