@@ -172,7 +172,7 @@ below command. This will also pull the latest version of the
     aws ecs update-service --cluster ${USER_NAME}-petstore-workshop --service ${USER_NAME} --task-definition ${USER_NAME} --region us-west-2
 
 Replacing the older version of your task will take a couple of minutes.
-To view the status navigate back to the
+To view the status, navigate back to the
 `<User Name>-petstore-workshop` cluster created
 in a previous module and view the &lt;User Name&gt; service to view your
 tasks. You should see the new task being scheduled but you will have to
@@ -201,10 +201,8 @@ task. You should see the healthchecks every `30` seconds like below:
 > The following section of the module assumes a working EKS cluster,
 > created in the **Amazon EKS** module.
 
-By default, Kubernetes will restart a container if it crashes for any
-reason. It uses Liveness and Readiness probes which can be configured
-for running a robust application by identifying the healthy containers
-to send traffic to and restarting the ones when required.
+By default, Kubernetes will restart a container if it crashes for any reason. It uses Liveness and Readiness probes which can be configured for running a robust application by identifying the healthy containers.
+It will to send traffic to the healthy ones and will restart the unhealthy in an attempt to restore them to a healthy state.
 
 In this section, we will understand how [liveness and readiness
 probes](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/)
