@@ -292,8 +292,6 @@ show any probe failures or restarts, as follows:
 
 Example Output:
 
-\+
-
       Type    Reason     Age   From                                                  Message
       ----    ------     ----  ----                                                  -------
       Normal  Scheduled  22s   default-scheduler                                     Successfully assigned default/liveness-app to ip-192-168-84-75.us-west-2.compute.internal
@@ -302,20 +300,16 @@ Example Output:
       Normal  Created    21s   kubelet, ip-192-168-84-75.us-west-2.compute.internal  Created container
       Normal  Started    20s   kubelet, ip-192-168-84-75.us-west-2.compute.internal  Started container
 
-\+ Step 6:: We will now introduce a failure inside the docker runtime by
+#### Step 6:: We will now introduce a failure inside the docker runtime by
 sending the `kill` command, as follows:
-
-\+
 
     kubectl exec -it liveness-app -- /bin/kill -s SIGUSR1 1
 
-\+ Step 7:: After 15-20 seconds, re-run the `kubectl describe` command
-to view the `Events` output again and see what actions the `kubelet`
-took.
+#### Step 7
 
-\+ Example Output:
+After 15-20 seconds, re-run the `kubectl describe` command to view the `Events` output again and see what actions the `kubelet` took.
 
-\+
+Example Output:
 
       Type     Reason     Age                From                                                  Message
       ----     ------     ----               ----                                                  -------
