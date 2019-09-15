@@ -326,20 +326,18 @@ signal, it did not respond to the health check pings and the `kubelet`
 killed the container. The container was subject to the default restart
 policy.
 
-\+ Step 8:: Confirm that the container was restarted by viewing the pod.
+#### Step 8
 
-\+
+ Confirm that the container was restarted by viewing the pod.
 
-    kubectl get pod liveness-app
+      kubectl get pod liveness-app
 
-\+ Expected Output:
+Expected Output:
 
-\+
+      NAME           READY   STATUS    RESTARTS   AGE
+      liveness-app   1/1     Running   1          6m42s
 
-    NAME           READY   STATUS    RESTARTS   AGE
-    liveness-app   1/1     Running   1          6m42s
-
-\+ NOTE: The number of `RESTARTS` is now `1`.
+> NOTE: The number of `RESTARTS` is now `1`.
 
 ### Configuring the Readiness Probe
 
@@ -397,10 +395,10 @@ View the deployment by executing the following `kubectl` command:
 
 Example Output:
 
-    NAME                                    READY   STATUS    RESTARTS   AGE
-    readiness-deployment-6b95b8dd66-dqdzq   0/1     Running   0          8s
-    readiness-deployment-6b95b8dd66-tpxll   0/1     Running   0          8s
-    readiness-deployment-6b95b8dd66-x2mwn   0/1     Running   0          8s
+      NAME                                    READY   STATUS    RESTARTS   AGE
+      readiness-deployment-6b95b8dd66-dqdzq   0/1     Running   0          8s
+      readiness-deployment-6b95b8dd66-tpxll   0/1     Running   0          8s
+      readiness-deployment-6b95b8dd66-x2mwn   0/1     Running   0          8s
 
 #### Step 4
 
