@@ -287,7 +287,7 @@ As you can see from the above output, this manifest created and configured sever
 <td><p>Namespaces are meant to be virtual clusters within a larger physical cluster.</p></td>
 </tr>
 <tr class="even">
-<td><p><strong>PersistentValue</strong></p></td>
+<td><p><strong>PersistentVolume</strong></p></td>
 <td><p>Persistent Volume (PV) is a piece of storage that has been provisioned by an administrator. <em>These are cluster wide resources.</em></p></td>
 </tr>
 <tr class="odd">
